@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+/* ── Design tokens ─────────────────────────────────────────────── */
+:root {
+  --bg: #fcf8f4;
+  --bg-alt: #f5eee7;
+  --surface: #ffffff;
+  --ink: #2a1e1a;
+  --muted: #6f5f57; /* slightly deeper than #7A6A62 to keep WCAG AA on --bg-alt */
+  --primary: #8e2b1e;
+  --primary-hover: #74221a;
+  --primary-soft: #f7e6e2;
+  --accent: #c8902e;
+  --accent-ink: #94661a; /* gold used for small text on light backgrounds (AA) */
+  --accent-soft: #fbefd9;
+  --dark: #1c1412;
+  --border: #efe4da;
+  --coral: #e8736b;
+  --cream: #f6e9d9;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-alt: var(--bg-alt);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-dark: var(--dark);
+  --color-border: var(--border);
+  --color-coral: var(--coral);
+  --color-cream: var(--cream);
+
+  --font-display: var(--font-playfair), Georgia, serif;
+  --font-sans: var(--font-jakarta), system-ui, sans-serif;
+  --font-deva: var(--font-noto-deva), serif;
+}
+
+/* ── Base ──────────────────────────────────────────────────────── */
+@layer base {
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 15.5px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  color: var(--ink);
+}
+
+::selection {
+  background: var(--coral);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--coral);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+}
+
+/* ── Utilities ─────────────────────────────────────────────────── */
+@utility container-site {
+  width: 100%;
+  max-width: 1140px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@utility section-pad {
+  padding-block: 3.5rem;
+  @media (width >= 64rem) {
+    padding-block: 5rem;
+  }
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Print: only the itinerary when "Print / Save as PDF" is used */
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  body.printing-plan * {
+    visibility: hidden;
+  }
+  body.printing-plan #planner-print-root,
+  body.printing-plan #planner-print-root * {
+    visibility: visible;
+  }
+  body.printing-plan #planner-print-root {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+  }
+}

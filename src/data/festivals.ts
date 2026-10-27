@@ -1,0 +1,11 @@
+import type { Festival } from "./types";
+
+/** The city's festival calendar. Months are typical; exact dates follow the lunar calendar. */
+export const festivals: Festival[] = [
+  { slug: "holi", month: "March", monthIndex: 3, name: "Holi", description: "Clouds of gulal, gujiya on every plate and bhang thandai — Kanpur plays Holi with total abandon.", where: "Across the city", image: "/images/kanpur/holi.jpg", alt: "People throwing coloured powder during Holi in Kanpur" },
+  { slug: "ganga-mela", month: "March", monthIndex: 3, name: "Ganga Mela", description: "Kanpur's own post-Holi festival, a week later on Anuradha Nakshatra: a final burst of colour that ends at the Sarsaiya Ghat mela — born from the freedom struggle of 1942.", where: "Hatia & Sarsaiya Ghat", image: "/images/kanpur/ganga-mela.jpg", alt: "Crowds celebrating Ganga Mela at Sarsaiya Ghat" },
+  { slug: "durga-puja-dussehra", month: "October", monthIndex: 10, name: "Durga Puja & Dussehra", description: "Pandals in Bengali-majority neighbourhoods, Ramlila stages everywhere and Ravan effigies going up in flames.", where: "Parade Ground & pandals", image: "/images/kanpur/durga-puja.jpg", alt: "Illuminated Durga Puja pandal in Kanpur" },
+  { slug: "diwali", month: "October / November", monthIndex: 11, name: "Diwali", description: "Markets like Naveen Market and Gumti stay awake all night with lights, sweets and gifts; the city glows for days.", where: "Markets & homes", image: "/images/kanpur/diwali.jpg", alt: "Diyas and lights decorating a Kanpur market for Diwali" },
+  { slug: "dev-deepawali", month: "November", monthIndex: 11, name: "Dev Deepawali", description: "Fifteen days after Diwali, on Kartik Purnima, the ghats of Bithoor shimmer with lamps — and Varanasi lights up spectacularly.", where: "Bithoor ghats", image: "/images/kanpur/dev-deepawali.jpg", alt: "Rows of lit diyas on the ghats for Dev Deepawali" },
+  { slug: "chhath-kartik-purnima", month: "November", monthIndex: 11, name: "Chhath & Kartik Purnima", description: "Families stand waist-deep in the Ganga to offer arghya to the setting and rising sun; a holy dip follows at Kartik Purnima.", where: "Sarsaiya Ghat & Bithoor", image: "/images/kanpur/chhath.jpg", alt: "Devotees offering prayers in the river during Chhath" },
+];
