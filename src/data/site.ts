@@ -4,7 +4,7 @@ export const site = {
   tagline: "The Stories of the Manchester of the East",
   description:
     "The stories of the Manchester of the East — a curated guide to Kanpur's heritage, food, festivals and everyday life, and the cities around it.",
-  url: (process.env.NEXT_PUBLIC_SITE_URL || "https://kanpur-ki-kahaani.vercel.app").replace(/\/$/, ""),
+  url: (process.env.NEXT_PUBLIC_SITE_URL || "https://kanpurkikahaani.site").replace(/\/$/, ""),
   locale: "en_IN",
   twitter: "@kanpurkikahaani",
   social: {
