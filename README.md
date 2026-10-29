@@ -70,7 +70,7 @@ Copy `.env.example` to `.env.local` (locally) or add these in your host's dashbo
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | Recommended | Public URL. Used for canonical URLs, sitemap, robots, JSON-LD and share links. Defaults to `https://kanpur-ki-kahaani.vercel.app` |
+| `NEXT_PUBLIC_SITE_URL` | Recommended | Public URL. Used for canonical URLs, sitemap, robots, JSON-LD and share links. Defaults to `https://kanpurkikahaani.site` |
 | `NEXT_PUBLIC_GA_ID` | Optional | GA4 measurement ID (`G-XXXX`). GA loads **only** if this is set |
 | `NEXT_PUBLIC_META_PIXEL_ID` | Optional | Meta Pixel ID. The pixel loads **only** if this is set |
 
