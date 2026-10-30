@@ -40,7 +40,7 @@ function pickTone(label: string): keyof typeof tones {
 export function ImageWithFallback({ src, alt, label, sublabel, tone, hideLabel, className, fill, ...rest }: Props) {
   const [failed, setFailed] = useState(false);
   const pid = `jaali-${useId().replace(/:/g, "")}`;
-  const present = imageExists(src) && !failed;
+  const present = (imageExists(src) || src.startsWith("https://")) && !failed;
 
   if (!present) {
     const t = tones[tone ?? pickTone(label)];

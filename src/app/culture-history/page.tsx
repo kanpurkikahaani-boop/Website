@@ -36,7 +36,7 @@ export default function CultureHistoryPage() {
               title="Kanpur Through the Ages"
               intro="From a riverside settlement to the Manchester of the East — and the city it's becoming now."
             />
-            <InlineLink href="/blog/mills-that-built-a-city">Read: The Mills That Built a City</InlineLink>
+            <InlineLink href="/blogs/mills-that-built-a-city">Read: The Mills That Built a City</InlineLink>
           </div>
           <Timeline entries={timeline.map((e) => ({ label: e.era, title: e.title, body: e.description }))} />
         </div>

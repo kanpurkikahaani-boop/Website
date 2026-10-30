@@ -18,6 +18,8 @@ export interface NavGroup {
 }
 
 export const homeLink: NavLink = { label: "Home", href: "/" };
+/** Top-level direct link shown after the dropdown groups. */
+export const blogsLink: NavLink = { label: "Blogs", href: "/blogs" };
 
 export const navGroups: NavGroup[] = [
   {
@@ -73,4 +75,4 @@ export function groupFor(pathname: string): NavGroup | undefined {
 }
 
 /** Every routable page, used by the sitemap and footer. */
-export const allNavHrefs: string[] = ["/", ...navGroups.flatMap((g) => g.items.map((i) => i.href))];
+export const allNavHrefs: string[] = ["/", ...navGroups.flatMap((g) => g.items.map((i) => i.href)), blogsLink.href];

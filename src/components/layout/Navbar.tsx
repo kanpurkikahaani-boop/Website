@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Menu } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { navGroups, groupFor, type NavGroup } from "@/data/nav";
+import { blogsLink, navGroups, groupFor, type NavGroup } from "@/data/nav";
 import { cn } from "@/lib/utils";
 import { MobileMenu } from "./MobileMenu";
 
@@ -69,6 +69,18 @@ export function Navbar({ logo }: { logo: React.ReactNode }) {
                 setOpen={(v) => setOpen((o) => (v ? g.label : o === g.label ? null : o))}
               />
             ))}
+            <li>
+              <Link
+                href={blogsLink.href}
+                aria-current={pathname === "/blogs" ? "page" : undefined}
+                className={cn(
+                  "rounded-full px-4 py-2 text-[14.5px] font-medium transition-colors",
+                  pathname.startsWith("/blogs") ? "bg-primary-soft text-primary" : "text-ink hover:text-primary",
+                )}
+              >
+                {blogsLink.label}
+              </Link>
+            </li>
           </ul>
         </nav>
         <button

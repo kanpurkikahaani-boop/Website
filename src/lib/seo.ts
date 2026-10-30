@@ -18,7 +18,10 @@ export function buildMetadata({ title, description, path, ogImage, type = "websi
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      types: { "application/rss+xml": [{ url: "/blogs/rss.xml", title: `${site.name} — Stories` }] },
+    },
     openGraph: {
       title,
       description,

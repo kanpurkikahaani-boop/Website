@@ -1,5 +1,4 @@
 import { cities } from "./cities";
-import { posts } from "./blog";
 
 /** Titles for the per-page Open Graph images served at /og/{key}. */
 export const ogPages: Record<string, { title: string; eyebrow: string }> = {
@@ -17,8 +16,8 @@ export const ogPages: Record<string, { title: string; eyebrow: string }> = {
   accommodation: { title: "Accommodation", eyebrow: "Stay & Live" },
   campus: { title: "Campus Life", eyebrow: "Stay & Live" },
   privacy: { title: "Privacy", eyebrow: "Kanpur Ki Kahaani" },
+  blogs: { title: "From Our Blogs", eyebrow: "Stories" },
   ...Object.fromEntries(
     cities.map((c) => [`city-${c.slug}`, { title: `${c.name} — ${c.tagline}`, eyebrow: `Nearby city · ~${c.distanceKm} km from Kanpur` }]),
   ),
-  ...Object.fromEntries(posts.map((p) => [`blog-${p.slug}`, { title: p.title, eyebrow: `Stories · ${p.category}` }])),
 };

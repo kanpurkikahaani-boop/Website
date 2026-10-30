@@ -2,7 +2,7 @@
 
 import { Check, Link2 } from "lucide-react";
 import { useState } from "react";
-import { FacebookIcon, WhatsAppIcon, XIcon } from "@/components/ui/BrandIcons";
+import { FacebookIcon, RedditIcon, WhatsAppIcon, XIcon } from "@/components/ui/BrandIcons";
 import { track } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +27,7 @@ export function ShareButtons({
     { name: "WhatsApp", href: `https://wa.me/?text=${encodeURIComponent(body)}`, Icon: WhatsAppIcon },
     { name: "X", href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`, Icon: XIcon },
     { name: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, Icon: FacebookIcon },
+    { name: "Reddit", href: `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, Icon: RedditIcon },
   ];
 
   async function copy() {

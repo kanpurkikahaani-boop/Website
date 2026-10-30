@@ -20,13 +20,14 @@ import { FadeUp } from "@/components/ui/FadeUp";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { heroSlides, sectionImages } from "@/data/images";
 import { cities } from "@/data/cities";
-import { posts } from "@/data/blog";
 import { videos } from "@/data/videos";
 import { kanpurPlaces } from "@/data/places";
 import { site, socials, absoluteUrl } from "@/data/site";
 import { buildMetadata, touristDestinationJsonLd } from "@/lib/seo";
-import { formatDate, readingTime } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import { hasLogo } from "@/lib/assets";
+import { getLatestPosts } from "@/lib/posts";
+import { cityName } from "@/lib/city-names";
 
 export const metadata: Metadata = buildMetadata({
   title: "Kanpur Tourism – Things to Do in Kanpur & Weekend Trips Nearby | Kanpur Ki Kahaani",
@@ -50,7 +51,11 @@ const reach = [
   { mode: "air" as const, title: "By Air", body: "Kanpur Airport at Chakeri (KNU) has domestic flights; Lucknow's international airport (LKO) is about 80 km away for wider connections." },
 ];
 
-export default function HomePage() {
+// Refresh the "From Our Blogs" section at least every 5 minutes (and instantly on publish).
+export const revalidate = 300;
+
+export default async function HomePage() {
+  const posts = await getLatestPosts(3);
   const orgJsonLd = [
     {
       "@context": "https://schema.org",
@@ -211,14 +216,14 @@ export default function HomePage() {
           {posts.map((p, i) => (
             <FadeUp as="li" key={p.slug} delay={(i % 3) * 0.06}>
               <ImageCard
-                image={p.image}
-                alt={p.alt}
+                image={p.coverUrl ?? "/images/kanpur/blog-cover.jpg"}
+                alt={p.coverAlt ?? p.title}
                 imageLabel={p.title}
-                eyebrow={p.category}
+                eyebrow={cityName(p.city) || "Story"}
                 title={p.title}
                 description={p.excerpt}
-                chips={[formatDate(p.date), `${readingTime(p.body)} min read`]}
-                href={`/blog/${p.slug}`}
+                chips={[formatDate(p.publishedAt.slice(0, 10)), `${p.readingMinutes} min read`]}
+                href={`/blogs/${p.slug}`}
               />
             </FadeUp>
           ))}

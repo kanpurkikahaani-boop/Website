@@ -40,7 +40,7 @@ export default function FoodPage() {
         />
         <SampleNote className="mt-8">Prices are indicative and some venue names are illustrative — check locally before you go.</SampleNote>
         <p className="mt-4 text-sm">
-          Hungry for more? <InlineLink href="/blog/eating-through-arya-nagar">Read our Arya Nagar food crawl</InlineLink>
+          Hungry for more? <InlineLink href="/blogs/eating-through-arya-nagar">Read our Arya Nagar food crawl</InlineLink>
         </p>
       </Section>
     </>

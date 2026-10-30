@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ChevronDown, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { navGroups, groupFor } from "@/data/nav";
+import { blogsLink, navGroups, groupFor } from "@/data/nav";
 import { cn } from "@/lib/utils";
 
 export function MobileMenu({ open, onClose, pathname }: { open: boolean; onClose: () => void; pathname: string }) {
@@ -117,6 +117,16 @@ export function MobileMenu({ open, onClose, pathname }: { open: boolean; onClose
               </div>
             );
           })}
+          <Link
+            href={blogsLink.href}
+            aria-current={pathname === "/blogs" ? "page" : undefined}
+            className={cn(
+              "mt-1 block rounded-xl px-4 py-3 text-base font-semibold",
+              pathname.startsWith("/blogs") ? "bg-primary-soft text-primary" : "text-ink",
+            )}
+          >
+            {blogsLink.label}
+          </Link>
         </nav>
         <div className="border-t border-border p-5">
           <Link href="/tourism#planner" className="block rounded-full bg-primary py-3 text-center text-sm font-semibold text-white">

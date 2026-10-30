@@ -122,6 +122,44 @@ h4 {
   }
 }
 
+/* Blog article body (rendered, sanitized Tiptap HTML) */
+.prose-kkk {
+  color: color-mix(in srgb, var(--ink) 85%, transparent);
+  font-size: 16.5px;
+  line-height: 1.8;
+}
+.prose-kkk > * + * { margin-top: 1.15em; }
+.prose-kkk h2, .prose-kkk h3, .prose-kkk h4 {
+  font-family: var(--font-display);
+  color: var(--primary);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-top: 1.8em;
+}
+.prose-kkk h2 { font-size: 26px; }
+.prose-kkk h3 { font-size: 21px; }
+.prose-kkk h4 { font-size: 18px; color: var(--ink); }
+.prose-kkk a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+.prose-kkk a:hover { color: var(--primary-hover); }
+.prose-kkk strong { color: var(--ink); }
+.prose-kkk ul { list-style: disc; padding-left: 1.4em; }
+.prose-kkk ol { list-style: decimal; padding-left: 1.4em; }
+.prose-kkk li + li { margin-top: 0.35em; }
+.prose-kkk blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 0.2em 0 0.2em 1.1em;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.1em;
+  color: var(--ink);
+}
+.prose-kkk hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+.prose-kkk img { border-radius: 1rem; width: 100%; height: auto; }
+.prose-kkk code { background: var(--bg-alt); padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.9em; }
+.prose-kkk pre { background: var(--dark); color: var(--cream); padding: 1em; border-radius: 0.75rem; overflow-x: auto; }
+.prose-kkk .kkk-video, .prose-kkk div[data-youtube-video] { position: relative; aspect-ratio: 16 / 9; }
+.prose-kkk iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 1rem; }
+
 /* Print: only the itinerary when "Print / Save as PDF" is used */
 @media print {
   header,
