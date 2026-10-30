@@ -9,7 +9,7 @@ The site currently renders a warm gradient tile (with the place name) wherever a
 3. Save as **JPG**, landscape, at least **1600 px wide** (hero images 2400 px), ideally under 400 KB. `next/image` handles resizing and AVIF/WebP.
 4. Record each image in the table: fill in *Source URL*, *Author* and *Licence*.
 
-**117 images** are referenced in `src/data/`. Some are shared between pages (e.g. a place card and a news story).
+**118 images** are referenced in `src/data/`. Some are shared between pages (e.g. a place card and a news story).
 
 ## Agra
 
@@ -169,6 +169,12 @@ Suggested sources: Wikimedia Commons “Category:Ghats of Varanasi”, “Sarnat
 | `public/images/varanasi/paan.jpg` | Banarasi paan being prepared on a brass tray | | | |
 | `public/images/varanasi/sarnath.jpg` | The Dhamek Stupa at Sarnath near Varanasi | | | |
 | `public/images/varanasi/vishwanath-gali.jpg` | Narrow lane of small shops near Kashi Vishwanath | | | |
+
+## Blog default cover
+
+| File | What it should show | Source URL | Author | Licence |
+|---|---|---|---|---|
+| `public/images/kanpur/blog-cover.jpg` | A wide Kanpur scene (e.g. the Ganga at Bithoor). Used when a post has no cover image | | | |
 
 ## Brand
 

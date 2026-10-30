@@ -10,7 +10,7 @@ export async function generateMetadata({ searchParams }: PageProps<"/news">): Pr
   const meta = buildMetadata({
     title: "Kanpur News Today – Lucknow, Agra, Varanasi & UP Headlines | Kanpur Ki Kahaani",
     description:
-      "Today's Kanpur news plus Lucknow, Agra, Prayagraj, Varanasi and Ayodhya headlines from English and Hindi newspapers, refreshed every morning with links to the source.",
+      "Today's Kanpur news plus Lucknow, Agra, Prayagraj, Varanasi and Ayodhya headlines from English and Hindi newspapers, refreshed every morning with source links.",
     path: "/news",
     ogImage: "/og/news",
   });

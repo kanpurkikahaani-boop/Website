@@ -39,7 +39,14 @@ export function newsTitle(city?: NewsCity, genre?: Genre) {
 }
 
 export function newsDescription(city?: NewsCity, genre?: Genre) {
-  const c = city ? CITY_LABELS[city].en : "Kanpur, Lucknow, Agra, Prayagraj, Varanasi and Ayodhya";
+  const c = city ? CITY_LABELS[city].en : "Kanpur and nearby cities";
   const g = genre ? genreLabel(genre).toLowerCase() : "local";
-  return `Latest ${g} news from ${c}, updated daily from leading English and Hindi newspapers. Headlines with links to read every story at the original source.`;
+  // Pick the first phrasing that lands in the 150–160 character sweet spot for search snippets.
+  const variants = [
+    `Latest ${g} news from ${c}, refreshed every morning from leading English and Hindi newspapers, with links to read each story at the original source.`,
+    `Latest ${g} news from ${c}, refreshed every morning from English and Hindi newspapers, with links to read each story at the source.`,
+    `Latest ${g} news from ${c}, refreshed daily from English and Hindi papers, with links to each story at the source.`,
+    `${c} ${g} news: today's headlines from English and Hindi newspapers, refreshed every morning, each linking to the original story.`,
+  ];
+  return variants.find((v) => v.length >= 150 && v.length <= 160) ?? variants.reduce((a, b) => (Math.abs(155 - a.length) <= Math.abs(155 - b.length) ? a : b));
 }

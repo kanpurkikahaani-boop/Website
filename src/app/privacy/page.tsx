@@ -6,7 +6,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Privacy Notice | Kanpur Ki Kahaani",
   description:
-    "What Kanpur Ki Kahaani collects and why: newsletter email and city interests, optional analytics, admin sign-in and embeds — and how to withdraw consent or erase data.",
+    "What Kanpur Ki Kahaani collects and why: newsletter email and city interests, optional analytics and embeds — and how to withdraw consent or erase your data.",
   path: "/privacy",
   ogImage: "/og/privacy",
 });

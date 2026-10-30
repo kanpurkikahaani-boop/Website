@@ -2,7 +2,14 @@
 
 *The Stories of the Manchester of the East*: a tourism and city guide for Kanpur and five nearby cities (Lucknow, Agra, Prayagraj, Varanasi and Ayodhya), built for an academic digital marketing project.
 
-Stack: **Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · lucide-react · Embla Carousel · Framer Motion · Open-Meteo**. Every page is prerendered as static HTML, so the site needs no server or database.
+Stack: **Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · Supabase (Postgres, Auth, Storage) · Tiptap · Vercel Cron · lucide-react · Embla Carousel · Framer Motion · Open-Meteo**.
+
+Most pages are still prerendered (static or ISR). v2 adds server features:
+- the newsletter API;
+- an admin-only blog editor;
+- a news aggregator refreshed daily by Vercel Cron.
+
+**👉 To switch these on, follow [`SETUP.md`](SETUP.md)** (Supabase project, migrations, Google sign-in, env vars). Without Supabase the site still builds and runs: the blog falls back to the built-in stories and the news page shows its directory.
 
 ---
 
@@ -19,7 +26,10 @@ npm run dev                  # http://localhost:3000
 | Script | What it does |
 |---|---|
 | `npm run dev` | Development server with hot reload |
-| `npm run build` | Production build. All pages are statically prerendered |
+| `npm run build` | Production build (static + ISR pages, plus server routes for the API and admin) |
+| `npm run test:news` | Unit tests for news classification and feed parsing (fixtures, no network) |
+| `npm run test:rls` | Security tests: applies the migrations to a local Postgres and attacks every table as anon, non-admin, unverified admin and admin (needs `PGHOST`/`PGPORT`/`PGUSER`) |
+| `npm run verify:sources` | Checks every candidate news feed and newspaper link; keeps only the ones that work (see SETUP.md step 9) |
 | `npm start` | Serve the production build |
 | `npm run lint` | ESLint (`eslint-config-next`, core-web-vitals + TypeScript rules) |
 | `npm run typecheck` | Generates route types, then runs `tsc --noEmit` |
@@ -42,10 +52,10 @@ All copy, prices, links and image paths live in typed files under **`src/data/`*
 | `food.ts` | Food & Night Life tabs and each city's "Must-Try Food" |
 | `shopping.ts`, `outdoor.ts`, `festivals.ts`, `history.ts` | Explore pages |
 | `events.ts` | Upcoming events. Past events hide automatically. **Dates are `// VERIFY`** |
-| `news.ts` | Sample headlines. Set `url` to the real article; it stays `"#"` until you do |
+| `newsSources.ts` + `news-sources.verified.json` | News feeds and the newspaper directory. **Generated** by `npm run verify:sources` from `scripts/news-candidates.json`; never hand-add unverified URLs |
 | `stays.ts` | Sample accommodation and the booking-link builder (UTM parameters) |
 | `campus.ts` | Colleges and student tips |
-| `blog.ts` | Blog posts. Body: paragraphs separated by blank lines; `## ` starts a subheading |
+| `blog.ts` | The three original stories. Since v2 posts live in Supabase and are written at `/admin/blogs`; this file is only the fallback (and the source for `0003_seed_posts.sql`) |
 | `videos.ts` | YouTube IDs for "Kanpur in Motion" (**placeholders: replace `REPLACE_ME`**) |
 | `playlist.ts` | Spotify playlist ID (**placeholder: replace `REPLACE_ME`**) |
 | `images.ts` | Home hero slides and section images |
@@ -70,6 +80,11 @@ Copy `.env.example` to `.env.local` (locally) or add these in your host's dashbo
 
 | Variable | Required | Purpose |
 |---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | For v2 features | Supabase project URL and public anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | For v2 features | **Server-only** key used by the subscribe API and the news cron. Bypasses RLS: never expose it |
+| `ADMIN_EMAIL` | For v2 features | The one account allowed into `/admin` (must also be in the `admins` table) |
+| `CRON_SECRET` | For v2 features | Protects `/api/cron/refresh-news` (Vercel Cron sends it automatically) |
+| `UNSUBSCRIBE_SECRET` | For v2 features | Signs newsletter unsubscribe links |
 | `NEXT_PUBLIC_SITE_URL` | Recommended | Public URL. Used for canonical URLs, sitemap, robots, JSON-LD and share links. Defaults to `https://kanpurkikahaani.site` |
 | `NEXT_PUBLIC_GA_ID` | Optional | GA4 measurement ID (`G-XXXX`). GA loads **only** if this is set |
 | `NEXT_PUBLIC_META_PIXEL_ID` | Optional | Meta Pixel ID. The pixel loads **only** if this is set |
@@ -112,7 +127,9 @@ src/lib/                  itinerary.ts (planner engine), weather.ts (Open-Meteo 
 
 These are the choices I made without asking.
 
-- **Next.js 16 without Cache Components.** The site is fully static, so the classic rendering model is simpler and deploys anywhere.
+- **Next.js 16 without Cache Components.** Public pages are static or ISR (blog: 5 min, news: 1 hour), plus instant `revalidatePath` on publish and after each news refresh. Admin pages always render per request.
+- **Admin security** is enforced at three layers: `src/proxy.ts`, server-side `requireAdmin()` in every admin page/action/route, and Supabase Row Level Security (`is_admin()` requires a *verified* email listed in `admins`).
+- **News fair use.** Only the headline, source, time, link and at most ~140 characters of the feed's own description are stored. Article text and photos are never copied, and source favicons are hot-linked from Google's favicon service, not stored.
 - **Gold text on light backgrounds** uses a deeper gold (`--accent-ink: #94661A`) so small eyebrow labels pass WCAG AA. Pure `#C8902E` is kept for dark sections, icons and the active carousel dot. `--muted` is slightly deepened (`#6F5F57`) for the same reason.
 - **Shareable filters.** Filters write to the URL (`?filter=`, `?month=`, `?tab=`, `?city=`, `?tier=`). The default view is also prerendered, so every card is in the static HTML for SEO.
 - **Itinerary planner rules** (`src/lib/itinerary.ts`):
