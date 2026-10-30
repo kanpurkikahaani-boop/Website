@@ -23,11 +23,12 @@ export function sanitizeBlogHtml(html: string) {
     exclusiveFilter: (frame) => frame.tag === "iframe" && !YOUTUBE_EMBED.test(frame.attribs.src ?? ""),
     transformTags: {
       a: (tagName, attribs) => {
-        const external = /^https?:\/\//.test(attribs.href ?? "") && !(attribs.href ?? "").includes("kanpurkikahaani.site");
-        return {
-          tagName,
-          attribs: external ? { ...attribs, target: "_blank", rel: "noopener noreferrer" } : { href: attribs.href ?? "#", title: attribs.title ?? "" },
-        };
+        const href = attribs.href ?? "#";
+        const external = /^https?:\/\//.test(href) && !href.includes("kanpurkikahaani.site");
+        const out: Record<string, string> = { href };
+        if (attribs.title) out.title = attribs.title;
+        if (external) Object.assign(out, { target: "_blank", rel: "noopener noreferrer" });
+        return { tagName, attribs: out };
       },
       iframe: (tagName, attribs) => ({ tagName, attribs: { ...attribs, loading: "lazy" } }),
     },
