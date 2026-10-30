@@ -22,7 +22,7 @@ import { cities } from "@/data/cities";
 import { posts } from "@/data/blog";
 import { videos } from "@/data/videos";
 import { kanpurPlaces } from "@/data/places";
-import { site, absoluteUrl } from "@/data/site";
+import { site, socials, absoluteUrl } from "@/data/site";
 import { buildMetadata, touristDestinationJsonLd } from "@/lib/seo";
 import { formatDate, readingTime } from "@/lib/utils";
 import { hasLogo } from "@/lib/assets";
@@ -65,7 +65,7 @@ export default function HomePage() {
       name: site.name,
       url: site.url,
       logo: hasLogo ? absoluteUrl("/brand/logo.png") : absoluteUrl("/icon"),
-      sameAs: Object.values(site.social),
+      sameAs: socials.map((s) => s.url),
     },
     touristDestinationJsonLd({
       name: "Kanpur",

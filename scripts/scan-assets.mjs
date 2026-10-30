@@ -31,6 +31,10 @@ writeFileSync(
   JSON.stringify(manifest, null, 2) + "\n",
 );
 
-console.log(
-  `[scan-assets] logo: ${manifest.hasLogo ? "found" : "MISSING – using KKK placeholder"} · images: ${images.length}`,
-);
+console.log(`[scan-assets] logo: ${manifest.hasLogo ? "found" : "MISSING"} · images: ${images.length}`);
+if (!manifest.hasLogo) {
+  console.warn(
+    "\x1b[41m\x1b[97m LOGO MISSING \x1b[0m\x1b[31m public/brand/logo.png was not found. " +
+      "The navbar, footer, popup, favicon and OG images will use the coral KKK placeholder until you add it.\x1b[0m",
+  );
+}

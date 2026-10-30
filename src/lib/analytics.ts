@@ -10,7 +10,8 @@ export type AnalyticsEvent =
   | "book_stay_click"
   | "video_play"
   | "city_card_click"
-  | "share_click";
+  | "share_click"
+  | "social_click";
 
 type Params = Record<string, string | number | boolean | undefined>;
 

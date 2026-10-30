@@ -7,14 +7,22 @@ export const site = {
   url: (process.env.NEXT_PUBLIC_SITE_URL || "https://kanpurkikahaani.site").replace(/\/$/, ""),
   locale: "en_IN",
   twitter: "@kanpurkikahaani",
-  social: {
-    instagram: "https://www.instagram.com/",
-    facebook: "https://www.facebook.com/",
-    youtube: "https://www.youtube.com/",
-  },
   kanpur: { lat: 26.4499, lon: 80.3319 },
   year: 2026,
 } as const;
+
+export type SocialPlatform = "instagram" | "facebook" | "x" | "medium" | "reddit";
+
+/** Official profiles — single source for the top bar, footer, JSON-LD sameAs and blog follow links. */
+export const socials: { platform: SocialPlatform; label: string; url: string }[] = [
+  { platform: "instagram", label: "Instagram", url: "https://www.instagram.com/kanpurkikahaani/" },
+  { platform: "facebook", label: "Facebook", url: "https://www.facebook.com/share/14sYGBBZAyj/?mibextid=wwXIfr" },
+  { platform: "x", label: "X", url: "https://x.com/kanpurkikahaani" },
+  { platform: "medium", label: "Medium", url: "https://medium.com/@kanpurkikahaani" },
+  { platform: "reddit", label: "Reddit", url: "https://www.reddit.com/user/KanpurkiKahaani/" },
+];
+
+export const mediumUrl = socials.find((s) => s.platform === "medium")!.url;
 
 export function absoluteUrl(path = "/") {
   return `${site.url}${path.startsWith("/") ? path : `/${path}`}`;

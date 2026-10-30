@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Logo } from "@/components/layout/Logo";
 import { SkipLink } from "@/components/layout/SkipLink";
+import { TopBar } from "@/components/layout/TopBar";
 import { MobilePlanFab } from "@/components/layout/MobilePlanFab";
 import { Analytics } from "@/components/seo/Analytics";
 import { site } from "@/data/site";
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en-IN" className={`${playfair.variable} ${jakarta.variable} ${notoDeva.variable}`}>
       <body className="flex min-h-screen flex-col">
         <SkipLink />
+        <TopBar />
         <Navbar logo={<Logo />} />
         <main id="main" tabIndex={-1} className="flex-1 outline-none">
           {children}
