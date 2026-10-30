@@ -11,7 +11,9 @@
     "lint": "eslint .",
     "pretypecheck": "node scripts/scan-assets.mjs && next typegen",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm run lint && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run build",
+    "verify:sources": "node scripts/verify-sources.mjs",
+    "test:news": "tsx scripts/test-news-classify.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
