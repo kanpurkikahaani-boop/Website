@@ -3,7 +3,8 @@ import { absoluteUrl } from "@/data/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/admin", "/api/", "/unsubscribe"] }],
+    // Admin, API and unsubscribe pages stay out of search results via noindex headers/meta tags.
+    rules: [{ userAgent: "*", allow: "/" }],
     sitemap: absoluteUrl("/sitemap.xml"),
   };
 }

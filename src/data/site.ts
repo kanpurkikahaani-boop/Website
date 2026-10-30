@@ -1,10 +1,30 @@
+/** The one canonical domain. Every canonical URL, sitemap entry, OG URL and JSON-LD URL is built from it. */
+export const CANONICAL_SITE_URL = "https://kanpurkikahaani.site";
+
+/**
+ * NEXT_PUBLIC_SITE_URL may override the canonical domain (e.g. a future domain change), but a
+ * Vercel deployment domain (*.vercel.app), localhost or a non-HTTPS URL is never accepted —
+ * that is what previously leaked https://kanpur-ki-kahaani.vercel.app into the sitemap.
+ */
+function resolveSiteUrl() {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (!raw) return CANONICAL_SITE_URL;
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== "https:" || u.hostname.endsWith(".vercel.app") || u.hostname === "localhost") return CANONICAL_SITE_URL;
+    return u.origin;
+  } catch {
+    return CANONICAL_SITE_URL;
+  }
+}
+
 export const site = {
   name: "Kanpur Ki Kahaani",
   shortName: "KKK",
   tagline: "The Stories of the Manchester of the East",
   description:
     "The stories of the Manchester of the East — a curated guide to Kanpur's heritage, food, festivals and everyday life, and the cities around it.",
-  url: (process.env.NEXT_PUBLIC_SITE_URL || "https://kanpurkikahaani.site").replace(/\/$/, ""),
+  url: resolveSiteUrl(),
   locale: "en_IN",
   twitter: "@kanpurkikahaani",
   kanpur: { lat: 26.4499, lon: 80.3319 },
