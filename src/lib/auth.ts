@@ -1,17 +1,15 @@
 import "server-only";
 import type { User } from "@supabase/supabase-js";
+import { connection } from "next/server";
 import { redirect } from "next/navigation";
+import { isAdminUser } from "./admin-check";
 import { createSessionClient } from "./supabase/server";
 
-/** True when the user is the configured admin AND their email is verified. */
-export function isAdminUser(user: Pick<User, "email" | "email_confirmed_at"> | null | undefined) {
-  const admin = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-  if (!admin || !user?.email) return false;
-  return user.email.toLowerCase() === admin && Boolean(user.email_confirmed_at);
-}
+export { isAdminUser };
 
 /** The signed-in admin, re-verified with Supabase Auth (never trusts the cookie alone). */
 export async function getAdminUser(): Promise<User | null> {
+  await connection(); // always evaluated at request time, never at build
   const supabase = await createSessionClient();
   if (!supabase) return null;
   const { data, error } = await supabase.auth.getUser();
