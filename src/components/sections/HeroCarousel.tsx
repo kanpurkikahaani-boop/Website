@@ -132,7 +132,7 @@ export function HeroCarousel({ slides }: { slides: Slide[] }) {
             onClick={() => go(i)}
             aria-label={`Go to slide ${i + 1}: ${s.caption}`}
             aria-current={i === index}
-            className="flex h-6 items-center"
+            className="flex h-6 min-w-6 items-center justify-center"
           >
             <span
               className={cn(

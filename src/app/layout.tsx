@@ -5,22 +5,22 @@ import { Footer } from "@/components/layout/Footer";
 import { Logo } from "@/components/layout/Logo";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { TopBar } from "@/components/layout/TopBar";
+import { DevaFontLoader } from "@/components/layout/DevaFontLoader";
 import { MobilePlanFab } from "@/components/layout/MobilePlanFab";
 import { Analytics } from "@/components/seo/Analytics";
 import { site } from "@/data/site";
 import "./globals.css";
 
+// Both are variable fonts: one file each covers every weight we use (fewer preloads → faster LCP).
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
-  weight: ["600", "700"],
   display: "swap",
 });
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -71,6 +71,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Footer />
         <MobilePlanFab />
         <Analytics />
+        <DevaFontLoader />
       </body>
     </html>
   );

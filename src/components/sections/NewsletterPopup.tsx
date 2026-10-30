@@ -108,7 +108,7 @@ function PopupDialog({ onClose, reduce }: { onClose: (r: "dismiss" | "done") => 
   // Focus the first field, trap Tab, close on Escape
   useEffect(() => {
     const el = ref.current;
-    el?.querySelector<HTMLElement>("input[type=email], button")?.focus();
+    (el?.querySelector<HTMLElement>("input[type=email]") ?? el?.querySelector<HTMLElement>("button"))?.focus();
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
         e.preventDefault();
@@ -189,7 +189,7 @@ function PopupDialog({ onClose, reduce }: { onClose: (r: "dismiss" | "done") => 
         </div>
       ) : (
         <>
-          <div className="flex items-center gap-3 sm:block sm:text-center">
+          <div className="flex items-center gap-3 pr-9 sm:block sm:pr-0 sm:text-center">
             <LogoMark size={56} decorative={false} className="sm:mx-auto max-sm:h-10! max-sm:w-10!" />
             <div className="sm:mt-3">
               <p className="eyebrow text-[10.5px]">The Kahaani Letter</p>

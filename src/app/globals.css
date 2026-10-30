@@ -11,7 +11,7 @@
   --primary-hover: #74221a;
   --primary-soft: #f7e6e2;
   --accent: #c8902e;
-  --accent-ink: #94661a; /* gold used for small text on light backgrounds (AA) */
+  --accent-ink: #855a14; /* gold used for small text on light backgrounds (AA) */
   --accent-soft: #fbefd9;
   --dark: #1c1412;
   --border: #efe4da;
@@ -38,10 +38,16 @@
 
   --font-display: var(--font-playfair), Georgia, serif;
   --font-sans: var(--font-jakarta), system-ui, sans-serif;
-  --font-deva: var(--font-noto-deva), serif;
+  /* Devanagari web font is applied only after load (see DevaFontLoader) so it never delays LCP;
+     until then Hindi text uses the system's Devanagari font. */
+  --font-deva: var(--font-deva-active, serif);
 }
 
 /* ── Base ──────────────────────────────────────────────────────── */
+html.deva-ready {
+  --font-deva-active: var(--font-noto-deva), serif;
+}
+
 @layer base {
 html {
   scroll-behavior: smooth;

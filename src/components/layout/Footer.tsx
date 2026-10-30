@@ -25,7 +25,7 @@ export function Footer() {
             <Link href="/privacy" className="hover:text-accent">
               Privacy
             </Link>
-            <Link href="/admin/login" rel="nofollow" className="text-cream/45 hover:text-accent">
+            <Link href="/admin/login" rel="nofollow" className="text-cream/65 hover:text-accent">
               Team login
             </Link>
           </div>

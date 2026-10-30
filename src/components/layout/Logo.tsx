@@ -31,7 +31,7 @@ export function LogoMark({ size = 42, className, decorative = true }: { size?: n
       aria-hidden
       style={{ width: size, height: size, fontSize: size * 0.3 }}
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-full bg-coral font-display font-bold tracking-wider text-[#fdf3e7] ring-2 ring-[#f6dfb5]/70 ring-offset-0",
+        "inline-flex shrink-0 items-center justify-center rounded-full bg-coral font-display font-bold tracking-wider text-dark ring-2 ring-[#f6dfb5]/70 ring-offset-0",
         className,
       )}
     >
