@@ -2,28 +2,38 @@
 
 import { Mail } from "lucide-react";
 import { useCallback, useState } from "react";
+import Link from "next/link";
 import { Toast } from "@/components/ui/Toast";
-import { track } from "@/lib/analytics";
+import { useSubscribe } from "@/lib/newsletter/use-subscribe";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-/** Front-end-only newsletter signup with validation, toast and analytics event. */
+/** Home-page newsletter band. Posts to /api/subscribe (source: home_band). */
 export function NewsletterBand() {
   const [email, setEmail] = useState("");
+  const [website, setWebsite] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const clearToast = useCallback(() => setToast(null), []);
+  const { state, subscribe } = useSubscribe("home_band");
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!EMAIL_RE.test(email.trim())) {
       setError("Please enter a valid email address.");
       return;
     }
     setError(null);
-    track("newsletter_signup", { location: "home_band" });
-    setEmail("");
-    setToast("You're in! The next Kahaani lands in your inbox soon.");
+    const result = await subscribe({ email, website });
+    if (result === "subscribed") {
+      setEmail("");
+      setToast("You're in! Watch your inbox.");
+    } else if (result === "exists") {
+      setEmail("");
+      setToast("You're already on the list!");
+    } else {
+      setError("We couldn't sign you up just now. Please try again.");
+    }
   }
 
   return (
@@ -35,7 +45,7 @@ export function NewsletterBand() {
             Get the Kahaani in your inbox
           </h2>
           <p className="mt-2 text-cream/85">
-            One warm letter a month: new stories, festival dates, food finds and weekend trips from Kanpur.
+            Hidden gems, food trails, festivals and weekend trips from Kanpur — once a week, no spam.
           </p>
         </div>
         <form onSubmit={onSubmit} noValidate className="w-full max-w-md">
@@ -60,17 +70,35 @@ export function NewsletterBand() {
             </div>
             <button
               type="submit"
-              className="h-12 rounded-full bg-dark px-7 text-sm font-semibold text-white transition hover:bg-black"
+              disabled={state === "loading"}
+              className="h-12 rounded-full bg-dark px-7 text-sm font-semibold text-white transition hover:bg-black disabled:opacity-70"
             >
-              Subscribe
+              {state === "loading" ? "Subscribing…" : "Subscribe"}
             </button>
           </div>
+          <Honeypot value={website} onChange={setWebsite} id="newsletter-website" />
           <p id="newsletter-error" role="alert" className="mt-2 min-h-5 pl-4 text-sm text-[#ffd9d2]">
             {error}
+          </p>
+          <p className="pl-4 text-xs text-cream/75">
+            By subscribing you agree to receive emails from Kanpur Ki Kahaani. Unsubscribe anytime.{" "}
+            <Link href="/privacy" className="underline hover:text-white">
+              Privacy
+            </Link>
           </p>
         </form>
       </div>
       <Toast message={toast} onDone={clearToast} />
     </section>
+  );
+}
+
+/** Off-screen field that only bots fill in. Hidden from people and screen readers. */
+export function Honeypot({ value, onChange, id }: { value: string; onChange: (v: string) => void; id: string }) {
+  return (
+    <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+      <label htmlFor={id}>Leave this field empty</label>
+      <input id={id} name="website" type="text" tabIndex={-1} autoComplete="off" value={value} onChange={(e) => onChange(e.target.value)} />
+    </div>
   );
 }

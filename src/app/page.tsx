@@ -9,6 +9,7 @@ import { MapEmbed } from "@/components/sections/MapEmbed";
 import { LiteYouTube } from "@/components/sections/LiteYouTube";
 import { CityCard } from "@/components/sections/CityCard";
 import { NewsletterBand } from "@/components/sections/NewsletterBand";
+import { NewsletterPopup } from "@/components/sections/NewsletterPopup";
 import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ImageCard } from "@/components/ui/ImageCard";
@@ -232,6 +233,7 @@ export default function HomePage() {
       </Section>
 
       <NewsletterBand />
+      <NewsletterPopup />
     </>
   );
 }
