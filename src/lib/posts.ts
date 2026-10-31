@@ -1,7 +1,4 @@
 import "server-only";
-import { posts as legacyPosts } from "@/data/blog";
-import { renderPostContent } from "@/lib/content/render";
-import { textToTiptap } from "@/lib/content/from-text";
 import { createPublicClient } from "@/lib/supabase/public";
 
 export type CitySlug = "kanpur" | "lucknow" | "agra" | "prayagraj" | "varanasi" | "ayodhya";
@@ -58,36 +55,6 @@ function toPost(r: Row): Post {
   };
 }
 
-/** Built-in fallback (the three original stories) when Supabase isn't configured. */
-const legacyTags: Record<string, string[]> = {
-  "48-hours-in-kanpur": ["itineraries", "first-timers", "heritage"],
-  "eating-through-arya-nagar": ["food", "street-food"],
-  "mills-that-built-a-city": ["history", "industry"],
-};
-function legacy(): Post[] {
-  return legacyPosts.map((p) => {
-    const { html, minutes } = renderPostContent(textToTiptap(p.body));
-    const publishedAt = `${p.date}T06:00:00+05:30`;
-    return {
-      id: p.slug,
-      slug: p.slug,
-      title: p.title,
-      excerpt: p.excerpt,
-      coverUrl: p.image,
-      coverAlt: p.alt,
-      city: "kanpur",
-      tags: legacyTags[p.slug] ?? [],
-      publishedAt,
-      readingMinutes: minutes,
-      html,
-      seoTitle: p.title,
-      seoDescription: p.description,
-      author: "Kanpur Ki Kahaani",
-      updatedAt: publishedAt,
-    };
-  });
-}
-
 export const POSTS_PER_PAGE = 9;
 
 export interface PostQuery {
@@ -101,13 +68,8 @@ export interface PostQuery {
 export async function getPublishedPosts({ city, tag, q, page = 1 }: PostQuery = {}) {
   const db = createPublicClient();
   const from = (page - 1) * POSTS_PER_PAGE;
-  if (!db) {
-    let list: PostSummary[] = legacy();
-    if (city) list = list.filter((p) => p.city === city);
-    if (tag) list = list.filter((p) => p.tags.includes(tag));
-    if (q) list = list.filter((p) => `${p.title} ${p.excerpt}`.toLowerCase().includes(q.toLowerCase()));
-    return { posts: list.slice(from, from + POSTS_PER_PAGE), total: list.length };
-  }
+  // Posts only ever come from the admin-written `posts` table.
+  if (!db) return { posts: [] as PostSummary[], total: 0 };
   let query = db
     .from("posts")
     .select(SUMMARY_COLS, { count: "exact" })
@@ -134,7 +96,7 @@ export async function getLatestPosts(n = 3) {
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   const db = createPublicClient();
-  if (!db) return legacy().find((p) => p.slug === slug) ?? null;
+  if (!db) return null;
   const { data, error } = await db.from("posts").select(FULL_COLS).eq("slug", slug).maybeSingle();
   if (error) console.error("[posts] get failed:", error.message);
   return data ? toPost(data) : null;
@@ -143,7 +105,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 /** All published slugs + dates, for the sitemap, RSS and static generation. */
 export async function getAllPublished(): Promise<Post[]> {
   const db = createPublicClient();
-  if (!db) return legacy();
+  if (!db) return [];
   const { data, error } = await db.from("posts").select(FULL_COLS).order("published_at", { ascending: false }).limit(500);
   if (error) {
     console.error("[posts] all failed:", error.message);

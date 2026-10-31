@@ -7,7 +7,7 @@ import { useSubscribe } from "@/lib/newsletter/use-subscribe";
 import { EMAIL_RE, Honeypot } from "./NewsletterBand";
 
 /** Compact signup card used inside blog posts (source: blog). */
-export function InlineSignup() {
+export function InlineSignup({ title = "Enjoyed this story? Get the next one by email." }: { title?: string }) {
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +28,7 @@ export function InlineSignup() {
         <div className="min-w-0 flex-1">
           <p className="eyebrow text-[10.5px]">The Kahaani Letter</p>
           <h2 id="inline-signup-title" className="mt-1 text-xl font-bold text-primary md:text-2xl">
-            Enjoyed this story? Get the next one by email.
+            {title}
           </h2>
           {done ? (
             <p role="status" className="mt-3 font-semibold text-ink">{message}</p>

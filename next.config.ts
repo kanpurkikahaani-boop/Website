@@ -19,7 +19,7 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/blog", destination: "/blogs", permanent: true },
-      { source: "/blog/:slug", destination: "/blogs/:slug", permanent: true },
+      { source: "/blog/:slug*", destination: "/blogs", permanent: true },
       // Old production domain → canonical custom domain (308, path and query preserved).
       // /api/* is excluded so Vercel Cron, which may call the deployment domain, keeps working.
       // Preview deployments use different *.vercel.app hosts and are unaffected.

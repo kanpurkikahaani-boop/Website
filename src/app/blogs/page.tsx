@@ -6,6 +6,8 @@ import { Section } from "@/components/ui/Section";
 import { ImageCard } from "@/components/ui/ImageCard";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 import { TagChip } from "@/components/ui/TagChip";
+import { InlineSignup } from "@/components/sections/InlineSignup";
+import { socials } from "@/data/site";
 import { CITY_OPTIONS, cityName } from "@/lib/city-names";
 import { getAllTags, getPublishedPosts, POSTS_PER_PAGE } from "@/lib/posts";
 import { buildMetadata } from "@/lib/seo";
@@ -57,6 +59,10 @@ export default async function BlogsPage({ searchParams }: PageProps<"/blogs">) {
       />
       <Section labelledBy="blog-list-title">
         <h2 id="blog-list-title" className="sr-only">All stories</h2>
+        {total === 0 && !isFiltered ? (
+          <EmptyBlog />
+        ) : (
+          <>
 
         {featured && (
           <Link href={`/blogs/${featured.slug}`} className="group mb-12 grid overflow-hidden rounded-3xl border border-border bg-surface md:grid-cols-2">
@@ -142,6 +148,8 @@ export default async function BlogsPage({ searchParams }: PageProps<"/blogs">) {
           <span className="mx-2">·</span>
           <TagChip>{total} {total === 1 ? "story" : "stories"}</TagChip>
         </p>
+          </>
+        )}
       </Section>
     </>
   );
@@ -169,5 +177,34 @@ function Pill({ href, active, small, children }: { href: string; active: boolean
     >
       {children}
     </Link>
+  );
+}
+
+/** Shown until the team publishes the first story. */
+function EmptyBlog() {
+  const follow = socials.filter((s) => s.platform === "medium" || s.platform === "instagram");
+  return (
+    <div className="mx-auto max-w-2xl rounded-3xl border border-border bg-surface p-7 text-center md:p-10">
+      <p className="eyebrow">Coming soon</p>
+      <h3 className="mt-2 text-[26px] font-bold leading-tight text-primary md:text-[32px]">
+        Our first stories are on their way — subscribe to get them first
+      </h3>
+      <p className="mt-3">Travel journals, food trails and deep-dives on Kanpur and its neighbours, written by people who love the city.</p>
+      <div className="text-left">
+        <InlineSignup title="Be the first to read them" />
+      </div>
+      <p className="text-sm">
+        Meanwhile, find us on{" "}
+        {follow.map((s, i) => (
+          <span key={s.platform}>
+            {i > 0 && " and "}
+            <a href={s.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">
+              {s.label} ↗
+            </a>
+          </span>
+        ))}
+        .
+      </p>
+    </div>
   );
 }

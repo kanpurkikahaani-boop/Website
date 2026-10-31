@@ -209,7 +209,9 @@ export default async function HomePage() {
         </ul>
       </Section>
 
-      {/* Blog */}
+      {/* Blog — hidden until the team publishes stories */}
+      {posts.length > 0 && (
+        <>
       <Section tone="alt" id="stories" labelledBy="stories-title">
         <SectionHeader id="stories-title" eyebrow="Stories" title="From Our Blogs" intro="Journals, food crawls and histories from around the city." />
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -236,6 +238,9 @@ export default async function HomePage() {
           .
         </p>
       </Section>
+
+        </>
+      )}
 
       <NewsletterBand />
       <NewsletterPopupLazy />
