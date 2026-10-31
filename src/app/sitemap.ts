@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { allNavHrefs } from "@/data/nav";
-import { getAllPublished } from "@/lib/posts";
+import { getAllAuthors, getAllPublished } from "@/lib/posts";
 import { GENRE_SLUGS, NEWS_CITIES } from "@/lib/news/taxonomy";
 import { absoluteUrl } from "@/data/site";
 
@@ -32,5 +32,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "daily" as const,
     priority: href.split("/").length === 3 ? 0.6 : 0.4,
   }));
-  return [...pages, ...blog, ...news];
+  const authors = (await getAllAuthors()).map((a) => ({
+    url: absoluteUrl(`/blogs/author/${a.slug}`),
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.4,
+  }));
+  return [...pages, ...blog, ...authors, ...news];
 }

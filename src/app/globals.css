@@ -166,6 +166,88 @@ h4 {
 .prose-kkk .kkk-video, .prose-kkk div[data-youtube-video] { position: relative; aspect-ratio: 16 / 9; }
 .prose-kkk iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 1rem; }
 
+/* ── Article template (v4) ─────────────────────────────────────── */
+.article-body {
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--ink);
+}
+/* Drop cap on the first paragraph of the story */
+.article-body #introduction > p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 4.1em;
+  line-height: 0.82;
+  margin: 0.06em 0.12em 0 0;
+  color: var(--primary);
+}
+.prose-kkk .day-badge {
+  display: inline-block;
+  vertical-align: 0.35em;
+  margin-right: 0.5rem;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.prose-kkk h2[id] { scroll-margin-top: 110px; }
+.prose-kkk .pull-quote,
+.prose-kkk blockquote.pull-quote {
+  margin: 2.2em 0;
+  border-left: 4px solid var(--accent);
+  padding: 0.3em 0 0.3em 1.3em;
+}
+.prose-kkk .pull-quote p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.45em;
+  line-height: 1.4;
+  color: var(--primary);
+}
+.prose-kkk .pull-quote cite {
+  display: block;
+  margin-top: 0.6em;
+  font-family: var(--font-sans);
+  font-size: 0.8em;
+  font-style: normal;
+  color: var(--muted);
+}
+.prose-kkk .kkk-figure { margin: 2em -1rem; }
+@media (width >= 64rem) { .prose-kkk .kkk-figure { margin-inline: -3rem; } }
+.prose-kkk .kkk-figure img { width: 100%; border-radius: 1rem; }
+.prose-kkk .kkk-caption { margin-top: 0.5em; padding-inline: 1rem; text-align: center; font-size: 13px; color: var(--muted); }
+
+/* Links inside the article and its boxes */
+.prose-kkk a,
+.article-links a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--primary) 45%, transparent);
+  overflow-wrap: normal;
+  word-break: normal;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+.prose-kkk a:visited,
+.article-links a:visited { color: #6f1f15; }
+.prose-kkk a:hover,
+.article-links a:hover { color: var(--accent-ink); text-decoration-color: var(--accent); }
+.prose-kkk a.ext::after,
+.article-links a.ext::after {
+  content: "↗" / ""; /* empty alt text: decorative for screen readers */
+  display: inline-block;
+  margin-left: 0.15em;
+  font-size: 0.75em;
+  text-decoration: none;
+}
+
 /* Print: only the itinerary when "Print / Save as PDF" is used */
 @media print {
   header,

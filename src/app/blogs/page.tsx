@@ -8,6 +8,7 @@ import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 import { TagChip } from "@/components/ui/TagChip";
 import { InlineSignup } from "@/components/sections/InlineSignup";
 import { socials } from "@/data/site";
+import { BLOG_CATEGORIES } from "@/lib/blog-categories";
 import { CITY_OPTIONS, cityName } from "@/lib/city-names";
 import { getAllTags, getPublishedPosts, POSTS_PER_PAGE } from "@/lib/posts";
 import { buildMetadata } from "@/lib/seo";
@@ -15,7 +16,7 @@ import { cn, formatDate } from "@/lib/utils";
 
 export async function generateMetadata({ searchParams }: PageProps<"/blogs">): Promise<Metadata> {
   const sp = await searchParams;
-  const filtered = ["city", "tag", "q", "page"].some((k) => sp[k]);
+  const filtered = ["city", "tag", "q", "page", "category", "author"].some((k) => sp[k]);
   const meta = buildMetadata({
     title: "Kanpur Travel Blog – Stories, Food Trails & Day Trips | Kanpur Ki Kahaani",
     description:
@@ -33,17 +34,19 @@ export default async function BlogsPage({ searchParams }: PageProps<"/blogs">) {
   const sp = await searchParams;
   const city = CITY_OPTIONS.some((c) => c.slug === str(sp.city)) ? str(sp.city) : "";
   const tag = str(sp.tag).slice(0, 40);
+  const category = BLOG_CATEGORIES.some((c) => c.slug === str(sp.category)) ? str(sp.category) : "";
+  const author = /^[a-z0-9-]{1,80}$/.test(str(sp.author)) ? str(sp.author) : "";
   const q = str(sp.q).slice(0, 80);
   const page = Math.max(1, Math.floor(Number(sp.page)) || 1);
-  const [{ posts, total }, tags] = await Promise.all([getPublishedPosts({ city, tag, q, page }), getAllTags()]);
+  const [{ posts, total }, tags] = await Promise.all([getPublishedPosts({ city, tag, category, author, q, page }), getAllTags()]);
   const pages = Math.max(1, Math.ceil(total / POSTS_PER_PAGE));
-  const isFiltered = Boolean(city || tag || q);
+  const isFiltered = Boolean(city || tag || q || category || author);
   const featured = !isFiltered && page === 1 ? posts[0] : undefined;
   const grid = featured ? posts.slice(1) : posts;
 
   const href = (patch: Record<string, string | undefined>) => {
     const next = new URLSearchParams();
-    const merged = { city, tag, q, ...patch };
+    const merged = { city, tag, q, category, author, ...patch };
     for (const [k, v] of Object.entries(merged)) if (v) next.set(k, v);
     const s = next.toString();
     return s ? `/blogs?${s}` : "/blogs";

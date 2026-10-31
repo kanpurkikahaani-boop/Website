@@ -1,19 +1,34 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Clock } from "lucide-react";
 import { Breadcrumbs } from "@/components/sections/Breadcrumbs";
 import { InlineSignup } from "@/components/sections/InlineSignup";
 import { ShareButtons } from "@/components/sections/ShareButtons";
-import { SocialLinks } from "@/components/layout/SocialLinks";
-import { Section } from "@/components/ui/Section";
 import { ImageCard } from "@/components/ui/ImageCard";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
-import { LinkButton } from "@/components/ui/Button";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { absoluteUrl, mediumUrl, site } from "@/data/site";
+import { ReadingProgress } from "@/components/blog/ReadingProgress";
+import { ArticleToc, MobileToc } from "@/components/blog/ArticleToc";
+import {
+  AuthorAvatar,
+  AuthorBox,
+  FurtherReading,
+  GlossarySection,
+  KeyFactsBox,
+  MoreToExplore,
+  PlanVisitCard,
+  PrevNext,
+  TagChips,
+  tagLabel,
+} from "@/components/blog/ArticleSections";
+import { absoluteUrl, site } from "@/data/site";
+import { categoryName } from "@/lib/blog-categories";
 import { hasLogo } from "@/lib/assets";
 import { cityName } from "@/lib/city-names";
-import { getAllPublished, getPostBySlug, getRelatedPosts } from "@/lib/posts";
+import { extractToc } from "@/lib/content/enrich";
+import { htmlToText } from "@/lib/content/sanitize";
+import { getAdjacentPosts, getAllPublished, getPostBySlug, getRelatedPosts } from "@/lib/posts";
 import { buildMetadata } from "@/lib/seo";
 import { formatDate } from "@/lib/utils";
 
@@ -28,114 +43,230 @@ export async function generateMetadata({ params }: PageProps<"/blogs/[slug]">): 
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return { title: "Story not found", robots: { index: false } };
-  return buildMetadata({
-    title: `${post.seoTitle || post.title} | Kanpur Ki Kahaani`,
+  const meta = buildMetadata({
+    title: post.seoTitle || `${post.title} | Kanpur Ki Kahaani`,
     description: post.seoDescription || post.excerpt,
     path: `/blogs/${post.slug}`,
     ogImage: `/blogs/${post.slug}/opengraph-image`,
     type: "article",
     publishedTime: post.publishedAt,
   });
+  return {
+    ...meta,
+    authors: [{ name: post.author, url: post.authorInfo ? absoluteUrl(`/blogs/author/${post.authorInfo.slug}`) : undefined }],
+    keywords: post.tags.map(tagLabel),
+    openGraph: {
+      ...meta.openGraph,
+      type: "article",
+      publishedTime: post.publishedAt,
+      modifiedTime: post.updatedAt,
+      authors: [post.authorInfo ? absoluteUrl(`/blogs/author/${post.authorInfo.slug}`) : post.author],
+      section: categoryName(post.category) || undefined,
+      tags: post.tags.map(tagLabel),
+    },
+  };
 }
+
+/** Title with an optional emphasised phrase in gold italics (keeps the author's emphasis). */
+function Title({ title, emphasis }: { title: string; emphasis: string | null }) {
+  const i = emphasis ? title.indexOf(emphasis) : -1;
+  if (!emphasis || i < 0) return <>{title}</>;
+  return (
+    <>
+      {title.slice(0, i)}
+      <em className="font-display italic text-accent">{emphasis}</em>
+      {title.slice(i + emphasis.length)}
+    </>
+  );
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 export default async function BlogPostPage({ params }: PageProps<"/blogs/[slug]">) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) notFound();
-  const related = await getRelatedPosts(post, 3);
+  const [related, adjacent] = await Promise.all([getRelatedPosts(post, 3), getAdjacentPosts(post)]);
   const url = absoluteUrl(`/blogs/${post.slug}`);
   const place = cityName(post.city);
+  const category = categoryName(post.category);
+  const updated = new Date(post.updatedAt).getTime() - new Date(post.publishedAt).getTime() > DAY_MS;
+  const shortTitle = post.title.length > 48 ? (post.seoTitle?.split(":")[0] ?? post.title.slice(0, 45) + "…") : post.title;
+
+  // Split the author's text at the first H2 so site boxes can sit after the intro, outside the prose.
+  const firstH2 = post.html.search(/<h2[\s>]/);
+  const intro = firstH2 > 0 ? post.html.slice(0, firstH2) : post.html;
+  const rest = firstH2 > 0 ? post.html.slice(firstH2) : "";
+  const toc = [{ id: "introduction", text: "Introduction", badge: null }, ...extractToc(post.html)];
+  const wordCount = htmlToText(post.html.replace(/<span class="sr-only">[^<]*<\/span>/g, "")).split(/\s+/).length;
+  const cover = post.coverUrl ?? "/images/kanpur/blog-cover.jpg";
+  // Topic for box titles, e.g. "Navaratri in Kanpur" from "Navaratri in Kanpur: 9-Day Guide …".
+  const topic = post.seoTitle?.split(/[:|–]/)[0].trim() || shortTitle;
+  const festival = post.category === "celebrations" && post.tags[0] ? `${tagLabel(post.tags[0])} ` : "";
+  const planTitle = `Plan your ${festival}visit`;
 
   return (
     <>
-      <article>
-        <header className="relative overflow-hidden bg-dark">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-32 -top-40 h-[480px] w-[480px] rounded-full opacity-60 blur-3xl"
-            style={{ background: "radial-gradient(circle, rgba(200,144,46,0.38) 0%, rgba(142,43,30,0.22) 45%, transparent 70%)" }}
-          />
-          <div className="container-site relative max-w-3xl py-14 md:py-20">
-            <p className="eyebrow text-accent">Stories{place ? ` · ${place}` : ""}{post.tags[0] ? ` · ${post.tags[0]}` : ""}</p>
-            <h1 className="mt-3 text-[34px] font-bold leading-[1.1] tracking-tight text-white md:text-[52px]">{post.title}</h1>
-            {post.excerpt && <p className="mt-4 text-cream/75">{post.excerpt}</p>}
-            <p className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-cream/70">
-              <span>By {post.author}</span>
-              <time dateTime={post.publishedAt}>{formatDate(post.publishedAt.slice(0, 10))}</time>
-              <span className="inline-flex items-center gap-1.5">
-                <Clock size={14} aria-hidden className="text-accent" /> {post.readingMinutes} min read
+      <ReadingProgress targetId="article-body" />
+      <Breadcrumbs crumbs={[{ name: "Home", href: "/" }, { name: "Blogs", href: "/blogs" }, { name: shortTitle }]} />
+
+      <article className="pb-16">
+        <header className="container-site max-w-[800px] pt-10 text-center md:pt-14">
+          <p className="eyebrow">
+            {category ? <Link href={`/blogs?category=${post.category}`} className="hover:text-primary">{category}</Link> : "Stories"}
+            {place && (
+              <>
+                {" · "}
+                <Link href={`/blogs?city=${post.city}`} className="hover:text-primary">{place}</Link>
+              </>
+            )}
+          </p>
+          <h1 className="mt-3 text-[32px] font-bold leading-[1.12] tracking-tight text-ink md:text-[50px]">
+            <Title title={post.title} emphasis={post.titleEmphasis} />
+          </h1>
+          {(post.standfirst || post.excerpt) && (
+            <p className="mx-auto mt-4 max-w-[680px] text-[18px] leading-relaxed text-muted md:text-[20px]">{post.standfirst || post.excerpt}</p>
+          )}
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-3 text-sm">
+            <span className="flex items-center gap-2.5">
+              <AuthorAvatar author={post.authorInfo} name={post.author} size={40} />
+              <span>
+                By{" "}
+                {post.authorInfo ? (
+                  <Link href={`/blogs/author/${post.authorInfo.slug}`} className="font-semibold text-ink hover:text-primary">{post.author}</Link>
+                ) : (
+                  <strong className="text-ink">{post.author}</strong>
+                )}
               </span>
-            </p>
+            </span>
+            <span>
+              Published <time dateTime={post.publishedAt} className="font-semibold text-ink">{formatDate(post.publishedAt.slice(0, 10), { long: true }).replace(/^\w+, /, "")}</time>
+            </span>
+            {updated && (
+              <span>
+                Updated <time dateTime={post.updatedAt}>{formatDate(post.updatedAt.slice(0, 10))}</time>
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1.5">
+              <Clock size={14} aria-hidden className="text-accent" /> {post.readingMinutes} min read
+            </span>
           </div>
+          <ShareButtons className="mt-5 flex-wrap justify-center" url={url} title={post.title} context={`blog_${post.slug}`} />
         </header>
-        <Breadcrumbs crumbs={[{ name: "Home", href: "/" }, { name: "Blogs", href: "/blogs" }, { name: post.title }]} />
 
-        <div className="container-site max-w-3xl py-10 md:py-14">
-          <div className="relative aspect-[16/9] overflow-hidden rounded-3xl">
-            <ImageWithFallback src={post.coverUrl ?? "/images/kanpur/blog-cover.jpg"} alt={post.coverAlt ?? post.title} label={post.title} sublabel={place} fill priority sizes="(min-width: 768px) 720px, 100vw" className="object-cover" />
+        <figure className="container-site mt-8 max-w-[1080px]">
+          <div className="relative aspect-[16/9] overflow-hidden rounded-2xl">
+            <ImageWithFallback src={cover} alt={post.coverAlt ?? post.title} label={post.title} sublabel={place} fill priority sizes="(min-width: 1080px) 1040px, 100vw" className="object-cover" />
           </div>
-          <ShareButtons className="mt-6 flex-wrap" url={url} title={post.title} context={`blog_${post.slug}`} />
-          {/* content_html is sanitized on the server (sanitize-html allowlist) before it is stored */}
-          <div className="prose-kkk mt-8" dangerouslySetInnerHTML={{ __html: post.html }} />
+          {(post.coverCaption || post.coverCredit) && (
+            <figcaption className="mt-2 text-center text-xs text-muted">
+              {post.coverCaption}
+              {post.coverCaption && post.coverCredit && " — "}
+              {post.coverCredit}
+            </figcaption>
+          )}
+        </figure>
 
-          <InlineSignup />
-
-          <div className="flex flex-col gap-6 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
-            <ShareButtons className="flex-wrap" url={url} title={post.title} context={`blog_${post.slug}_end`} />
-            <LinkButton href="/tourism#planner">Plan your Kanpur trip</LinkButton>
-          </div>
-          <div className="mt-8 flex flex-col gap-4 rounded-2xl bg-dark p-6 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="eyebrow text-accent">Follow the Kahaani</p>
-              <a href={mediumUrl} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block font-display text-lg text-white hover:text-accent">
-                Read more on Medium ↗
-              </a>
+        <div className="container-site mt-10 grid max-w-[1080px] gap-10 lg:grid-cols-[minmax(0,680px)_300px] lg:justify-between">
+          <div className="min-w-0">
+            {toc.length > 2 && <MobileToc items={toc} />}
+            <div id="article-body" className="prose-kkk article-body mt-6 lg:mt-0">
+              <div id="introduction" className="scroll-mt-28" dangerouslySetInnerHTML={{ __html: intro }} />
+              {post.pullQuote && (
+                <blockquote className="pull-quote">
+                  <p>&ldquo;{post.pullQuote}&rdquo;</p>
+                  <cite>— {post.author}</cite>
+                </blockquote>
+              )}
+              <KeyFactsBox title={`${topic} at a glance`} facts={post.keyFacts} />
+              {/* content_html is sanitized on the server (allowlist) before it is stored */}
+              <div dangerouslySetInnerHTML={{ __html: rest }} />
             </div>
-            <SocialLinks variant="footer" />
+
+            <div className="lg:hidden">
+              <div className="mt-10">
+                <PlanVisitCard title={planTitle} items={post.planVisit} />
+              </div>
+            </div>
+            <GlossarySection items={post.glossary} />
+            <FurtherReading items={post.furtherReading} />
+            <MoreToExplore city={post.city} />
+            <TagChips tags={post.tags} />
+            <AuthorBox author={post.authorInfo} name={post.author} />
+            <InlineSignup />
+            <PrevNext newer={adjacent.newer} older={adjacent.older} />
           </div>
+
+          <aside className="hidden lg:block" aria-label="Article tools">
+            <div className="sticky top-24 space-y-6">
+              {toc.length > 2 && <ArticleToc items={toc} />}
+              <PlanVisitCard title={planTitle} items={post.planVisit} />
+            </div>
+          </aside>
         </div>
       </article>
 
       {related.length > 0 && (
-        <Section tone="alt" labelledBy="related-title">
-          <p className="eyebrow">Keep reading</p>
-          <h2 id="related-title" className="mt-2 mb-8 text-[30px] font-bold text-primary md:text-[36px]">Related Posts</h2>
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {related.map((p) => (
-              <li key={p.slug}>
-                <ImageCard
-                  image={p.coverUrl ?? "/images/kanpur/blog-cover.jpg"}
-                  alt={p.coverAlt ?? p.title}
-                  imageLabel={p.title}
-                  eyebrow={cityName(p.city) || "Story"}
-                  title={p.title}
-                  description={p.excerpt}
-                  chips={[formatDate(p.publishedAt.slice(0, 10)), `${p.readingMinutes} min read`]}
-                  href={`/blogs/${p.slug}`}
-                />
-              </li>
-            ))}
-          </ul>
-        </Section>
+        <section aria-labelledby="related-title" className="section-pad bg-bg-alt">
+          <div className="container-site">
+            <p className="eyebrow">Keep reading</p>
+            <h2 id="related-title" className="mt-2 mb-8 text-[30px] font-bold text-primary md:text-[36px]">Related stories</h2>
+            <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((p) => (
+                <li key={p.slug}>
+                  <ImageCard
+                    image={p.coverUrl ?? "/images/kanpur/blog-cover.jpg"}
+                    alt={p.coverAlt ?? p.title}
+                    imageLabel={p.title}
+                    eyebrow={cityName(p.city) || "Story"}
+                    title={p.title}
+                    description={p.excerpt}
+                    chips={[formatDate(p.publishedAt.slice(0, 10)), `${p.readingMinutes} min read`]}
+                    href={`/blogs/${p.slug}`}
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
       )}
 
       <JsonLd
         data={{
           "@context": "https://schema.org",
-          "@type": "Article",
+          "@type": "BlogPosting",
           headline: post.title,
           description: post.seoDescription || post.excerpt,
+          image: [cover.startsWith("https://") ? cover : absoluteUrl(cover), absoluteUrl(`/blogs/${post.slug}/opengraph-image`)],
           datePublished: post.publishedAt,
           dateModified: post.updatedAt,
-          author: { "@type": "Organization", name: post.author, url: site.url },
+          author: post.authorInfo
+            ? { "@type": "Person", name: post.author, url: absoluteUrl(`/blogs/author/${post.authorInfo.slug}`) }
+            : { "@type": "Organization", name: post.author, url: site.url },
           publisher: {
             "@type": "Organization",
             name: site.name,
+            url: site.url,
             logo: { "@type": "ImageObject", url: hasLogo ? absoluteUrl("/brand/logo.png") : absoluteUrl("/icon") },
           },
-          image: post.coverUrl?.startsWith("https://") ? post.coverUrl : absoluteUrl(`/blogs/${post.slug}/opengraph-image`),
-          mainEntityOfPage: url,
-          keywords: post.tags.join(", "),
+          mainEntityOfPage: { "@type": "WebPage", "@id": url },
+          ...(category ? { articleSection: category } : {}),
+          keywords: post.tags.map(tagLabel).join(", "),
+          wordCount,
+          inLanguage: "en-IN",
+          ...(post.tags.includes("navaratri")
+            ? {
+                about: [
+                  { "@type": "Thing", name: "Navaratri", sameAs: "https://en.wikipedia.org/wiki/Navaratri" },
+                  { "@type": "Thing", name: "Durga Puja", sameAs: "https://en.wikipedia.org/wiki/Durga_Puja" },
+                ],
+                mentions: ["Baradevi Temple", "Swaroop Nagar", "Civil Lines", "Kanpur Bengali Club"].map((name) => ({
+                  "@type": "Place",
+                  name,
+                  address: { "@type": "PostalAddress", addressLocality: "Kanpur", addressRegion: "Uttar Pradesh", addressCountry: "IN" },
+                })),
+              }
+            : {}),
         }}
       />
     </>

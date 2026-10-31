@@ -7,16 +7,30 @@ export function sanitizeBlogHtml(html: string) {
   return sanitizeHtml(html, {
     allowedTags: [
       "p", "h2", "h3", "h4", "strong", "b", "em", "i", "u", "s", "a", "ul", "ol", "li",
-      "blockquote", "hr", "br", "img", "figure", "figcaption", "code", "pre", "div", "iframe",
+      "blockquote", "hr", "br", "img", "figure", "figcaption", "code", "pre", "div", "iframe", "span",
     ],
     allowedAttributes: {
-      a: ["href", "title", "target", "rel"],
+      a: ["href", "title", "target", "rel", "class"],
+      h2: ["id"],
+      h3: ["id"],
+      h4: ["id"],
+      span: ["class"],
+      figure: ["class"],
+      figcaption: ["class"],
+      blockquote: ["class"],
       img: ["src", "alt", "title", "width", "height", "loading"],
       iframe: ["src", "width", "height", "allow", "allowfullscreen", "title", "loading"],
       div: ["data-youtube-video", "class"],
       ol: ["start"],
     },
-    allowedClasses: { div: ["kkk-video"] },
+    allowedClasses: {
+      div: ["kkk-video"],
+      span: ["day-badge", "sr-only"],
+      a: ["ext"],
+      figure: ["kkk-figure"],
+      figcaption: ["kkk-caption"],
+      blockquote: ["pull-quote"],
+    },
     allowedSchemes: ["http", "https", "mailto"],
     allowedSchemesByTag: { img: ["https"] },
     allowProtocolRelative: false,
@@ -27,7 +41,7 @@ export function sanitizeBlogHtml(html: string) {
         const external = /^https?:\/\//.test(href) && !href.includes("kanpurkikahaani.site");
         const out: Record<string, string> = { href };
         if (attribs.title) out.title = attribs.title;
-        if (external) Object.assign(out, { target: "_blank", rel: "noopener noreferrer" });
+        if (external) Object.assign(out, { target: "_blank", rel: "noopener noreferrer", class: "ext" });
         return { tagName, attribs: out };
       },
       iframe: (tagName, attribs) => ({ tagName, attribs: { ...attribs, loading: "lazy" } }),

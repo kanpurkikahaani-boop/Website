@@ -3,6 +3,37 @@ import { createPublicClient } from "@/lib/supabase/public";
 
 export type CitySlug = "kanpur" | "lucknow" | "agra" | "prayagraj" | "varanasi" | "ayodhya";
 
+export interface Author {
+  id: string;
+  slug: string;
+  name: string;
+  bio: string;
+  avatarUrl: string | null;
+  website: string | null;
+  instagram: string | null;
+}
+
+export interface KeyFact {
+  label: string;
+  value: string;
+}
+export interface ReadingItem {
+  title: string;
+  url: string;
+  publisher: string;
+}
+export interface GlossaryItem {
+  term: string;
+  definition: string;
+  url: string;
+  source: string;
+}
+export interface PlanItem {
+  group: string;
+  label: string;
+  url: string;
+}
+
 export interface PostSummary {
   id: string;
   slug: string;
@@ -14,18 +45,49 @@ export interface PostSummary {
   tags: string[];
   publishedAt: string;
   readingMinutes: number;
+  category: string | null;
+  authorName: string;
+  authorSlug: string | null;
 }
 
 export interface Post extends PostSummary {
   html: string;
   seoTitle: string | null;
   seoDescription: string | null;
+  /** Byline: the linked author when set, else the legacy text column. */
   author: string;
+  authorInfo: Author | null;
   updatedAt: string;
+  standfirst: string | null;
+  titleEmphasis: string | null;
+  pullQuote: string | null;
+  coverCaption: string | null;
+  coverCredit: string | null;
+  keyFacts: KeyFact[];
+  furtherReading: ReadingItem[];
+  glossary: GlossaryItem[];
+  planVisit: PlanItem[];
 }
 
-const SUMMARY_COLS = "id, slug, title, excerpt, cover_url, cover_alt, city, tags, published_at, reading_minutes";
-const FULL_COLS = `${SUMMARY_COLS}, content_html, seo_title, seo_description, author, updated_at`;
+const AUTHOR_COLS = "authors(id, slug, name, bio, avatar_url, website, instagram)";
+const SUMMARY_COLS = `id, slug, title, excerpt, cover_url, cover_alt, city, tags, published_at, reading_minutes, category, author, ${AUTHOR_COLS}`;
+const FULL_COLS = `${SUMMARY_COLS}, content_html, seo_title, seo_description, updated_at, standfirst, title_emphasis, pull_quote, cover_caption, cover_credit, key_facts, further_reading, glossary, plan_visit`;
+
+function toAuthor(a: unknown): Author | null {
+  const r = (Array.isArray(a) ? a[0] : a) as Row | null | undefined;
+  if (!r) return null;
+  return {
+    id: String(r.id),
+    slug: String(r.slug),
+    name: String(r.name),
+    bio: String(r.bio ?? ""),
+    avatarUrl: (r.avatar_url as string) ?? null,
+    website: (r.website as string) ?? null,
+    instagram: (r.instagram as string) ?? null,
+  };
+}
+
+const arr = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
 
 type Row = Record<string, unknown>;
 
@@ -41,6 +103,9 @@ function toSummary(r: Row): PostSummary {
     tags: (r.tags as string[]) ?? [],
     publishedAt: String(r.published_at),
     readingMinutes: Number(r.reading_minutes ?? 1),
+    category: (r.category as string) ?? null,
+    authorName: toAuthor(r.authors)?.name ?? String(r.author ?? "Kanpur Ki Kahaani"),
+    authorSlug: toAuthor(r.authors)?.slug ?? null,
   };
 }
 
@@ -50,8 +115,18 @@ function toPost(r: Row): Post {
     html: String(r.content_html ?? ""),
     seoTitle: (r.seo_title as string) ?? null,
     seoDescription: (r.seo_description as string) ?? null,
-    author: String(r.author ?? "Kanpur Ki Kahaani"),
+    author: toAuthor(r.authors)?.name ?? String(r.author ?? "Kanpur Ki Kahaani"),
+    authorInfo: toAuthor(r.authors),
     updatedAt: String(r.updated_at ?? r.published_at),
+    standfirst: (r.standfirst as string) ?? null,
+    titleEmphasis: (r.title_emphasis as string) ?? null,
+    pullQuote: (r.pull_quote as string) ?? null,
+    coverCaption: (r.cover_caption as string) ?? null,
+    coverCredit: (r.cover_credit as string) ?? null,
+    keyFacts: arr<KeyFact>(r.key_facts),
+    furtherReading: arr<ReadingItem>(r.further_reading),
+    glossary: arr<GlossaryItem>(r.glossary),
+    planVisit: arr<PlanItem>(r.plan_visit),
   };
 }
 
@@ -60,12 +135,14 @@ export const POSTS_PER_PAGE = 9;
 export interface PostQuery {
   city?: string;
   tag?: string;
+  category?: string;
+  author?: string;
   q?: string;
   page?: number;
 }
 
 /** Published posts, newest first, with optional filters. RLS hides drafts and future posts. */
-export async function getPublishedPosts({ city, tag, q, page = 1 }: PostQuery = {}) {
+export async function getPublishedPosts({ city, tag, category, author, q, page = 1 }: PostQuery = {}) {
   const db = createPublicClient();
   const from = (page - 1) * POSTS_PER_PAGE;
   // Posts only ever come from the admin-written `posts` table.
@@ -77,6 +154,12 @@ export async function getPublishedPosts({ city, tag, q, page = 1 }: PostQuery = 
     .range(from, from + POSTS_PER_PAGE - 1);
   if (city) query = query.eq("city", city);
   if (tag) query = query.contains("tags", [tag]);
+  if (category) query = query.eq("category", category);
+  if (author) {
+    const a = await getAuthor(author);
+    if (!a) return { posts: [], total: 0 };
+    query = query.eq("author_id", a.id);
+  }
   if (q) {
     const safe = q.replace(/[%_,()]/g, " ").trim();
     if (safe) query = query.or(`title.ilike.%${safe}%,excerpt.ilike.%${safe}%`);
@@ -125,4 +208,25 @@ export async function getRelatedPosts(post: PostSummary, n = 3) {
 export async function getAllTags() {
   const all = await getAllPublished();
   return [...new Set(all.flatMap((p) => p.tags))].sort();
+}
+
+export async function getAuthor(slug: string): Promise<Author | null> {
+  const db = createPublicClient();
+  if (!db) return null;
+  const { data } = await db.from("authors").select("id, slug, name, bio, avatar_url, website, instagram").eq("slug", slug).maybeSingle();
+  return toAuthor(data);
+}
+
+export async function getAllAuthors(): Promise<Author[]> {
+  const db = createPublicClient();
+  if (!db) return [];
+  const { data } = await db.from("authors").select("id, slug, name, bio, avatar_url, website, instagram").order("name");
+  return (data ?? []).map((a) => toAuthor(a)!).filter(Boolean);
+}
+
+/** Previous (older) and next (newer) published posts around this one. */
+export async function getAdjacentPosts(post: PostSummary) {
+  const all = await getAllPublished();
+  const i = all.findIndex((p) => p.slug === post.slug);
+  return { newer: i > 0 ? all[i - 1] : null, older: i >= 0 && i < all.length - 1 ? all[i + 1] : null };
 }

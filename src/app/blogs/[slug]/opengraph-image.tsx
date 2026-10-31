@@ -11,5 +11,9 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   const place = cityName(post?.city);
-  return renderOg({ title: post?.title ?? "Kanpur Ki Kahaani", eyebrow: `Stories${place ? ` · ${place}` : ""}` });
+  return renderOg({
+    title: post?.title ?? "Kanpur Ki Kahaani",
+    eyebrow: `Stories${place ? ` · ${place}` : ""}`,
+    subtitle: post ? `By ${post.author}` : undefined,
+  });
 }

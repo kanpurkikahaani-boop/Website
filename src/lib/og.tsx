@@ -56,7 +56,7 @@ async function jakarta() {
 }
 
 /** Dynamic Open Graph card: dark background, logo on the left, title in Playfair. */
-export async function renderOg({ title, eyebrow }: { title: string; eyebrow?: string }) {
+export async function renderOg({ title, eyebrow, subtitle }: { title: string; eyebrow?: string; subtitle?: string }) {
   const src = await logoDataUrl();
   return new ImageResponse(
     (
@@ -90,7 +90,7 @@ export async function renderOg({ title, eyebrow }: { title: string; eyebrow?: st
             {title}
           </div>
           <div style={{ fontFamily: "Jakarta", color: "rgba(246,233,217,0.75)", fontSize: 26, marginTop: 26 }}>
-            The Stories of the Manchester of the East
+            {subtitle ?? "The Stories of the Manchester of the East"}
           </div>
         </div>
       </div>
