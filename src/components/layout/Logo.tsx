@@ -5,12 +5,13 @@ import { cn } from "@/lib/utils";
 
 if (!hasLogo && process.env.NODE_ENV === "development") {
   console.error(
-    "\n\x1b[41m\x1b[97m KKK LOGO MISSING \x1b[0m public/brand/logo.png not found — showing the coral KKK placeholder. Add the logo file and restart `npm run dev`.\n",
+    "\n\x1b[41m\x1b[97m LOGO MISSING \x1b[0m public/brand/logo.png not found. Add the logo file and restart `npm run dev`.\n",
   );
 }
 
 /**
- * The circular badge on its own: the real logo if present, else a coral "KKK" disc.
+ * The circular logo badge (public/brand/logo.png) — the only logo on the site.
+ * If the file is missing, an empty coral circle holds the space (and the build prints a warning).
  * `decorative` hides it from screen readers when a wordmark sits next to it.
  */
 export function LogoMark({ size = 42, className, decorative = true }: { size?: number; className?: string; decorative?: boolean }) {
@@ -29,14 +30,9 @@ export function LogoMark({ size = 42, className, decorative = true }: { size?: n
   return (
     <span
       aria-hidden
-      style={{ width: size, height: size, fontSize: size * 0.3 }}
-      className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-full bg-coral font-display font-bold tracking-wider text-dark ring-2 ring-[#f6dfb5]/70 ring-offset-0",
-        className,
-      )}
-    >
-      KKK
-    </span>
+      style={{ width: size, height: size }}
+      className={cn("inline-block shrink-0 rounded-full bg-coral", className)}
+    />
   );
 }
 

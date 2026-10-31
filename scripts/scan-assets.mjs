@@ -35,6 +35,6 @@ console.log(`[scan-assets] logo: ${manifest.hasLogo ? "found" : "MISSING"} · im
 if (!manifest.hasLogo) {
   console.warn(
     "\x1b[41m\x1b[97m LOGO MISSING \x1b[0m\x1b[31m public/brand/logo.png was not found. " +
-      "The navbar, footer, popup, favicon and OG images will use the coral KKK placeholder until you add it.\x1b[0m",
+      "Add the logo — the navbar, footer, popup, favicon and OG images all use it.\x1b[0m",
   );
 }

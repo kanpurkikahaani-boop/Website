@@ -20,40 +20,20 @@ function Badge({ src, size }: { src: string | null; size: number }) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} width={size} height={size} style={{ borderRadius: size }} alt="" />;
   }
-  return (
-    <div
-      style={{
-        width: size,
-        height: size,
-        borderRadius: size,
-        background: "#E8736B",
-        border: `${Math.max(2, size / 40)}px solid #F6DFB5`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "#FDF3E7",
-        fontSize: size * 0.3,
-        fontFamily: "Playfair",
-        fontWeight: 700,
-        letterSpacing: size * 0.01,
-      }}
-    >
-      KKK
-    </div>
-  );
+  // No logo file: plain coral circle (the build prints a LOGO MISSING warning).
+  return <div style={{ width: size, height: size, borderRadius: size, background: "#E8736B", display: "flex" }} />;
 }
 
 /** Square icon (favicon / apple-touch / PWA). */
 export async function renderIcon(size: number) {
   const src = await logoDataUrl();
-  const fonts = src ? [] : [await playfair()];
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", display: "flex", background: "transparent" }}>
         <Badge src={src} size={size} />
       </div>
     ),
-    { width: size, height: size, fonts },
+    { width: size, height: size },
   );
 }
 
