@@ -12,7 +12,6 @@
     "pretypecheck": "node scripts/scan-assets.mjs && next typegen",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run lint && npm run build",
-    "verify:sources": "node scripts/verify-sources.mjs",
     "test:news": "tsx scripts/test-news-classify.ts && tsx scripts/test-news-pipeline.ts",
     "test:rls": "node scripts/test-rls.mjs"
   },

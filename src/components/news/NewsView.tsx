@@ -23,17 +23,17 @@ export async function NewsView({
   landing?: boolean;
 }) {
   const [{ items, total, failed }, lastUpdated] = await Promise.all([getNews(filters), getLastUpdated()]);
-  const { city = "", genre = "", lang = "", q = "", page } = filters;
+  const { city = "", genre = "", lang = "", page } = filters;
   const more = items.length < total;
   const qs = (patch: Record<string, string>) => {
     const p = new URLSearchParams();
-    for (const [k, v] of Object.entries({ city, genre, lang, q, ...patch })) if (v) p.set(k, v);
+    for (const [k, v] of Object.entries({ city, genre, lang, ...patch })) if (v) p.set(k, v);
     return `/news?${p}`;
   };
 
   return (
     <>
-      <FilterBar city={city} genre={genre} lang={lang} q={q} />
+      <FilterBar city={city} genre={genre} lang={lang} />
       <p className="mt-3 text-xs text-muted" aria-live="polite">
         {lastUpdated ? <>Last updated: {formatIST(lastUpdated)}</> : "Headlines refresh every morning at 6:00 AM IST."}
         {total > 0 && <> · {total} headline{total === 1 ? "" : "s"}</>}
@@ -47,10 +47,10 @@ export async function NewsView({
           </h2>
           <p className="mt-2 max-w-md text-sm">
             {failed || !lastUpdated
-              ? "Our daily news refresh runs every morning. Meanwhile, read the newspapers we follow below."
+              ? "We're fetching the latest from the newspapers below — check back in a few minutes."
               : "Try another city, genre or language — or browse the newspapers we follow below."}
           </p>
-          {(city || genre || lang || q) && (
+          {(city || genre || lang) && (
             <Link href="/news" className="mt-5 rounded-full border border-border px-5 py-2 text-sm font-semibold text-ink hover:border-primary">
               Clear filters
             </Link>

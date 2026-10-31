@@ -113,18 +113,13 @@ Upload the logo as `public/brand/logo.png`: a square PNG, ideally 1024×1024. Yo
 
 Until then the coral **KKK** placeholder is shown, and the build log prints a red **LOGO MISSING** warning.
 
-## 9. Verify the news sources (once)
+## 9. News sources (nothing to do)
 
-Feed URLs must be checked from a machine that can reach the publishers. On your computer (or any environment with normal internet access), run:
+`/news` uses only top newspapers: TOI, The Hindu, Hindustan Times, Indian Express, NDTV and India Today, plus Dainik Jagran, Amar Ujala, Hindustan, Dainik Bhaskar, Navbharat Times and their city desks. The list lives in `src/data/newsSources.ts`.
 
-```bash
-npm install
-npm run verify:sources
-```
+Every feed is checked live each time it's fetched; a feed that fails is skipped and shown in red on `/admin/news`. Newspaper links in the directory only appear while they return HTTP 200.
 
-This fetches every candidate feed and newspaper link in `scripts/news-candidates.json`. It keeps **only** the ones that return HTTP 200 (and, for feeds, valid RSS with items), and writes them to `src/data/news-sources.verified.json`. A full report goes to `scripts/verify-sources-report.json`.
-
-Commit and push both files. Re-run this every few months; publishers change their feed URLs.
+Before Supabase is set up, the site reads the feeds directly (cached for an hour). Once the daily cron has run, it reads from the database.
 
 ## 10. First news refresh and smoke test
 

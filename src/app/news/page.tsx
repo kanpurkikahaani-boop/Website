@@ -15,7 +15,7 @@ export async function generateMetadata({ searchParams }: PageProps<"/news">): Pr
     ogImage: "/og/news",
   });
   // Filter combinations are crawlable via /news/[city]/[genre]; query-string variants stay out of the index.
-  const filtered = f.city || f.genre || f.lang || f.q || f.page > 1;
+  const filtered = f.city || f.genre || f.lang || f.page > 1;
   return filtered ? { ...meta, robots: { index: false, follow: true } } : meta;
 }
 

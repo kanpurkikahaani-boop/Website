@@ -1,26 +1,8 @@
 import "server-only";
-import { activeSources, type NewsSource } from "@/data/newsSources";
+import { activeSources } from "@/data/newsSources";
 import { createServiceClient } from "@/lib/supabase/admin";
-import { KEEP_DAYS, parser, toRow, type NewsRow } from "./to-row";
-
-const UA = "KanpurKiKahaaniBot/1.0 (+https://kanpurkikahaani.site)";
-const FEED_TIMEOUT_MS = 10_000;
-
-async function fetchFeed(src: NewsSource) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), FEED_TIMEOUT_MS);
-  try {
-    const res = await fetch(src.feedUrl, {
-      headers: { "User-Agent": UA, Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml" },
-      signal: ctrl.signal,
-      cache: "no-store",
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await parser.parseString(await res.text());
-  } finally {
-    clearTimeout(timer);
-  }
-}
+import { fetchFeed } from "./fetch-feed";
+import { KEEP_DAYS, toRow, type NewsRow } from "./to-row";
 
 export interface RefreshResult {
   ok: boolean;

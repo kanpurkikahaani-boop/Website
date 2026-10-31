@@ -22,8 +22,8 @@ const googleFeed = `<?xml version="1.0"?><rss version="2.0"><channel><title>Goog
 <pubDate>${recent}</pubDate><source url="https://www.amarujala.com">Amar Ujala</source></item>
 </channel></rss>`;
 
-const national: NewsSource = { name: "Example Paper", homepage: "https://example-paper.in", feedUrl: "x", language: "en", scope: "national", active: true, verifiedAt: "" };
-const gnews: NewsSource = { name: "Google News", homepage: "https://news.google.com", feedUrl: "y", language: "hi", scope: "aggregator", city: "lucknow", genre: "weather-environment", active: true, verifiedAt: "" };
+const national: NewsSource = { name: "Example Paper", homepage: "https://example-paper.in", feedUrl: "x", language: "en", scope: "national", active: true };
+const gnews: NewsSource = { name: "Google News", homepage: "https://news.google.com", feedUrl: "y", language: "hi", scope: "aggregator", city: "lucknow", genre: "weather-environment", active: true };
 
 (async () => {
   const a = await parser.parseString(publisherFeed);

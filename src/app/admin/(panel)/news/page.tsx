@@ -1,4 +1,4 @@
-import { activeSources, sourcesVerifiedAt } from "@/data/newsSources";
+import { activeSources } from "@/data/newsSources";
 import { formatIST } from "@/lib/news/query";
 import { createSessionClient } from "@/lib/supabase/server";
 import { RefreshButton } from "./RefreshButton";
@@ -19,7 +19,7 @@ export default async function AdminNewsPage() {
           <p className="eyebrow">Admin</p>
           <h1 className="mt-1 text-[32px] font-bold text-primary">News sources</h1>
           <p className="text-sm">
-            {sources.length} verified feeds{sourcesVerifiedAt ? ` (checked ${formatIST(sourcesVerifiedAt)})` : " — run npm run verify:sources"} · daily refresh at 6:00 AM IST
+            {sources.length} top-newspaper feeds, each checked live on every run · daily refresh at 6:00 AM IST
           </p>
         </div>
         <RefreshButton />

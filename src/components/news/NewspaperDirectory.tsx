@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
-import { newspaperDirectory, type DirectoryGroup } from "@/data/newsSources";
+import type { DirectoryGroup } from "@/data/newsSources";
+import { getVerifiedDirectory } from "@/lib/news/directory";
 import { CITY_LABELS, NEWS_CITIES } from "@/lib/news/taxonomy";
 
 const GROUPS: { id: DirectoryGroup; label: string }[] = [
@@ -9,8 +10,9 @@ const GROUPS: { id: DirectoryGroup; label: string }[] = [
 ];
 
 /** Server-rendered outbound links to the newspapers we follow (only URLs verified to return 200). */
-export function NewspaperDirectory() {
-  const groups = GROUPS.map((g) => ({ ...g, links: newspaperDirectory.filter((d) => d.group === g.id) })).filter((g) => g.links.length);
+export async function NewspaperDirectory() {
+  const directory = await getVerifiedDirectory().catch(() => []);
+  const groups = GROUPS.map((g) => ({ ...g, links: directory.filter((d) => d.group === g.id) })).filter((g) => g.links.length);
   return (
     <section aria-labelledby="directory-title" className="mt-16">
       <p className="eyebrow">Read more</p>
@@ -18,7 +20,7 @@ export function NewspaperDirectory() {
       <p className="mt-2 max-w-xl">Go straight to the source — national dailies and the city desks covering Kanpur and its neighbours.</p>
       {groups.length === 0 ? (
         <p className="mt-6 rounded-2xl border border-dashed border-border p-6 text-sm">
-          The newspaper directory will appear here once its links have been verified.
+          Links to the newspapers we follow are loading — please check back shortly.
         </p>
       ) : (
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

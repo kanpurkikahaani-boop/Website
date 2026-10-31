@@ -29,7 +29,6 @@ npm run dev                  # http://localhost:3000
 | `npm run build` | Production build (static + ISR pages, plus server routes for the API and admin) |
 | `npm run test:news` | Unit tests for news classification and feed parsing (fixtures, no network) |
 | `npm run test:rls` | Security tests: applies the migrations to a local Postgres and attacks every table as anon, non-admin, unverified admin and admin (needs `PGHOST`/`PGPORT`/`PGUSER`) |
-| `npm run verify:sources` | Checks every candidate news feed and newspaper link; keeps only the ones that work (see SETUP.md step 9) |
 | `npm start` | Serve the production build |
 | `npm run lint` | ESLint (`eslint-config-next`, core-web-vitals + TypeScript rules) |
 | `npm run typecheck` | Generates route types, then runs `tsc --noEmit` |
@@ -52,12 +51,12 @@ All copy, prices, links and image paths live in typed files under **`src/data/`*
 | `food.ts` | Food & Night Life tabs and each city's "Must-Try Food" |
 | `shopping.ts`, `outdoor.ts`, `festivals.ts`, `history.ts` | Explore pages |
 | `events.ts` | Upcoming events. Past events hide automatically. **Dates are `// VERIFY`** |
-| `newsSources.ts` + `news-sources.verified.json` | News feeds and the newspaper directory. **Generated** by `npm run verify:sources` from `scripts/news-candidates.json`; never hand-add unverified URLs |
+| `newsSources.ts` | News feeds (top national + Hindi papers and their city desks) and the newspaper directory. Each feed and link is checked live; dead ones are skipped automatically |
 | `stays.ts` | Sample accommodation and the booking-link builder (UTM parameters) |
 | `campus.ts` | Colleges and student tips |
 | `blog.ts` | The three original stories. Since v2 posts live in Supabase and are written at `/admin/blogs`; this file is only the fallback (and the source for `0003_seed_posts.sql`) |
 | `videos.ts` | YouTube IDs for "Kanpur in Motion" (**placeholders: replace `REPLACE_ME`**) |
-| `playlist.ts` | Spotify playlist ID (**placeholder: replace `REPLACE_ME`**) |
+| `playlist.ts` | Spotify playlist ID for the City Playlist page |
 | `images.ts` | Home hero slides and section images |
 | `og-pages.ts` | Titles used on per-page Open Graph images |
 
