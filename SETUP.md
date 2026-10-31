@@ -26,7 +26,10 @@ Open **SQL Editor → New query** and run each file from `supabase/migrations/`,
 |---|---|---|
 | 1 | `0001_init.sql` | Tables (`admins`, `subscribers`, `posts`, `news_items`, `news_sources_health`, `news_runs`), the `is_admin()` check and all Row Level Security policies |
 | 2 | `0002_storage.sql` | The `blog-images` storage bucket (public read, admin-only write, 5 MB, images only) |
-| 3 | `0003_seed_posts.sql` | Copies the 3 original stories into the database as published posts |
+| 3 | `0004_events.sql` | The `events` table, the `event-images` storage bucket (public read, admin-only write) and `cron_runs` |
+| 4 | `0005_remove_seed_posts.sql` | Deletes the three pre-written stories if an earlier version inserted them. Safe to run either way |
+
+> **Already ran the old `0003_seed_posts.sql`?** That file no longer exists. Just run `0004` and `0005`: `0005` removes those three posts. Blog posts now come only from the admin editor.
 
 Each should finish with "Success. No rows returned".
 
@@ -97,21 +100,39 @@ Go to Vercel → your project → **Settings → Environment Variables**. Add ea
 | `NEXT_PUBLIC_GA_ID` | optional, GA4 ID |
 | `NEXT_PUBLIC_META_PIXEL_ID` | optional, Meta Pixel ID |
 
-## 7. Merge and deploy
+## 7. Deploy and check the daily jobs
 
-The v2 work is on the **`v2`** branch.
-- Vercel builds a **Preview** deployment for it automatically, so you can check it first. Variables must be enabled for Preview for it to work there.
-- To go live, merge `v2` into `main` on GitHub. Vercel then deploys to production.
+Pushing to `main` deploys to production. `vercel.json` registers two daily cron jobs:
 
-`vercel.json` registers the daily cron job: 00:30 UTC = **6:00 AM IST**. Check it under **Settings → Cron Jobs** after the first production deploy.
+| Time (IST) | Job | What it does |
+|---|---|---|
+| 5:45 AM | `/api/cron/refresh-events` | Archives finished events and re-checks each event's BookMyShow link. A **404** unpublishes the event and flags it in red on `/admin/events`; a blocked check (403) changes nothing. |
+| 6:00 AM | `/api/cron/refresh-news` | Fetches the newspaper feeds |
 
-## 8. Add the logo
+Check both under **Settings → Cron Jobs** after the deploy. Two daily crons is the maximum on Vercel's free (Hobby) plan.
 
-Upload the logo as `public/brand/logo.png`: a square PNG, ideally 1024×1024. You can use GitHub's **Add file → Upload files** on the branch. It then appears automatically in:
+## 8. The logo
+
+The logo is `public/brand/logo.png`: the circular badge with transparent corners, 512×512. It appears in:
 - the navbar, footer, popup and admin login;
-- the favicon, the app icons and the share (Open Graph) images.
+- the favicon, the app icons, the share (Open Graph) images and Google's `Organization.logo`.
 
-Until then the coral **KKK** placeholder is shown, and the build log prints a red **LOGO MISSING** warning.
+To change it, replace that file with a square PNG and redeploy. If the file is ever missing, the build log prints a red **LOGO MISSING** warning.
+
+## 8b. Click-check the BookMyShow city links (2 minutes)
+
+BookMyShow blocks automated checks, so please open each link once and confirm it shows that city's events. They're set in `bookMyShowCityUrls` in `src/data/site.ts`.
+
+| City | Link |
+|---|---|
+| Kanpur | https://in.bookmyshow.com/explore/events-kanpur |
+| Lucknow | https://in.bookmyshow.com/explore/events-lucknow |
+| Agra | https://in.bookmyshow.com/explore/events-agra |
+| Prayagraj | https://in.bookmyshow.com/explore/events-allahabad (BookMyShow uses the old name) |
+| Varanasi | https://in.bookmyshow.com/explore/events-varanasi |
+| Ayodhya | https://in.bookmyshow.com/explore/home/ayodhya (city home; Ayodhya may have no events page) |
+
+If one lands on a "city not found" page, open BookMyShow, pick the city manually, and paste the address from your browser into `site.ts`.
 
 ## 9. News sources (nothing to do)
 
@@ -125,9 +146,10 @@ Before Supabase is set up, the site reads the feeds directly (cached for an hour
 
 1. Visit `https://kanpurkikahaani.site/admin/login` and sign in with Google (or a magic link). You should land on the dashboard.
 2. Open **News sources → Refresh now**. After a minute it reports how many headlines were stored. `/news` then shows them, with "Last updated" in IST.
-3. Open **Blogs** and check the 3 original stories are listed. Write a test draft, upload an image, click **Save & preview**, then delete it.
-4. Subscribe on the home page with a test email. It should appear under **Subscribers**, and **Export CSV** should download it.
-5. Sign out, then try `/admin` in a private window: you should be sent back to the login page.
+3. Open **Blogs**. It starts empty, and `/blogs` shows "Our first stories are on their way". Write a test draft, upload an image, click **Save & preview**, then delete it.
+4. Open **Events → New event**. Add a real upcoming event, paste its BookMyShow page into "BookMyShow event link", upload your own photo, and click **Publish**. It appears on `/events` with a **Book on BookMyShow** button.
+5. Subscribe on the home page with a test email. It should appear under **Subscribers**, and **Export CSV** should download it.
+6. Sign out, then try `/admin` in a private window: you should be sent back to the login page.
 
 ---
 
@@ -138,10 +160,14 @@ Before Supabase is set up, the site reads the feeds directly (cached for an hour
   - **Publish** puts the post live on `/blogs`, the home page, the sitemap and RSS within seconds.
 - **Newsletter list:** `/admin/subscribers` → **Export CSV** to import into your email tool.
   - Every email you send must include that subscriber's unsubscribe link. The code exposes `unsubscribeUrl(email)` in `src/lib/newsletter/unsubscribe.ts` for this.
+- **Events:** `/admin/events` → **New event**.
+  - Only paste links that start with `https://in.bookmyshow.com/`.
+  - Use your own photos. Never download or copy BookMyShow's images.
+  - Finished events archive themselves each morning.
 - **News:** fully automatic every morning. If a feed dies, it shows in red on `/admin/news`; remove or replace it via step 9.
 - **Security model**, enforced at three layers:
   1. `src/proxy.ts` blocks `/admin/*`.
   2. Every admin page, server action and route re-checks the admin on the server.
-  3. Supabase Row Level Security, where only verified emails in the `admins` table can see drafts, change posts, read subscribers or upload images.
+  3. Supabase Row Level Security, where only verified emails in the `admins` table can see drafts, change posts or events, read subscribers or upload images.
 
   `npm run test:rls` replays the attack tests against a local Postgres.

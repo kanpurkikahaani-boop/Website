@@ -23,7 +23,8 @@ for (const f of [
   "supabase/tests/emulate-supabase.sql",
   "supabase/migrations/0001_init.sql",
   "supabase/migrations/0002_storage.sql",
-  "supabase/migrations/0003_seed_posts.sql",
+  "supabase/migrations/0004_events.sql",
+  "supabase/migrations/0005_remove_seed_posts.sql",
 ]) {
   await c.query(readFileSync(f, "utf8"));
 }
@@ -42,11 +43,17 @@ await c.query(
    ($3, 'someone@gmail.com', now())`,
   [ids.admin, ids.unverified, ids.visitor],
 );
+await c.query(`insert into public.posts (slug, title, status, published_at) values ('first-story', 'First story', 'published', now() - interval '1 day')`);
 await c.query(`insert into public.posts (slug, title, status) values ('secret-draft', 'Secret draft', 'draft')`);
 await c.query(`insert into public.posts (slug, title, status, published_at) values ('future-post', 'Scheduled', 'published', now() + interval '7 days')`);
 await c.query(`insert into public.subscribers (email, source, consent) values ('reader@example.com', 'home_popup', true)`);
 await c.query(`insert into public.news_sources_health (source, items_last_run) values ('Example feed', 3)`);
 await c.query(`insert into storage.objects (bucket_id, name) values ('blog-images', '2026/10/existing.jpg')`);
+await c.query(`insert into storage.objects (bucket_id, name) values ('event-images', '2026/10/poster.jpg')`);
+await c.query(`insert into public.events (title, category, city, start_at, status, bms_url) values
+  ('Live comedy night', 'comedy', 'kanpur', now() + interval '3 days', 'published', 'https://in.bookmyshow.com/events/x'),
+  ('Unannounced gig', 'music', 'lucknow', now() + interval '9 days', 'draft', null),
+  ('Old expo', 'expo', 'agra', now() - interval '9 days', 'archived', null)`);
 
 const roles = {
   anon: { role: "anon", claims: { role: "anon" } },
@@ -74,10 +81,19 @@ async function as(who, sql) {
 
 const tests = [
   { name: "posts: read drafts / scheduled", sql: `select 1 from public.posts where status = 'draft' or published_at > now()`, adminExpect: (r) => r.ok && r.rows === 2, otherExpect: (r) => r.ok && r.rows === 0 },
-  { name: "posts: read published", sql: `select 1 from public.posts where status = 'published' and published_at <= now()`, adminExpect: (r) => r.ok && r.rows === 3, otherExpect: (r) => r.ok && r.rows === 3 },
+  { name: "posts: read published", sql: `select 1 from public.posts where status = 'published' and published_at <= now()`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => r.ok && r.rows === 1 },
   { name: "posts: insert", sql: `insert into public.posts (slug, title, status) values ('hack', 'Hacked', 'published')`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => !r.ok },
-  { name: "posts: update published", sql: `update public.posts set title = 'Defaced'`, adminExpect: (r) => r.ok && r.rows === 5, otherExpect: (r) => !r.ok || r.rows === 0 },
-  { name: "posts: delete", sql: `delete from public.posts`, adminExpect: (r) => r.ok && r.rows === 5, otherExpect: (r) => !r.ok || r.rows === 0 },
+  { name: "posts: update published", sql: `update public.posts set title = 'Defaced'`, adminExpect: (r) => r.ok && r.rows === 3, otherExpect: (r) => !r.ok || r.rows === 0 },
+  { name: "posts: delete", sql: `delete from public.posts`, adminExpect: (r) => r.ok && r.rows === 3, otherExpect: (r) => !r.ok || r.rows === 0 },
+  { name: "events: read drafts / archived", sql: `select 1 from public.events where status <> 'published'`, adminExpect: (r) => r.ok && r.rows === 2, otherExpect: (r) => r.ok && r.rows === 0 },
+  { name: "events: read published", sql: `select 1 from public.events where status = 'published'`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => r.ok && r.rows === 1 },
+  { name: "events: insert", sql: `insert into public.events (title, category, city, start_at, status) values ('Fake gig', 'music', 'kanpur', now() + interval '1 day', 'published')`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => !r.ok },
+  { name: "events: update", sql: `update public.events set title = 'Hacked'`, adminExpect: (r) => r.ok && r.rows === 3, otherExpect: (r) => !r.ok || r.rows === 0 },
+  { name: "events: delete", sql: `delete from public.events`, adminExpect: (r) => r.ok && r.rows === 3, otherExpect: (r) => !r.ok || r.rows === 0 },
+  { name: "event-images: upload", sql: `insert into storage.objects (bucket_id, name) values ('event-images', 'x/evil.jpg')`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => !r.ok },
+  { name: "event-images: delete", sql: `delete from storage.objects where bucket_id = 'event-images'`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => !r.ok || r.rows === 0 },
+  { name: "events: non-BookMyShow bms_url", sql: `insert into public.events (title, category, city, start_at, status, bms_url) values ('Phish', 'music', 'kanpur', now(), 'draft', 'https://evil.example/book')`, adminExpect: (r) => !r.ok, otherExpect: (r) => !r.ok },
+  { name: "cron_runs: write", sql: `insert into public.cron_runs (job) values ('refresh-events')`, adminExpect: (r) => !r.ok, otherExpect: (r) => !r.ok },
   { name: "subscribers: read", sql: `select email from public.subscribers`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => r.ok && r.rows === 0 },
   { name: "subscribers: insert directly", sql: `insert into public.subscribers (email, source, consent) values ('spam@x.com', 'home_popup', true)`, adminExpect: (r) => !r.ok, otherExpect: (r) => !r.ok },
   { name: "subscribers: delete", sql: `delete from public.subscribers`, adminExpect: (r) => !r.ok || r.rows === 0, otherExpect: (r) => !r.ok || r.rows === 0 },

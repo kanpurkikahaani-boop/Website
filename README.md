@@ -50,11 +50,9 @@ All copy, prices, links and image paths live in typed files under **`src/data/`*
 | `cities.ts` | The five nearby cities: about copy, distances, times, airports, itineraries, map position. **Distances are marked `// VERIFY`** |
 | `food.ts` | Food & Night Life tabs and each city's "Must-Try Food" |
 | `shopping.ts`, `outdoor.ts`, `festivals.ts`, `history.ts` | Explore pages |
-| `events.ts` | Upcoming events. Past events hide automatically. **Dates are `// VERIFY`** |
 | `newsSources.ts` | News feeds (top national + Hindi papers and their city desks) and the newspaper directory. Each feed and link is checked live; dead ones are skipped automatically |
 | `stays.ts` | Sample accommodation and the booking-link builder (UTM parameters) |
 | `campus.ts` | Colleges and student tips |
-| `blog.ts` | The three original stories. Since v2 posts live in Supabase and are written at `/admin/blogs`; this file is only the fallback (and the source for `0003_seed_posts.sql`) |
 | `videos.ts` | YouTube IDs for "Kanpur in Motion" (**placeholders: replace `REPLACE_ME`**) |
 | `playlist.ts` | Spotify playlist ID for the City Playlist page |
 | `images.ts` | Home hero slides and section images |
@@ -66,7 +64,7 @@ Anything uncertain (prices, event dates, hotel names, news, distances) is flagge
 
 ## 3. Add images and the logo
 
-- **Logo:** put the logo at `public/brand/logo.png` (square PNG, around 1024×1024). Until it exists, a coral "KKK" disc stands in everywhere: navbar, footer, favicon, apple-touch and PWA icons, and OG images.
+- **Logo:** `public/brand/logo.png` (the circular badge, 512×512 PNG) is the only logo: navbar, footer, popup, admin login, favicon, apple-touch and PWA icons, and OG images. Replace the file to change it; a missing file prints a LOGO MISSING warning at build time.
 - **Photos:** save them at `public/images/{kanpur|lucknow|agra|prayagraj|varanasi|ayodhya}/{slug}.jpg`. Each path is already referenced in the data files, and **`IMAGE_CREDITS.md`** lists all 117 of them, with what each should show and suggested free-licence sources.
 - Missing photos render as a warm gradient tile with the place name (`ImageWithFallback`), so the site always looks finished.
 - Every photo must actually show the place it is labelled as.

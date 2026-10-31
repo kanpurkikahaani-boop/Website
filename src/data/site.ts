@@ -20,7 +20,6 @@ function resolveSiteUrl() {
 
 export const site = {
   name: "Kanpur Ki Kahaani",
-  shortName: "KKK",
   tagline: "The Stories of the Manchester of the East",
   description:
     "The stories of the Manchester of the East — a curated guide to Kanpur's heritage, food, festivals and everyday life, and the cities around it.",
