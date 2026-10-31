@@ -19,10 +19,10 @@ export default function PlaylistPage() {
   return (
     <>
       <PageHero
-        eyebrow="Live"
+        eyebrow="City Playlist"
         title="City Playlist"
         subtitle="Kanpur's on aux. Hit play — main character energy, Kanpur edition. 🎧"
-        crumbs={[{ name: "Live", href: "/events" }, { name: "City Playlist" }]}
+        crumbs={[{ name: "City Playlist" }]}
       />
       <Section labelledBy="listen-title">
         <div className="mx-auto max-w-3xl">

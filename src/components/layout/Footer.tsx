@@ -3,6 +3,7 @@ import { navGroups } from "@/data/nav";
 import { site } from "@/data/site";
 import { Logo } from "./Logo";
 import { SocialLinks } from "./SocialLinks";
+import { SpotifyIcon } from "@/components/ui/BrandIcons";
 
 export function Footer() {
   return (
@@ -13,7 +14,7 @@ export function Footer() {
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream/70">{site.description}</p>
           <SocialLinks variant="footer" className="mt-5" />
         </div>
-        <FooterCol title="Home" links={[{ label: "Home", href: "/" }, { label: "How to Reach", href: "/#reach" }, { label: "Blogs", href: "/blogs" }, { label: "Newsletter", href: "/#newsletter" }]} />
+        <FooterCol title="Home" links={[{ label: "Home", href: "/" }, { label: "How to Reach", href: "/#reach" }, { label: "Blogs", href: "/blogs" }, { label: "City Playlist", href: "/playlist", spotify: true }, { label: "Newsletter", href: "/#newsletter" }]} />
         {navGroups.map((g) => (
           <FooterCol key={g.label} title={g.label} links={g.items} />
         ))}
@@ -35,14 +36,15 @@ export function Footer() {
   );
 }
 
-function FooterCol({ title, links }: { title: string; links: { label: string; href: string }[] }) {
+function FooterCol({ title, links }: { title: string; links: { label: string; href: string; spotify?: boolean }[] }) {
   return (
     <div>
       <h2 className="font-sans text-[11.5px] font-bold uppercase tracking-[0.2em] text-accent">{title}</h2>
       <ul className="mt-4 space-y-2.5">
         {links.map((l) => (
           <li key={l.href}>
-            <Link href={l.href} className="text-sm text-cream/75 transition-colors hover:text-accent">
+            <Link href={l.href} className="inline-flex items-center gap-1.5 text-sm text-cream/75 transition-colors hover:text-accent">
+              {l.spotify && <SpotifyIcon size={15} className="text-[#1DB954]" />}
               {l.label}
             </Link>
           </li>

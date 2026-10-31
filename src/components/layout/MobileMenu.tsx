@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { ChevronDown, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { blogsLink, navGroups, groupFor } from "@/data/nav";
+import { blogsLink, navGroups, groupFor, playlistLink } from "@/data/nav";
+import { SpotifyIcon } from "@/components/ui/BrandIcons";
 import { cn } from "@/lib/utils";
 
 export function MobileMenu({ open, onClose, pathname }: { open: boolean; onClose: () => void; pathname: string }) {
@@ -126,6 +127,17 @@ export function MobileMenu({ open, onClose, pathname }: { open: boolean; onClose
             )}
           >
             {blogsLink.label}
+          </Link>
+          <Link
+            href={playlistLink.href}
+            aria-current={pathname === playlistLink.href ? "page" : undefined}
+            className={cn(
+              "flex items-center gap-2.5 rounded-xl px-4 py-3 text-base font-semibold",
+              pathname === playlistLink.href ? "bg-primary-soft text-primary" : "text-ink",
+            )}
+          >
+            <SpotifyIcon size={20} className="text-[#1DB954]" />
+            {playlistLink.label}
           </Link>
         </nav>
         <div className="border-t border-border p-5">

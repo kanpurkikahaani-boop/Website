@@ -20,6 +20,8 @@ export interface NavGroup {
 export const homeLink: NavLink = { label: "Home", href: "/" };
 /** Top-level direct link shown after the dropdown groups. */
 export const blogsLink: NavLink = { label: "Blogs", href: "/blogs" };
+/** Icon-only Spotify link shown right after Blogs. */
+export const playlistLink: NavLink = { label: "City Playlist", href: "/playlist" };
 
 export const navGroups: NavGroup[] = [
   {
@@ -51,12 +53,11 @@ export const navGroups: NavGroup[] = [
   {
     label: "Live",
     eyebrow: "Live",
-    match: ["/events", "/weather", "/news", "/playlist"],
+    match: ["/events", "/weather", "/news"],
     items: [
       { label: "Upcoming Events", href: "/events" },
       { label: "Weather", href: "/weather" },
       { label: "News", href: "/news" },
-      { label: "City Playlist", href: "/playlist" },
     ],
   },
   {
@@ -75,4 +76,4 @@ export function groupFor(pathname: string): NavGroup | undefined {
 }
 
 /** Every routable page, used by the sitemap and footer. */
-export const allNavHrefs: string[] = ["/", ...navGroups.flatMap((g) => g.items.map((i) => i.href)), blogsLink.href];
+export const allNavHrefs: string[] = ["/", ...navGroups.flatMap((g) => g.items.map((i) => i.href)), blogsLink.href, playlistLink.href];

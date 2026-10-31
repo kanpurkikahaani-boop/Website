@@ -60,3 +60,12 @@ export function RedditIcon({ size = 18, className }: P) {
     </svg>
   );
 }
+
+/** Spotify mark; pass `className="text-[#1DB954]"` (or currentColor) for the brand green. */
+export function SpotifyIcon({ size = 20, className }: P) {
+  return (
+    <svg {...base(size)} className={className} fill="currentColor">
+      <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.62.62 0 0 1-.86.21c-2.35-1.44-5.3-1.76-8.79-.96a.62.62 0 1 1-.28-1.22c3.81-.87 7.08-.5 9.71 1.11.3.18.39.56.22.86Zm1.22-2.72a.78.78 0 0 1-1.07.26c-2.69-1.65-6.79-2.13-9.97-1.17a.78.78 0 1 1-.45-1.5c3.63-1.1 8.15-.57 11.23 1.33.37.22.48.71.26 1.08Zm.11-2.83C14.7 8.95 9.38 8.78 6.3 9.71a.94.94 0 1 1-.54-1.8c3.53-1.07 9.41-.86 13.11 1.34a.94.94 0 0 1-.95 1.62Z" />
+    </svg>
+  );
+}

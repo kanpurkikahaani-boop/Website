@@ -12,7 +12,7 @@ export const ogPages: Record<string, { title: string; eyebrow: string }> = {
   events: { title: "Upcoming Events", eyebrow: "Live" },
   weather: { title: "Kanpur Weather", eyebrow: "Live" },
   news: { title: "Kanpur News", eyebrow: "Live" },
-  playlist: { title: "City Playlist", eyebrow: "Live" },
+  playlist: { title: "City Playlist", eyebrow: "Kanpur on Spotify" },
   accommodation: { title: "Accommodation", eyebrow: "Stay & Live" },
   campus: { title: "Campus Life", eyebrow: "Stay & Live" },
   privacy: { title: "Privacy", eyebrow: "Kanpur Ki Kahaani" },
