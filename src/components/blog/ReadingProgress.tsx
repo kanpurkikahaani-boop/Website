@@ -29,7 +29,7 @@ export function ReadingProgress({ targetId }: { targetId: string }) {
   }, [targetId]);
   return (
     <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 z-[90] h-[3px] bg-transparent">
-      <div className="h-full origin-left bg-accent transition-transform duration-75" style={{ transform: `scaleX(${p})` }} />
+      <div data-reading-progress className="h-full origin-left bg-accent transition-transform duration-75" style={{ transform: `scaleX(${p})` }} />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { createSessionClient } from "@/lib/supabase/server";
 import { PostRowActions } from "@/components/admin/PostRowActions";
+import type { LinkReport } from "@/lib/link-check";
 
 export const metadata = { title: "Blogs" };
 
@@ -9,7 +10,7 @@ export default async function AdminBlogsPage() {
   const db = await createSessionClient();
   const { data: posts, error } = await db!
     .from("posts")
-    .select("id, slug, title, status, published_at, updated_at, city")
+    .select("id, slug, title, status, published_at, updated_at, city, link_report, links_checked_at")
     .order("updated_at", { ascending: false });
 
   return (
@@ -39,6 +40,7 @@ export default async function AdminBlogsPage() {
                 <td className="px-4 py-3">
                   <Link href={`/admin/blogs/${p.id}/edit`} className="font-semibold text-ink hover:text-primary">{p.title}</Link>
                   <p className="text-xs text-muted">/blogs/{p.slug}</p>
+                  <LinkBadge report={p.link_report as LinkReport | null} />
                 </td>
                 <td className="px-4 py-3">
                   <span className={p.status === "published" ? "rounded-full bg-[#e3f1e6] px-2.5 py-1 text-xs font-semibold text-[#21603a]" : "rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent-ink"}>
@@ -59,5 +61,28 @@ export default async function AdminBlogsPage() {
         </table>
       </div>
     </>
+  );
+}
+
+/** Weekly link-check result: red when links are broken, amber when sites refused the bot. */
+function LinkBadge({ report }: { report: LinkReport | null }) {
+  if (!report) return null;
+  const when = new Date(report.checkedAt).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" });
+  if (!report.broken.length && !report.blocked.length) {
+    return <p className="mt-1 text-xs text-[#21603a]">All {report.ok} links OK · checked {when}</p>;
+  }
+  return (
+    <details className="mt-1 text-xs">
+      <summary className="cursor-pointer">
+        {report.broken.length > 0 && <span className="rounded-full bg-primary px-2 py-0.5 font-semibold text-white">{report.broken.length} broken link{report.broken.length === 1 ? "" : "s"}</span>}{" "}
+        {report.blocked.length > 0 && <span className="rounded-full bg-accent-soft px-2 py-0.5 font-semibold text-accent-ink">{report.blocked.length} to check by hand</span>}
+        <span className="text-muted"> · checked {when}</span>
+      </summary>
+      <ul className="mt-1 space-y-0.5 break-all text-muted">
+        {[...report.broken, ...report.blocked].map((r) => (
+          <li key={r.url}>{r.code ?? "—"} {r.url}{r.note ? ` (${r.note})` : ""}</li>
+        ))}
+      </ul>
+    </details>
   );
 }

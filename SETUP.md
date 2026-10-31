@@ -28,10 +28,14 @@ Open **SQL Editor → New query** and run each file from `supabase/migrations/`,
 | 2 | `0002_storage.sql` | The `blog-images` storage bucket (public read, admin-only write, 5 MB, images only) |
 | 3 | `0004_events.sql` | The `events` table, the `event-images` storage bucket (public read, admin-only write) and `cron_runs` |
 | 4 | `0005_remove_seed_posts.sql` | Deletes the three pre-written stories if an earlier version inserted them. Safe to run either way |
+| 5 | `0006_authors_and_post_fields.sql` | The `authors` table (public read, admin-only write), Rakshaa Mukesh's author profile, and the new article fields on `posts` (author, category, standfirst, pull quote, cover credit, key facts, plan-your-visit, glossary, further reading, link report) |
+| 6 | `0007_publish_navaratri.sql` | Publishes **"Why Navaratri in Kanpur Is Something Everyone Must Experience!"** (14 Oct 2026, by Rakshaa Mukesh). Safe to run again: it updates the post in place |
 
 > **Already ran the old `0003_seed_posts.sql`?** That file no longer exists. Just run `0004` and `0005`: `0005` removes those three posts. Blog posts now come only from the admin editor.
 
 Each should finish with "Success. No rows returned".
+
+> **Changing the Navaratri post's text or boxes later?** Edit it in `/admin/blogs` like any other post, or edit `content/blogs/navaratri-in-kanpur.*`, run `npm run build:navaratri` (regenerates `0007`) and paste `0007` again. Running `0007` again overwrites edits made in the admin editor.
 
 ## 3. Make yourself the admin
 
@@ -110,6 +114,14 @@ Pushing to `main` deploys to production. `vercel.json` registers two daily cron 
 | 6:00 AM | `/api/cron/refresh-news` | Fetches the newspaper feeds |
 
 Check both under **Settings → Cron Jobs** after the deploy. Two daily crons is the maximum on Vercel's free (Hobby) plan.
+
+**Weekly blog link check.** On Mondays, the 5:45 AM events job also checks every link in every published post (body + boxes). The result appears under each post on `/admin/blogs`: green "All N links OK", a red "N broken links" badge, or amber "to check by hand" when a site refuses automated checks (Instagram, Facebook and BookMyShow often do). Nothing is removed automatically. To run it now:
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" https://kanpurkikahaani.site/api/cron/check-blog-links
+```
+
+For a full article-area report (all link groups, density and new-tab rules) run `npm run check:links -- https://kanpurkikahaani.site/blogs/navaratri-in-kanpur`. It writes `reports/navaratri-in-kanpur-links.json`.
 
 ## 8. The logo
 

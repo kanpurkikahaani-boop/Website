@@ -1,0 +1,908 @@
+{
+  "page": "http://localhost:3000/blogs/navaratri-in-kanpur",
+  "generatedAt": "2026-10-31T18:02:10.171Z",
+  "verified": false,
+  "totals": {
+    "links": 105,
+    "unique": 105,
+    "internal": 40,
+    "external": 65,
+    "ok": null,
+    "broken": null,
+    "blocked": null,
+    "skipped": null
+  },
+  "groups": {
+    "A": {
+      "name": "Inline (author's text)",
+      "count": 35,
+      "internal": 6,
+      "external": 29
+    },
+    "B": {
+      "name": "Table of contents",
+      "count": 10,
+      "internal": 10,
+      "external": 0
+    },
+    "C": {
+      "name": "Plan your visit",
+      "count": 13,
+      "internal": 5,
+      "external": 8
+    },
+    "D": {
+      "name": "Glossary",
+      "count": 12,
+      "internal": 0,
+      "external": 12
+    },
+    "E": {
+      "name": "Further reading & sources",
+      "count": 11,
+      "internal": 0,
+      "external": 11
+    },
+    "F": {
+      "name": "More to explore (internal)",
+      "count": 10,
+      "internal": 10,
+      "external": 0
+    },
+    "G": {
+      "name": "Tags",
+      "count": 7,
+      "internal": 7,
+      "external": 0
+    },
+    "H": {
+      "name": "Author box",
+      "count": 7,
+      "internal": 2,
+      "external": 5
+    }
+  },
+  "problems": [],
+  "links": [
+    {
+      "group": "B",
+      "anchor": "Introduction",
+      "url": "#introduction",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "B",
+      "anchor": "Day 1Ghatasthapana and the Baradevi Chunri Ritual",
+      "url": "#day-1",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "B",
+      "anchor": "Days 2 & 3The Falahari Food Trail",
+      "url": "#days-2-3",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "B",
+      "anchor": "Day 4Khazana Coins from the Akhand Jyoti",
+      "url": "#day-4",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "B",
+      "anchor": "Day 5The Pandals Open a Day Early",
+      "url": "#day-5",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "B",
+      "anchor": "Day 6Garba Meets Dhunuchi Naach",
+      "url": "#day-6",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "B",
+      "anchor": "Day 7Sandhi Puja: 108 Lotuses in 48 Minutes",
+      "url": "#day-7",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "B",
+      "anchor": "Day 8Kanya Pujan on Maha Navami",
+      "url": "#day-8",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "B",
+      "anchor": "Day 9Sindoor Khela",
+      "url": "#day-9",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "B",
+      "anchor": "The Farewell",
+      "url": "#farewell",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Navaratri",
+      "url": "https://en.wikipedia.org/wiki/Navaratri",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Garba",
+      "url": "https://ich.unesco.org/en/RL/garba-of-gujarat-01962",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Durga Puja pandals",
+      "url": "https://ich.unesco.org/en/RL/durga-puja-in-kolkata-01503",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Kanpur",
+      "url": "/culture-history",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "1,000-year-old local temples",
+      "url": "/tourism?filter=temple",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Ghatasthapana",
+      "url": "https://en.wikipedia.org/wiki/Ghatasthapana",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Baradevi",
+      "url": "https://www.google.com/maps/search/?api=1&query=Baradevi+Temple+Kanpur",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "chunri",
+      "url": "https://en.wikipedia.org/wiki/Dupatta",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "falahari",
+      "url": "https://en.wikipedia.org/wiki/Fasting_in_Hinduism",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "street markets",
+      "url": "/food-nightlife",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "sabudana tikkis",
+      "url": "https://en.wikipedia.org/wiki/Sabudana_vada",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "chaat",
+      "url": "https://en.wikipedia.org/wiki/Chaat",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "kuttu flour",
+      "url": "https://en.wikipedia.org/wiki/Buckwheat",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Akhand Jyothi",
+      "url": "https://en.wikipedia.org/wiki/Eternal_flame",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Goddess Lakshmi",
+      "url": "https://en.wikipedia.org/wiki/Lakshmi",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Durga Puja",
+      "url": "https://en.wikipedia.org/wiki/Durga_Puja",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Bengali architecture",
+      "url": "https://en.wikipedia.org/wiki/Bengal_temple_architecture",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "industrial history",
+      "url": "/culture-history#timeline",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Chaniya Cholis",
+      "url": "https://en.wikipedia.org/wiki/Ghagra_choli",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Dhunuchi Naach",
+      "url": "https://en.wikipedia.org/wiki/Dhunuchi_dance",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Gujarati",
+      "url": "https://en.wikipedia.org/wiki/Culture_of_Gujarat",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Maha Ashtami",
+      "url": "https://en.wikipedia.org/wiki/Durga_Ashtami",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Sandhi puja",
+      "url": "https://en.wikipedia.org/wiki/Sandhi_Puja",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "muhurat",
+      "url": "https://en.wikipedia.org/wiki/Muhurta",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "diyas",
+      "url": "https://en.wikipedia.org/wiki/Diya_(lamp)",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Maha Navami",
+      "url": "https://en.wikipedia.org/wiki/Maha_Navami",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Kanya Pujan",
+      "url": "https://en.wikipedia.org/wiki/Kanya_Puja",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "halwa",
+      "url": "https://en.wikipedia.org/wiki/Halva",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "black chana",
+      "url": "https://en.wikipedia.org/wiki/Kala_chana",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Sindhoor Khela",
+      "url": "https://en.wikipedia.org/wiki/Sindoor_Khela",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Lal-par sarees",
+      "url": "https://en.wikipedia.org/wiki/Sari",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "vermilion",
+      "url": "https://en.wikipedia.org/wiki/Sindoor",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Goddess Durga",
+      "url": "https://en.wikipedia.org/wiki/Durga",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "music fades",
+      "url": "/playlist",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "A",
+      "anchor": "Navaratri in Kanpur",
+      "url": "/celebrations",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "Kanpur Central railway station",
+      "url": "https://www.google.com/maps/search/?api=1&query=Kanpur+Central+railway+station",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "Kanpur Airport (Chakeri)",
+      "url": "https://www.google.com/maps/search/?api=1&query=Kanpur+Airport+Chakeri",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "How to reach Kanpur",
+      "url": "/#reach",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "Kanpur Bengali Club",
+      "url": "https://www.google.com/maps/search/?api=1&query=Kanpur+Bengali+Club",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "Swaroop Nagar",
+      "url": "https://www.google.com/maps/search/?api=1&query=Swaroop+Nagar%2C+Kanpur",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "Civil Lines",
+      "url": "https://www.google.com/maps/search/?api=1&query=Civil+Lines%2C+Kanpur",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "JK Temple",
+      "url": "https://www.google.com/maps/search/?api=1&query=JK+Temple%2C+Kanpur",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "Bithoor ghats",
+      "url": "https://www.google.com/maps/search/?api=1&query=Bithoor+Ghat%2C+Kanpur",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "Where to stay in Kanpur",
+      "url": "/accommodation",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "Kanpur weather this week",
+      "url": "/weather",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "Upcoming events",
+      "url": "/events",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "Build your Kanpur itinerary",
+      "url": "/tourism#planner",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "C",
+      "anchor": "Garba & dandiya nights on BookMyShow",
+      "url": "https://in.bookmyshow.com/explore/events-kanpur",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "D",
+      "anchor": "Learn more on Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Kalasha",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "D",
+      "anchor": "Learn more on Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Upavasa",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "D",
+      "anchor": "Learn more on Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Aarti",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "D",
+      "anchor": "Learn more on Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Lakshmi_Puja",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "D",
+      "anchor": "Learn more on Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Pandal",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "D",
+      "anchor": "Learn more on Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Censer",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "D",
+      "anchor": "Learn more on Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Dhak_(instrument)",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "D",
+      "anchor": "Learn more on Britannica",
+      "url": "https://www.britannica.com/topic/Durga-Puja",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "D",
+      "anchor": "Learn more on Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Panchangam",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "D",
+      "anchor": "Learn more on Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Kumari_(goddess)",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "D",
+      "anchor": "Learn more on West Bengal Tourism",
+      "url": "https://www.wbtourism.gov.in/",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "D",
+      "anchor": "Learn more on Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Visarjan",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "E",
+      "anchor": "Uttar Pradesh Tourism",
+      "url": "https://uptourism.gov.in/",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "E",
+      "anchor": "Ministry of Culture",
+      "url": "https://www.indiaculture.gov.in/",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "E",
+      "anchor": "Navratri",
+      "url": "https://www.britannica.com/topic/Navratri",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "E",
+      "anchor": "Durga",
+      "url": "https://www.britannica.com/topic/Durga",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "E",
+      "anchor": "Kanpur Nagar district",
+      "url": "https://kanpurnagar.nic.in/",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "E",
+      "anchor": "Kanpur",
+      "url": "https://en.wikipedia.org/wiki/Kanpur",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "E",
+      "anchor": "Kolkata",
+      "url": "https://en.wikipedia.org/wiki/Kolkata",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "E",
+      "anchor": "Gujarat Tourism",
+      "url": "https://www.gujarattourism.com/",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "E",
+      "anchor": "Gujarat",
+      "url": "https://en.wikipedia.org/wiki/Gujarat",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "E",
+      "anchor": "Garba (dance)",
+      "url": "https://en.wikipedia.org/wiki/Garba_(dance)",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "E",
+      "anchor": "Culture of Bengal",
+      "url": "https://en.wikipedia.org/wiki/Culture_of_Bengal",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "F",
+      "anchor": "Places to visit in Kanpur",
+      "url": "/tourism",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "F",
+      "anchor": "Kanpur outdoors & sports",
+      "url": "/outdoor-sports",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "F",
+      "anchor": "Weekend trips from Kanpur",
+      "url": "/nearby",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "F",
+      "anchor": "Kanpur culture news",
+      "url": "/news/kanpur/lifestyle-culture",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "F",
+      "anchor": "All our stories",
+      "url": "/blogs",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "F",
+      "anchor": "Lucknow travel guide",
+      "url": "/cities/lucknow",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "F",
+      "anchor": "Agra travel guide",
+      "url": "/cities/agra",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "F",
+      "anchor": "Prayagraj travel guide",
+      "url": "/cities/prayagraj",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "F",
+      "anchor": "Varanasi travel guide",
+      "url": "/cities/varanasi",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "F",
+      "anchor": "Ayodhya travel guide",
+      "url": "/cities/ayodhya",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "G",
+      "anchor": "#Navaratri",
+      "url": "/blogs?tag=navaratri",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "G",
+      "anchor": "#Durga Puja",
+      "url": "/blogs?tag=durga-puja",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "G",
+      "anchor": "#Garba",
+      "url": "/blogs?tag=garba",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "G",
+      "anchor": "#Festivals",
+      "url": "/blogs?tag=festivals",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "G",
+      "anchor": "#Kanpur Food",
+      "url": "/blogs?tag=kanpur-food",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "G",
+      "anchor": "#Culture",
+      "url": "/blogs?tag=culture",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "G",
+      "anchor": "#Uttar Pradesh",
+      "url": "/blogs?tag=uttar-pradesh",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "H",
+      "anchor": "Rakshaa Mukesh",
+      "url": "/blogs/author/rakshaa-mukesh",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "H",
+      "anchor": "More stories by Rakshaa →",
+      "url": "/blogs?author=rakshaa-mukesh",
+      "type": "internal",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "H",
+      "anchor": "Kanpur Ki Kahaani on Instagram (opens in a new tab)",
+      "url": "https://www.instagram.com/kanpurkikahaani/",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "H",
+      "anchor": "Kanpur Ki Kahaani on Facebook (opens in a new tab)",
+      "url": "https://www.facebook.com/share/14sYGBBZAyj/?mibextid=wwXIfr",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "H",
+      "anchor": "Kanpur Ki Kahaani on X (opens in a new tab)",
+      "url": "https://x.com/kanpurkikahaani",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "H",
+      "anchor": "Kanpur Ki Kahaani on Medium (opens in a new tab)",
+      "url": "https://medium.com/@kanpurkikahaani",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    },
+    {
+      "group": "H",
+      "anchor": "Kanpur Ki Kahaani on Reddit (opens in a new tab)",
+      "url": "https://www.reddit.com/user/KanpurkiKahaani/",
+      "type": "external",
+      "status": "not-checked",
+      "code": null
+    }
+  ]
+}

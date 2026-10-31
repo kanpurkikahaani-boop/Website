@@ -79,6 +79,7 @@ export const navaratriPost = {
     { title: "Gujarat Tourism", url: "https://www.gujarattourism.com/", publisher: "Government of Gujarat" },
     { title: "Gujarat", url: "https://en.wikipedia.org/wiki/Gujarat", publisher: "Wikipedia" },
     { title: "Garba (dance)", url: "https://en.wikipedia.org/wiki/Garba_(dance)", publisher: "Wikipedia" },
+    { title: "Culture of Bengal", url: "https://en.wikipedia.org/wiki/Culture_of_Bengal", publisher: "Wikipedia" },
     // Still to add once the network allows (each found by search and verified, never invented):
     // UP Tourism Kanpur page, Incredible India Navratri + Durga Puja pages, 4 news reports on Navaratri in Kanpur.
   ],

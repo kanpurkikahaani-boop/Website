@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PageHero } from "@/components/sections/PageHero";
 import { FilterableCards } from "@/components/sections/FilterableCards";
 import { Section } from "@/components/ui/Section";
@@ -35,6 +36,16 @@ export default function CelebrationsPage() {
           title="The City's Festival Calendar"
           intro="Dates follow the Hindu lunar calendar, so they shift a little each year."
         />
+        <Link
+          href="/blogs/navaratri-in-kanpur"
+          className="group mb-8 flex flex-col gap-1 rounded-2xl border border-accent/40 bg-accent-soft/60 p-5 transition hover:border-primary sm:flex-row sm:items-center sm:justify-between"
+        >
+          <span>
+            <span className="block text-[11px] font-bold uppercase tracking-[0.18em] text-accent-ink">Navaratri &amp; Durga Puja · From our blog</span>
+            <span className="mt-1 block font-display text-lg font-semibold text-ink">Nine nights of chunri wishes, falahari feasts, pandals and garba.</span>
+          </span>
+          <span className="shrink-0 font-semibold text-primary group-hover:underline">Read our Navaratri in Kanpur guide →</span>
+        </Link>
         <FilterableCards
           param="month"
           label="Filter festivals by month"

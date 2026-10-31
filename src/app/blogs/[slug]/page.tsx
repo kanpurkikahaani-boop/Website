@@ -74,7 +74,7 @@ function Title({ title, emphasis }: { title: string; emphasis: string | null }) 
   return (
     <>
       {title.slice(0, i)}
-      <em className="font-display italic text-accent">{emphasis}</em>
+      <em className="font-display italic text-[#b07a1f]">{emphasis}</em>
       {title.slice(i + emphasis.length)}
     </>
   );
@@ -170,7 +170,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blogs/[slug]"
         <div className="container-site mt-10 grid max-w-[1080px] gap-10 lg:grid-cols-[minmax(0,680px)_300px] lg:justify-between">
           <div className="min-w-0">
             {toc.length > 2 && <MobileToc items={toc} />}
-            <div id="article-body" className="prose-kkk article-body mt-6 lg:mt-0">
+            <div id="article-body" data-link-group="A" className="prose-kkk article-body mt-6 lg:mt-0">
               <div id="introduction" className="scroll-mt-28" dangerouslySetInnerHTML={{ __html: intro }} />
               {post.pullQuote && (
                 <blockquote className="pull-quote">

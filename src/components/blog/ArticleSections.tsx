@@ -50,7 +50,7 @@ export function PlanVisitCard({ title, items }: { title: string; items: PlanItem
   if (!items.length) return null;
   const groups = [...new Set(items.map((i) => i.group))];
   return (
-    <aside aria-label={title} className={cn(card, "article-links")}>
+    <aside aria-label={title} data-link-group="C" className={cn(card, "article-links")}>
       <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-accent-ink">
         <MapPin size={14} aria-hidden /> Plan your visit
       </p>
@@ -76,7 +76,7 @@ export function PlanVisitCard({ title, items }: { title: string; items: PlanItem
 export function GlossarySection({ items }: { items: GlossaryItem[] }) {
   if (!items.length) return null;
   return (
-    <section aria-labelledby="glossary-title" className={cn(card, "article-links mt-10")}>
+    <section aria-labelledby="glossary-title" data-link-group="D" className={cn(card, "article-links mt-10")}>
       <h2 id="glossary-title" className={h}>Words in this story</h2>
       <p className="mt-1 text-sm text-muted">Short definitions from the Kanpur Ki Kahaani team.</p>
       <dl className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -99,7 +99,7 @@ export function GlossarySection({ items }: { items: GlossaryItem[] }) {
 export function FurtherReading({ items }: { items: ReadingItem[] }) {
   if (!items.length) return null;
   return (
-    <section aria-labelledby="further-title" className="article-links mt-10">
+    <section aria-labelledby="further-title" data-link-group="E" className="article-links mt-10">
       <h2 id="further-title" className={h}>Further reading &amp; sources</h2>
       <ol className="mt-4 list-decimal space-y-2 pl-6 text-[15px] marker:font-semibold marker:text-accent-ink">
         {items.map((r) => (
@@ -127,7 +127,7 @@ export function MoreToExplore({ city }: { city: string | null }) {
     label: `${c.name} travel guide`,
   }));
   return (
-    <section aria-labelledby="explore-title" className="mt-10">
+    <section aria-labelledby="explore-title" data-link-group="F" className="mt-10">
       <h2 id="explore-title" className={h}>More Kahaani to explore</h2>
       <ul className="mt-4 grid gap-3 sm:grid-cols-2">
         {[...base, ...cities].map((l) => (
@@ -148,7 +148,7 @@ export const tagLabel = (t: string) => t.split("-").map((w) => w.charAt(0).toUpp
 export function TagChips({ tags }: { tags: string[] }) {
   if (!tags.length) return null;
   return (
-    <nav aria-label="Tags" className="mt-10 flex flex-wrap gap-2">
+    <nav aria-label="Tags" data-link-group="G" className="mt-10 flex flex-wrap gap-2">
       {tags.map((t) => (
         <Link key={t} href={`/blogs?tag=${encodeURIComponent(t)}`} className="rounded-full border border-border bg-bg-alt px-3 py-1 text-[13px] font-medium text-ink hover:border-primary hover:text-primary">
           #{tagLabel(t)}
@@ -173,7 +173,7 @@ export function AuthorAvatar({ author, name, size = 48 }: { author: Author | nul
 
 export function AuthorBox({ author, name }: { author: Author | null; name: string }) {
   return (
-    <section aria-labelledby="author-title" className={cn(card, "mt-10 flex flex-col gap-5 sm:flex-row")}>
+    <section aria-labelledby="author-title" data-link-group="H" className={cn(card, "mt-10 flex flex-col gap-5 sm:flex-row")}>
       <AuthorAvatar author={author} name={name} size={72} />
       <div className="min-w-0 flex-1">
         <p className="eyebrow text-[10.5px]">About the writer</p>

@@ -54,7 +54,7 @@ function List({ items, active }: { items: TocItem[]; active?: string }) {
 export function ArticleToc({ items }: { items: TocItem[] }) {
   const active = useActiveId(items.map((i) => i.id));
   return (
-    <nav aria-label="In this story" className="rounded-2xl border border-border bg-surface p-4">
+    <nav aria-label="In this story" data-link-group="B" className="rounded-2xl border border-border bg-surface p-4">
       <p className="eyebrow mb-2 px-3 text-[10.5px]">In this story</p>
       <List items={items} active={active} />
     </nav>
@@ -64,7 +64,7 @@ export function ArticleToc({ items }: { items: TocItem[] }) {
 /** Collapsible "In this story ▾" panel (mobile). */
 export function MobileToc({ items }: { items: TocItem[] }) {
   return (
-    <details className="group rounded-2xl border border-border bg-surface lg:hidden">
+    <details data-link-group="B" className="group rounded-2xl border border-border bg-surface lg:hidden">
       <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-ink">
         In this story
         <ChevronDown size={18} aria-hidden className="transition-transform group-open:rotate-180" />
