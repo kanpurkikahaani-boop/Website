@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 import { PostEditor } from "@/components/admin/PostEditor";
-import { getPostForAdmin, isoToIstLocal } from "@/lib/posts-admin";
+import { getAuthorOptions, getPostForAdmin, isoToIstLocal } from "@/lib/posts-admin";
 
 export const metadata = { title: "Edit post" };
 
 export default async function EditPostPage({ params }: PageProps<"/admin/blogs/[id]/edit">) {
   const { id } = await params;
-  const p = await getPostForAdmin(id);
+  const [p, authors] = await Promise.all([getPostForAdmin(id), getAuthorOptions()]);
   if (!p) notFound();
   return (
     <>
@@ -28,7 +28,19 @@ export default async function EditPostPage({ params }: PageProps<"/admin/blogs/[
           seoDescription: p.seo_description ?? "",
           status: p.status,
           publishedAt: isoToIstLocal(p.published_at),
+          authorId: p.author_id ?? "",
+          category: p.category ?? "",
+          standfirst: p.standfirst ?? "",
+          titleEmphasis: p.title_emphasis ?? "",
+          pullQuote: p.pull_quote ?? "",
+          coverCaption: p.cover_caption ?? "",
+          coverCredit: p.cover_credit ?? "",
+          keyFacts: p.key_facts ?? [],
+          furtherReading: p.further_reading ?? [],
+          glossary: p.glossary ?? [],
+          planVisit: p.plan_visit ?? [],
         }}
+        authors={authors}
       />
     </>
   );

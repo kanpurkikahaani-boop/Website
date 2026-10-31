@@ -9,7 +9,15 @@ export async function getPostForAdmin(id: string) {
   return data;
 }
 
-/** ISO → "YYYY-MM-DDTHH:mm" in IST for <input type="datetime-local"> */
+/** Author choices for the editor's byline select. */
+export async function getAuthorOptions(): Promise<{ id: string; name: string }[]> {
+  const db = await createSessionClient();
+  if (!db) return [];
+  const { data } = await db.from("authors").select("id, name").order("name");
+  return (data ?? []) as { id: string; name: string }[];
+}
+
+/** ISO →"YYYY-MM-DDTHH:mm" in IST for <input type="datetime-local"> */
 export function isoToIstLocal(iso: string | null) {
   if (!iso) return "";
   const d = new Date(new Date(iso).getTime() + 5.5 * 60 * 60 * 1000);

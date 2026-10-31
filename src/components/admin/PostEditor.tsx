@@ -7,7 +7,11 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState, useTransition } from "react";
-import { isSlugAvailable, savePost } from "@/app/admin/(panel)/blogs/actions";
+import { createAuthor, isSlugAvailable, savePost } from "@/app/admin/(panel)/blogs/actions";
+import { BLOG_CATEGORIES } from "@/lib/blog-categories";
+import type { GlossaryItem, KeyFact, PlanItem, ReadingItem } from "@/lib/posts";
+import { LinkTools } from "./LinkTools";
+import { RowsEditor } from "./RowsEditor";
 import { blogExtensions } from "@/lib/content/extensions";
 import { CITY_OPTIONS } from "@/lib/city-names";
 import { slugifyTitle, slugRe } from "@/lib/posts-admin-schema";
@@ -28,7 +32,40 @@ export interface EditorPost {
   seoDescription: string;
   status: "draft" | "published";
   publishedAt: string; // datetime-local value (IST) or ""
+  authorId: string;
+  category: string;
+  standfirst: string;
+  titleEmphasis: string;
+  pullQuote: string;
+  coverCaption: string;
+  coverCredit: string;
+  keyFacts: KeyFact[];
+  furtherReading: ReadingItem[];
+  glossary: GlossaryItem[];
+  planVisit: PlanItem[];
 }
+
+export interface AuthorOption {
+  id: string;
+  name: string;
+}
+
+/** Empty values for the rich fields (new posts). */
+export const EMPTY_RICH_FIELDS = {
+  authorId: "",
+  category: "",
+  standfirst: "",
+  titleEmphasis: "",
+  pullQuote: "",
+  coverCaption: "",
+  coverCredit: "",
+  keyFacts: [] as KeyFact[],
+  furtherReading: [] as ReadingItem[],
+  glossary: [] as GlossaryItem[],
+  planVisit: [] as PlanItem[],
+};
+
+const clean = <T extends Record<string, string>>(rows: T[]) => rows.filter((r) => Object.values(r).some((v) => v.trim()));
 
 const AUTOSAVE_MS = 30_000;
 
@@ -37,7 +74,9 @@ function istToIso(local: string) {
   return local ? new Date(`${local}:00+05:30`).toISOString() : "";
 }
 
-export function PostEditor({ initial }: { initial: EditorPost }) {
+export function PostEditor({ initial, authors: initialAuthors }: { initial: EditorPost; authors: AuthorOption[] }) {
+  const [authors, setAuthors] = useState(initialAuthors);
+  const [newAuthor, setNewAuthor] = useState("");
   const router = useRouter();
   const [post, setPost] = useState<EditorPost>(initial);
   const [slugTouched, setSlugTouched] = useState(Boolean(initial.id));
@@ -91,6 +130,17 @@ export function PostEditor({ initial }: { initial: EditorPost }) {
             seoDescription: post.seoDescription,
             status: target,
             publishedAt: istToIso(post.publishedAt) || undefined,
+            authorId: post.authorId || null,
+            category: post.category,
+            standfirst: post.standfirst,
+            titleEmphasis: post.titleEmphasis,
+            pullQuote: post.pullQuote,
+            coverCaption: post.coverCaption,
+            coverCredit: post.coverCredit,
+            keyFacts: clean(post.keyFacts as unknown as Record<string, string>[]) as unknown as KeyFact[],
+            furtherReading: clean(post.furtherReading as unknown as Record<string, string>[]) as unknown as ReadingItem[],
+            glossary: clean(post.glossary as unknown as Record<string, string>[]) as unknown as GlossaryItem[],
+            planVisit: clean(post.planVisit as unknown as Record<string, string>[]) as unknown as PlanItem[],
           });
           if (!res.ok) {
             setError(res.error);
@@ -181,10 +231,98 @@ export function PostEditor({ initial }: { initial: EditorPost }) {
           <Toolbar editor={editor} onImage={upload} uploading={uploading} />
           <EditorContent editor={editor} />
         </div>
+
+        <LinkTools
+          editor={editor}
+          boxes={{
+            planVisit: clean(post.planVisit as unknown as Record<string, string>[]).length,
+            glossary: clean(post.glossary as unknown as Record<string, string>[]).length,
+            furtherReading: clean(post.furtherReading as unknown as Record<string, string>[]).length,
+            tags: post.tags.length,
+            headings: (editor?.getJSON().content ?? []).filter((n) => n.type === "heading" && n.attrs?.level === 2).length,
+            hasAuthor: Boolean(post.authorId),
+          }}
+        />
+
+        <fieldset className="space-y-4 rounded-2xl border border-border bg-surface p-5">
+          <legend className="px-1 text-xs font-bold uppercase tracking-[0.14em] text-accent-ink">Article details</legend>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Author" htmlFor="post-author">
+              <select id="post-author" value={post.authorId} onChange={(e) => update("authorId", e.target.value)} className={inputCls}>
+                <option value="">Kanpur Ki Kahaani (no writer)</option>
+                {authors.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+              </select>
+              <div className="mt-2 flex gap-2">
+                <input aria-label="New writer's name" value={newAuthor} onChange={(e) => setNewAuthor(e.target.value)} placeholder="Add a writer…" className={inputCls + " py-2"} />
+                <button
+                  type="button"
+                  disabled={!newAuthor.trim()}
+                  onClick={async () => {
+                    const r = await createAuthor({ name: newAuthor });
+                    if (!r.ok) return setError(r.error);
+                    setAuthors((l) => [...l, { id: r.id, name: r.name }].sort((a, b) => a.name.localeCompare(b.name)));
+                    update("authorId", r.id);
+                    setNewAuthor("");
+                  }}
+                  className="shrink-0 rounded-full border border-border px-3 text-xs font-semibold text-ink hover:border-primary disabled:opacity-50"
+                >
+                  Add author
+                </button>
+              </div>
+            </Field>
+            <Field label="Category" htmlFor="post-category">
+              <select id="post-category" value={post.category} onChange={(e) => update("category", e.target.value)} className={inputCls}>
+                <option value="">— none —</option>
+                {BLOG_CATEGORIES.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
+              </select>
+            </Field>
+          </div>
+          <Field label="Standfirst" htmlFor="post-standfirst" hint="Shown under the title. Defaults to the excerpt.">
+            <textarea id="post-standfirst" rows={2} maxLength={320} value={post.standfirst} onChange={(e) => update("standfirst", e.target.value)} className={inputCls} />
+          </Field>
+          <Field label="Title emphasis (optional)" htmlFor="post-emph" hint="A phrase from the title to show in gold italics, e.g. “Everyone Must Experience”.">
+            <input id="post-emph" value={post.titleEmphasis} onChange={(e) => update("titleEmphasis", e.target.value)} className={inputCls} />
+          </Field>
+          <Field label="Pull quote" htmlFor="post-pull" hint="Quote one of the author's own sentences; shown after the introduction.">
+            <textarea id="post-pull" rows={2} maxLength={400} value={post.pullQuote} onChange={(e) => update("pullQuote", e.target.value)} className={inputCls} />
+          </Field>
+        </fieldset>
+
+        <RowsEditor<KeyFact & Record<string, string>>
+          title="At a glance (key facts)"
+          hint="Site-written summary box shown after the introduction."
+          rows={post.keyFacts as (KeyFact & Record<string, string>)[]}
+          empty={{ label: "", value: "" }}
+          fields={[{ key: "label", label: "Label (e.g. When)" }, { key: "value", label: "Value" }]}
+          onChange={(rows) => update("keyFacts", rows)}
+        />
+        <RowsEditor<PlanItem & Record<string, string>>
+          title="Plan your visit"
+          hint="Grouped links in the sidebar card. Use https:// or an internal /path."
+          rows={post.planVisit as (PlanItem & Record<string, string>)[]}
+          empty={{ group: "", label: "", url: "" }}
+          fields={[{ key: "group", label: "Group (e.g. Getting here)" }, { key: "label", label: "Link text" }, { key: "url", label: "URL", wide: true }]}
+          onChange={(rows) => update("planVisit", rows)}
+        />
+        <RowsEditor<GlossaryItem & Record<string, string>>
+          title="Glossary"
+          hint="One-line definitions written by the site, each with a “Learn more” link."
+          rows={post.glossary as (GlossaryItem & Record<string, string>)[]}
+          empty={{ term: "", definition: "", url: "", source: "" }}
+          fields={[{ key: "term", label: "Term" }, { key: "source", label: "Source name" }, { key: "definition", label: "Definition", wide: true }, { key: "url", label: "Learn-more URL", wide: true }]}
+          onChange={(rows) => update("glossary", rows)}
+        />
+        <RowsEditor<ReadingItem & Record<string, string>>
+          title="Further reading & sources"
+          rows={post.furtherReading as (ReadingItem & Record<string, string>)[]}
+          empty={{ title: "", url: "", publisher: "" }}
+          fields={[{ key: "title", label: "Title" }, { key: "publisher", label: "Publisher" }, { key: "url", label: "URL", wide: true }]}
+          onChange={(rows) => update("furtherReading", rows)}
+        />
       </div>
 
       <aside className="space-y-5">
-        <div className="sticky top-24 space-y-5">
+        <div className="space-y-5">
           <div className="rounded-2xl border border-border bg-surface p-5">
             <p className="text-sm">
               Status: <strong className={post.status === "published" ? "text-[#21603a]" : "text-accent-ink"}>{post.status === "published" ? "Published" : "Draft"}</strong>
@@ -229,6 +367,12 @@ export function PostEditor({ initial }: { initial: EditorPost }) {
                 className="block w-full text-sm file:mr-3 file:rounded-full file:border-0 file:bg-primary-soft file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary"
               />
             </Field>
+            <Field label="Cover caption" htmlFor="post-cover-caption" hint="Say “Representative image” unless the photo really is from the place.">
+              <input id="post-cover-caption" value={post.coverCaption} onChange={(e) => update("coverCaption", e.target.value)} className={inputCls} />
+            </Field>
+            <Field label="Photo credit" htmlFor="post-cover-credit" hint="e.g. Photo: Name, CC BY-SA 4.0, via Wikimedia Commons">
+              <input id="post-cover-credit" value={post.coverCredit} onChange={(e) => update("coverCredit", e.target.value)} className={inputCls} />
+            </Field>
             <Field label="Cover alt text" htmlFor="post-cover-alt" hint="Describe what the photo shows">
               <input id="post-cover-alt" value={post.coverAlt} onChange={(e) => update("coverAlt", e.target.value)} className={inputCls} />
             </Field>
@@ -251,8 +395,8 @@ export function PostEditor({ initial }: { initial: EditorPost }) {
           </div>
 
           <div className="space-y-4 rounded-2xl border border-border bg-surface p-5">
-            <Field label="SEO title" htmlFor="post-seo-title" hint={`${post.seoTitle.length}/70 — defaults to the title`}>
-              <input id="post-seo-title" maxLength={70} value={post.seoTitle} onChange={(e) => update("seoTitle", e.target.value)} className={inputCls} />
+            <Field label="SEO title" htmlFor="post-seo-title" hint={`${post.seoTitle.length}/100 — defaults to the title`}>
+              <input id="post-seo-title" maxLength={100} value={post.seoTitle} onChange={(e) => update("seoTitle", e.target.value)} className={inputCls} />
             </Field>
             <Field
               label="Meta description"

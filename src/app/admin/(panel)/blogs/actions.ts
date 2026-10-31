@@ -14,6 +14,8 @@ function revalidatePost(slug?: string) {
   revalidatePath("/");
   revalidatePath("/sitemap.xml");
   revalidatePath("/blogs/rss.xml");
+  revalidatePath("/blogs/author/[slug]", "page");
+  revalidatePath("/celebrations");
   if (slug) revalidatePath(`/blogs/${slug}`);
 }
 
@@ -46,6 +48,17 @@ export async function savePost(input: PostInput): Promise<ActionResult> {
     status: p.status,
     published_at: publishedAt,
     reading_minutes: minutes,
+    author_id: p.authorId,
+    category: p.category,
+    standfirst: p.standfirst,
+    title_emphasis: p.titleEmphasis,
+    pull_quote: p.pullQuote,
+    cover_caption: p.coverCaption,
+    cover_credit: p.coverCredit,
+    key_facts: p.keyFacts,
+    further_reading: p.furtherReading,
+    glossary: p.glossary,
+    plan_visit: p.planVisit,
   };
 
   let previousSlug: string | undefined;
@@ -98,4 +111,17 @@ export async function isSlugAvailable(slug: string, exceptId?: string) {
   if (exceptId) q = q.neq("id", exceptId);
   const { data } = await q;
   return !data?.length;
+}
+
+/** Add a writer (admin-only; RLS enforces it again in the database). */
+export async function createAuthor(input: { name: string; bio?: string }): Promise<{ ok: true; id: string; slug: string; name: string } | { ok: false; error: string }> {
+  await requireAdmin();
+  const name = input.name.trim();
+  if (name.length < 2 || name.length > 120) return { ok: false, error: "Enter the writer's name" };
+  const slug = name.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const db = await createSessionClient();
+  if (!db) return { ok: false, error: "Supabase is not configured" };
+  const { data, error } = await db.from("authors").insert({ name, slug, bio: (input.bio ?? "").trim().slice(0, 600) }).select("id, slug, name").single();
+  if (error) return { ok: false, error: error.code === "23505" ? "A writer with that name already exists" : error.message };
+  return { ok: true, id: data.id, slug: data.slug, name: data.name };
 }

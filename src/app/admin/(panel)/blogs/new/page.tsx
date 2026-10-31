@@ -1,14 +1,31 @@
-import { PostEditor } from "@/components/admin/PostEditor";
+import { EMPTY_RICH_FIELDS, PostEditor } from "@/components/admin/PostEditor";
+import { getAuthorOptions } from "@/lib/posts-admin";
 
 export const metadata = { title: "New post" };
 
-export default function NewPostPage() {
+export default async function NewPostPage() {
+  const authors = await getAuthorOptions();
   return (
     <>
       <p className="eyebrow">Blogs</p>
       <h1 className="mb-8 mt-1 text-[32px] font-bold text-primary">New post</h1>
       <PostEditor
-        initial={{ title: "", slug: "", excerpt: "", contentJson: null, coverUrl: "", coverAlt: "", city: "", tags: [], seoTitle: "", seoDescription: "", status: "draft", publishedAt: "" }}
+        authors={authors}
+        initial={{
+          title: "",
+          slug: "",
+          excerpt: "",
+          contentJson: null,
+          coverUrl: "",
+          coverAlt: "",
+          city: "",
+          tags: [],
+          seoTitle: "",
+          seoDescription: "",
+          status: "draft",
+          publishedAt: "",
+          ...EMPTY_RICH_FIELDS,
+        }}
       />
     </>
   );

@@ -17,6 +17,9 @@ export function slugifyTitle(title: string) {
 const optionalText = (max: number) =>
   z.string().trim().max(max).optional().transform((v) => (v ? v : null));
 
+/** Links in the article boxes: https URLs or internal paths only (never javascript: etc.). */
+const linkUrl = z.string().trim().max(600).refine((u) => /^https:\/\//.test(u) || /^\/(?!\/)/.test(u), "Links must be https:// or an internal /path");
+
 /** Validated on the server for every save — never trust what the editor sends. */
 export const postInputSchema = z.object({
   id: z.uuid().optional(),
@@ -28,10 +31,22 @@ export const postInputSchema = z.object({
   coverAlt: optionalText(200),
   city: z.enum(CITY_SLUGS).nullable().optional().transform((v) => v ?? null),
   tags: z.array(z.string().trim().toLowerCase().regex(/^[a-z0-9-]{1,30}$/)).max(10).default([]),
-  seoTitle: optionalText(70),
+  seoTitle: optionalText(100),
   seoDescription: optionalText(170),
   status: z.enum(["draft", "published"]),
   publishedAt: z.string().optional().transform((v) => (v ? v : null)),
+  // ── Rich article fields (all optional) ──
+  authorId: z.uuid().nullable().optional().transform((v) => v ?? null),
+  category: optionalText(40),
+  standfirst: optionalText(320),
+  titleEmphasis: optionalText(120),
+  pullQuote: optionalText(400),
+  coverCaption: optionalText(200),
+  coverCredit: optionalText(240),
+  keyFacts: z.array(z.object({ label: z.string().trim().min(1).max(40), value: z.string().trim().min(1).max(200) })).max(12).default([]),
+  furtherReading: z.array(z.object({ title: z.string().trim().min(1).max(160), url: linkUrl, publisher: z.string().trim().max(80).default("") })).max(40).default([]),
+  glossary: z.array(z.object({ term: z.string().trim().min(1).max(60), definition: z.string().trim().min(1).max(240), url: linkUrl, source: z.string().trim().max(60).default("") })).max(30).default([]),
+  planVisit: z.array(z.object({ group: z.string().trim().min(1).max(40), label: z.string().trim().min(1).max(100), url: linkUrl })).max(30).default([]),
 });
 
 export type PostInput = z.input<typeof postInputSchema>;
