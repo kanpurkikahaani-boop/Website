@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, Newspaper, Users } from "lucide-react";
+import { CalendarDays, FileText, Newspaper, Users } from "lucide-react";
 import { IconBadge } from "@/components/ui/IconBadge";
 import { createSessionClient } from "@/lib/supabase/server";
 
@@ -7,14 +7,16 @@ export const metadata = { title: "Dashboard" };
 
 export default async function AdminDashboard() {
   const db = await createSessionClient();
-  const [posts, drafts, subs, run] = await Promise.all([
+  const [posts, drafts, subs, run, upcoming] = await Promise.all([
     db?.from("posts").select("id", { count: "exact", head: true }).eq("status", "published"),
     db?.from("posts").select("id", { count: "exact", head: true }).eq("status", "draft"),
     db?.from("subscribers").select("id", { count: "exact", head: true }).is("unsubscribed_at", null),
     db?.from("news_runs").select("finished_at, items_upserted, ok").order("finished_at", { ascending: false }).limit(1).maybeSingle(),
+    db?.from("events").select("id", { count: "exact", head: true }).eq("status", "published"),
   ]);
   const cards = [
     { href: "/admin/blogs", icon: FileText, title: "Blogs", stat: `${posts?.count ?? 0} published · ${drafts?.count ?? 0} drafts` },
+    { href: "/admin/events", icon: CalendarDays, title: "Events", stat: `${upcoming?.count ?? 0} published` },
     { href: "/admin/subscribers", icon: Users, title: "Subscribers", stat: `${subs?.count ?? 0} active` },
     {
       href: "/admin/news",
@@ -29,7 +31,7 @@ export default async function AdminDashboard() {
     <>
       <p className="eyebrow">Admin</p>
       <h1 className="mt-1 text-[32px] font-bold text-primary">Dashboard</h1>
-      <ul className="mt-8 grid gap-6 md:grid-cols-3">
+      <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
           <li key={c.href}>
             <Link href={c.href} className="block rounded-2xl border border-border bg-surface p-6 transition hover:-translate-y-0.5 hover:shadow-md">

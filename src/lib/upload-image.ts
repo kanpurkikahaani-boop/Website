@@ -7,10 +7,10 @@ const MAX_BYTES = 5 * 1024 * 1024;
 const TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif"];
 
 /**
- * Compress in the browser, then upload to the `blog-images` bucket with the admin's own
- * session — Storage RLS rejects anyone who isn't the admin. Returns the public URL.
+ * Compress in the browser, then upload to a public bucket (`blog-images` or `event-images`) with the
+ * admin's own session — Storage RLS rejects anyone who isn't the admin. Returns the public URL.
  */
-export async function uploadBlogImage(file: File): Promise<string> {
+export async function uploadBlogImage(file: File, bucket: "blog-images" | "event-images" = "blog-images"): Promise<string> {
   if (!TYPES.includes(file.type)) throw new Error("Please choose a JPG, PNG, WebP, AVIF or GIF image.");
   let toUpload: File = file;
   if (file.type !== "image/gif") {
@@ -22,11 +22,11 @@ export async function uploadBlogImage(file: File): Promise<string> {
   const d = new Date();
   const path = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${crypto.randomUUID()}.${ext}`;
   const supabase = createBrowserSupabase();
-  const { error } = await supabase.storage.from("blog-images").upload(path, toUpload, {
+  const { error } = await supabase.storage.from(bucket).upload(path, toUpload, {
     contentType: toUpload.type,
     cacheControl: "31536000",
     upsert: false,
   });
   if (error) throw new Error(`Upload failed: ${error.message}`);
-  return supabase.storage.from("blog-images").getPublicUrl(path).data.publicUrl;
+  return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
 }

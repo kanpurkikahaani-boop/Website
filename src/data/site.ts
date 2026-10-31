@@ -42,6 +42,21 @@ export const socials: { platform: SocialPlatform; label: string; url: string }[]
   { platform: "reddit", label: "Reddit", url: "https://www.reddit.com/user/KanpurkiKahaani/" },
 ];
 
+/**
+ * BookMyShow city pages — BookMyShow keeps these current, so visitors always see that day's events.
+ * We only LINK to BookMyShow: no scraping, no copied content or images.
+ * BookMyShow blocks automated checks, so these are click-checked by hand (see SETUP.md).
+ * Prayagraj is listed under its former name "allahabad"; Ayodhya has no events page, so it uses the city home.
+ */
+export const bookMyShowCityUrls: Record<"kanpur" | "lucknow" | "agra" | "prayagraj" | "varanasi" | "ayodhya", string> = {
+  kanpur: "https://in.bookmyshow.com/explore/events-kanpur",
+  lucknow: "https://in.bookmyshow.com/explore/events-lucknow",
+  agra: "https://in.bookmyshow.com/explore/events-agra",
+  prayagraj: "https://in.bookmyshow.com/explore/events-allahabad",
+  varanasi: "https://in.bookmyshow.com/explore/events-varanasi",
+  ayodhya: "https://in.bookmyshow.com/explore/home/ayodhya",
+};
+
 export const mediumUrl = socials.find((s) => s.platform === "medium")!.url;
 
 export function absoluteUrl(path = "/") {

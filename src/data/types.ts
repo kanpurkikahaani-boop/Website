@@ -113,20 +113,6 @@ export interface Festival {
   alt: string;
 }
 
-export interface EventItem {
-  slug: string;
-  city: CitySlug;
-  category: "CULTURAL" | "SPORTS" | "EXPO" | "MUSIC" | "FESTIVAL" | "LITERATURE";
-  title: string;
-  /** ISO date (YYYY-MM-DD) */
-  start: string;
-  end?: string;
-  venue: string;
-  description: string;
-  url: string;
-  sample: true;
-}
-
 export interface NewsItem {
   slug: string;
   city: CitySlug;

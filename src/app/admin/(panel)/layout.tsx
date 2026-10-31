@@ -4,6 +4,7 @@ import { requireAdminPage } from "@/lib/auth";
 const links = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/blogs", label: "Blogs" },
+  { href: "/admin/events", label: "Events" },
   { href: "/admin/subscribers", label: "Subscribers" },
   { href: "/admin/news", label: "News sources" },
 ];
