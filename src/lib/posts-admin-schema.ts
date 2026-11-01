@@ -43,6 +43,7 @@ export const postInputSchema = z.object({
   pullQuote: optionalText(400),
   coverCaption: optionalText(200),
   coverCredit: optionalText(240),
+  coverFocal: z.string().regex(/^\d{1,3}% \d{1,3}%$/).nullish().transform((v) => v ?? null),
   keyFacts: z.array(z.object({ label: z.string().trim().min(1).max(40), value: z.string().trim().min(1).max(200) })).max(12).default([]),
   furtherReading: z.array(z.object({ title: z.string().trim().min(1).max(160), url: linkUrl, publisher: z.string().trim().max(80).default("") })).max(40).default([]),
   glossary: z.array(z.object({ term: z.string().trim().min(1).max(60), definition: z.string().trim().min(1).max(240), url: linkUrl, source: z.string().trim().max(60).default("") })).max(30).default([]),
