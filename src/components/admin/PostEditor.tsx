@@ -194,7 +194,7 @@ export function PostEditor({ initial, authors: initialAuthors }: { initial: Edit
     setUploading(true);
     setError(null);
     try {
-      return await uploadBlogImage(file);
+      return await uploadBlogImage(file, "blog-images", idRef.current);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Upload failed");
       return null;

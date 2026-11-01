@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { isSupabaseConfigured, supabaseAnonKey, supabaseUrl } from "./config";
+import { hardenCookie } from "./cookie-options";
 
 /** Per-request client bound to the visitor's auth cookies (admin pages, server actions). RLS applies. */
 export async function createSessionClient() {
@@ -13,7 +14,7 @@ export async function createSessionClient() {
       },
       setAll(cookiesToSet) {
         try {
-          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, hardenCookie(options)));
         } catch {
           // Called from a Server Component: cookies are read-only there. The proxy refreshes sessions.
         }
