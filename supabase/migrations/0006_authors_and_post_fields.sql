@@ -11,9 +11,13 @@ create table if not exists public.authors (
   created_at timestamptz not null default now()
 );
 alter table public.authors enable row level security;
+drop policy if exists "public reads authors" on public.authors;
 create policy "public reads authors" on public.authors for select to anon, authenticated using (true);
+drop policy if exists "admin inserts authors" on public.authors;
 create policy "admin inserts authors" on public.authors for insert to authenticated with check (public.is_admin());
+drop policy if exists "admin updates authors" on public.authors;
 create policy "admin updates authors" on public.authors for update to authenticated using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "admin deletes authors" on public.authors;
 create policy "admin deletes authors" on public.authors for delete to authenticated using (public.is_admin());
 
 insert into public.authors (slug, name, bio)
@@ -37,3 +41,10 @@ alter table public.posts
   add column if not exists links_checked_at timestamptz;
 
 create index if not exists posts_author_idx on public.posts (author_id);
+
+-- Explicit table privileges (RLS above still decides which rows; visitors can only read).
+grant select on public.authors to anon, authenticated;
+grant insert, update, delete on public.authors to authenticated;
+
+-- Make the Supabase API see the new table and columns straight away.
+notify pgrst, 'reload schema';

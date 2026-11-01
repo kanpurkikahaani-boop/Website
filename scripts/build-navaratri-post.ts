@@ -55,6 +55,12 @@ on conflict (slug) do update set
   key_facts = excluded.key_facts, plan_visit = excluded.plan_visit, glossary = excluded.glossary,
   further_reading = excluded.further_reading, status = excluded.status, published_at = excluded.published_at,
   reading_minutes = excluded.reading_minutes, author = excluded.author, author_id = excluded.author_id;
+
+-- Refresh the Supabase API's schema cache, then show the result (expect 1 row: published).
+notify pgrst, 'reload schema';
+select p.slug, p.status, p.published_at, a.name as author
+from public.posts p left join public.authors a on a.id = p.author_id
+where p.slug = ${q(P.slug)};
 `;
   writeFileSync("supabase/migrations/0007_publish_navaratri.sql", sql);
   const links = [...html.matchAll(/<a [^>]*href="([^"]+)"/g)].length;
