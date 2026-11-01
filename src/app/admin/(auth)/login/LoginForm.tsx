@@ -42,13 +42,15 @@ export function MfaForm({ next }: { next: string }) {
   );
 }
 
-export function LoginForm({ next }: { next: string }) {
+/** `disabled`: shown greyed out until the site is connected to Supabase (see SETUP.md). */
+export function LoginForm({ next, disabled = false }: { next: string; disabled?: boolean }) {
   const [mode, setMode] = useState<"password" | "reset">("password");
   const [pwState, pwAction, pwPending] = useActionState(signInWithPassword, {});
   const [resetState, resetAction, resetPending] = useActionState(sendPasswordReset, {});
 
   return (
-    <div className="mt-6 text-left">
+    <fieldset disabled={disabled} className="mt-6 min-w-0 text-left disabled:opacity-60">
+      <legend className="sr-only">Sign in</legend>
       <form action={signInWithGoogle}>
         <input type="hidden" name="next" value={next} />
         <button type="submit" className="flex w-full items-center justify-center gap-3 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary-hover">
@@ -100,6 +102,6 @@ export function LoginForm({ next }: { next: string }) {
           </button>
         </form>
       )}
-    </div>
+    </fieldset>
   );
 }

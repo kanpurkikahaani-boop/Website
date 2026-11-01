@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Team login" };
 // Friendly, and never reveals whether an email address has an account.
 const errors: Record<string, string> = {
   forbidden: "This account doesn't have team access.",
-  unconfigured: "Sign-in isn't set up yet. Add the Supabase keys and ADMIN_EMAIL (see SETUP.md).",
+  unconfigured: "Sign-in switches on once the site is connected to Supabase: add the Supabase keys and ADMIN_EMAIL in Vercel, then redeploy (SETUP.md, steps 1–6).",
   callback: "That sign-in link has expired or was already used. Please try again.",
   google: "Couldn't reach Google sign-in just now. Please try again.",
   expired: "For your security you're signed out after 7 days. Please sign in again.",
@@ -34,17 +34,12 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/logi
             {message}
           </p>
         )}
-        {!configured ? (
-          !message && (
-            <p role="alert" className="mt-4 rounded-xl bg-primary-soft px-4 py-3 text-sm font-medium text-primary">
-              {errors.unconfigured}
-            </p>
-          )
-        ) : mfa ? (
-          <MfaForm next={next} />
-        ) : (
-          <LoginForm next={next} />
+        {!configured && !message && (
+          <p role="alert" className="mt-4 rounded-xl bg-primary-soft px-4 py-3 text-sm font-medium text-primary">
+            {errors.unconfigured}
+          </p>
         )}
+        {mfa && configured ? <MfaForm next={next} /> : <LoginForm next={next} disabled={!configured} />}
         <p className="mt-6 text-xs text-muted">This area is for the Kanpur Ki Kahaani team only.</p>
       </div>
     </section>
