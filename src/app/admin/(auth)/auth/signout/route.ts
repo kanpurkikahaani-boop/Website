@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { audit } from "@/lib/admin/audit";
-import { ADMIN_SEEN_COOKIE } from "@/lib/admin/session-rules";
+import { ADMIN_HINT_COOKIE, ADMIN_SEEN_COOKIE } from "@/lib/admin/session-rules";
 import { createSessionClient } from "@/lib/supabase/server";
 
 /** POST only, same-origin only (CSRF). Clears the Supabase session and our cookie, then → /blogs. */
@@ -16,6 +16,7 @@ export async function POST(request: Request) {
   await supabase?.auth.signOut();
   const res = NextResponse.redirect(new URL("/blogs", url.origin), { status: 303 });
   res.cookies.delete(ADMIN_SEEN_COOKIE);
+  res.cookies.delete(ADMIN_HINT_COOKIE);
   res.headers.set("Cache-Control", "no-store");
   res.headers.set("Clear-Site-Data", '"cache"'); // the back button won't show cached admin pages
   return res;

@@ -1,5 +1,6 @@
 import "server-only";
 import { blogsLink, homeLink, navGroups, playlistLink } from "@/data/nav";
+import { FULL_COLS, toPost, type Row } from "@/lib/posts";
 import { createSessionClient } from "@/lib/supabase/server";
 
 /** Fetch any post (draft or published) as the signed-in admin. RLS hides drafts from everyone else. */
@@ -33,4 +34,14 @@ export async function getSiteRoutes(): Promise<{ href: string; label: string }[]
   const posts = (data ?? []).map((p) => ({ href: `/blogs/${p.slug}`, label: `Story: ${p.title}` }));
   const seen = new Set<string>();
   return [...base, ...posts].filter((r) => !seen.has(r.href) && seen.add(r.href));
+}
+
+/** Any post by id (draft / scheduled / trashed) in the public article shape, for previews. */
+export async function getPostForPreview(id: string) {
+  const db = await createSessionClient();
+  if (!db) return null;
+  const { data } = await db.from("posts").select(`${FULL_COLS}, cover_focal, status`).eq("id", id).maybeSingle();
+  if (!data) return null;
+  const row = data as unknown as Row;
+  return { post: toPost({ ...row, published_at: row.published_at ?? new Date().toISOString() }), status: String(row.status) };
 }

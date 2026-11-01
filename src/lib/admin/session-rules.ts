@@ -35,3 +35,11 @@ export function safeNext(next: unknown, fallback = "/admin/blogs"): string {
     return fallback;
   }
 }
+
+/**
+ * Non-secret hint ("1") readable by page scripts, so the public site only asks /api/admin/me whether
+ * to show admin shortcuts when someone has signed in on this browser. It grants nothing: the API
+ * re-checks the real (httpOnly) session every time.
+ */
+export const ADMIN_HINT_COOKIE = "kkk_admin_hint";
+export const hintCookieOptions = { path: "/", httpOnly: false, sameSite: "lax" as const, secure: process.env.NODE_ENV === "production", maxAge: MAX_SESSION_MS / 1000 };

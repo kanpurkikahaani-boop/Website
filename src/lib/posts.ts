@@ -72,7 +72,7 @@ export interface Post extends PostSummary {
 
 const AUTHOR_COLS = "authors(id, slug, name, bio, avatar_url, website, instagram)";
 const SUMMARY_COLS = `id, slug, title, excerpt, cover_url, cover_alt, city, tags, published_at, reading_minutes, category, author, ${AUTHOR_COLS}`;
-const FULL_COLS = `${SUMMARY_COLS}, content_html, seo_title, seo_description, updated_at, standfirst, title_emphasis, pull_quote, cover_caption, cover_credit, key_facts, further_reading, glossary, plan_visit`;
+export const FULL_COLS = `${SUMMARY_COLS}, content_html, seo_title, seo_description, updated_at, standfirst, title_emphasis, pull_quote, cover_caption, cover_credit, key_facts, further_reading, glossary, plan_visit`;
 
 function toAuthor(a: unknown): Author | null {
   const r = (Array.isArray(a) ? a[0] : a) as Row | null | undefined;
@@ -90,7 +90,7 @@ function toAuthor(a: unknown): Author | null {
 
 const arr = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
 
-type Row = Record<string, unknown>;
+export type Row = Record<string, unknown>;
 
 function toSummary(r: Row): PostSummary {
   return {
@@ -110,7 +110,7 @@ function toSummary(r: Row): PostSummary {
   };
 }
 
-function toPost(r: Row): Post {
+export function toPost(r: Row): Post {
   return {
     ...toSummary(r),
     html: String(r.content_html ?? ""),

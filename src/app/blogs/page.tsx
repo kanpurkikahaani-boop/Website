@@ -60,6 +60,8 @@ export default async function BlogsPage({ searchParams }: PageProps<"/blogs">) {
         subtitle="Travel journals and deep-dives from writers who love this city"
         crumbs={[{ name: "Blogs" }]}
       />
+      {/* Empty mount point: the admin's "+ New post" button is added here in the browser, for the admin only. */}
+      <div id="admin-slot-blogs" className="container-site empty:hidden" />
       <Section labelledBy="blog-list-title">
         <h2 id="blog-list-title" className="sr-only">All stories</h2>
         {total === 0 && !isFiltered ? (

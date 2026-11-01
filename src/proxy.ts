@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isAdminUser } from "@/lib/admin-check";
-import { ADMIN_SEEN_COOKIE, checkSessionAge, seenCookieOptions } from "@/lib/admin/session-rules";
+import { ADMIN_HINT_COOKIE, ADMIN_SEEN_COOKIE, checkSessionAge, seenCookieOptions } from "@/lib/admin/session-rules";
 import { hardenCookie } from "@/lib/supabase/cookie-options";
 
 const PUBLIC_ADMIN_PATHS = ["/admin/login", "/admin/auth/callback"];
@@ -13,6 +13,20 @@ const PUBLIC_ADMIN_PATHS = ["/admin/login", "/admin/auth/callback"];
  */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // /blogs/[slug]?preview=<token> → the dynamic preview route (it checks the token AND the admin).
+  if (pathname.startsWith("/blogs/")) {
+    const token = request.nextUrl.searchParams.get("preview");
+    const slug = pathname.slice("/blogs/".length);
+    if (!token || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) return NextResponse.next();
+    const to = request.nextUrl.clone();
+    to.pathname = `/preview/blogs/${slug}`;
+    const res = NextResponse.rewrite(to);
+    res.headers.set("X-Robots-Tag", "noindex, nofollow");
+    res.headers.set("Cache-Control", "private, no-store");
+    return res;
+  }
+
   let response = NextResponse.next({ request });
   const noindex = (r: NextResponse) => {
     r.headers.set("X-Robots-Tag", "noindex, nofollow");
@@ -56,6 +70,7 @@ export async function proxy(request: NextRequest) {
     const res = redirectToLogin(request, verdict === "idle" ? "idle" : "expired", true);
     response.cookies.getAll().forEach((c) => res.cookies.set(c)); // carry the cleared auth cookies
     res.cookies.delete(ADMIN_SEEN_COOKIE);
+    res.cookies.delete(ADMIN_HINT_COOKIE);
     return noindex(res);
   }
 
@@ -81,5 +96,5 @@ function redirectToLogin(request: NextRequest, error?: string, withNext = false,
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/blogs/:slug"],
 };

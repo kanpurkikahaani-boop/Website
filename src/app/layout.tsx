@@ -7,6 +7,7 @@ import { SkipLink } from "@/components/layout/SkipLink";
 import { TopBar } from "@/components/layout/TopBar";
 import { DevaFontLoader } from "@/components/layout/DevaFontLoader";
 import { MobilePlanFab } from "@/components/layout/MobilePlanFab";
+import { AdminIsland } from "@/components/admin/AdminIsland";
 import { Analytics } from "@/components/seo/Analytics";
 import { site } from "@/data/site";
 import "./globals.css";
@@ -72,6 +73,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <MobilePlanFab />
         <Analytics />
         <DevaFontLoader />
+        <AdminIsland />
       </body>
     </html>
   );
