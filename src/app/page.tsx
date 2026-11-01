@@ -243,6 +243,12 @@ export default async function HomePage() {
       )}
 
       <NewsletterBand />
+      <p className="bg-bg py-6 text-center text-sm">
+        The people behind these stories:{" "}
+        <Link href="/team" className="font-semibold text-primary hover:underline">
+          Meet the team →
+        </Link>
+      </p>
       <NewsletterPopupLazy />
     </>
   );

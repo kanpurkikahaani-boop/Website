@@ -28,6 +28,7 @@ for (const f of [
   "supabase/migrations/0006_authors_and_post_fields.sql",
   "supabase/migrations/0008_admin_v6.sql",
   "supabase/migrations/0008_admin_v6.sql", // twice: must be re-runnable
+  "supabase/migrations/0009_team_authors.sql",
 ]) {
   await c.query(readFileSync(f, "utf8"));
 }
@@ -101,10 +102,10 @@ const tests = [
   { name: "event-images: upload", sql: `insert into storage.objects (bucket_id, name) values ('event-images', 'x/evil.jpg')`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => !r.ok },
   { name: "event-images: delete", sql: `delete from storage.objects where bucket_id = 'event-images'`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => !r.ok || r.rows === 0 },
   { name: "events: non-BookMyShow bms_url", sql: `insert into public.events (title, category, city, start_at, status, bms_url) values ('Phish', 'music', 'kanpur', now(), 'draft', 'https://evil.example/book')`, adminExpect: (r) => !r.ok, otherExpect: (r) => !r.ok },
-  { name: "authors: read (public)", sql: `select 1 from public.authors`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => r.ok && r.rows === 1 },
+  { name: "authors: read (public)", sql: `select 1 from public.authors`, adminExpect: (r) => r.ok && r.rows === 2, otherExpect: (r) => r.ok && r.rows === 2 },
   { name: "authors: insert", sql: `insert into public.authors (slug, name) values ('fake-writer', 'Fake Writer')`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => !r.ok },
-  { name: "authors: update", sql: `update public.authors set bio = 'Hacked'`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => !r.ok || r.rows === 0 },
-  { name: "authors: delete", sql: `delete from public.authors`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => !r.ok || r.rows === 0 },
+  { name: "authors: update", sql: `update public.authors set bio = 'Hacked'`, adminExpect: (r) => r.ok && r.rows === 2, otherExpect: (r) => !r.ok || r.rows === 0 },
+  { name: "authors: delete", sql: `delete from public.authors`, adminExpect: (r) => r.ok && r.rows === 2, otherExpect: (r) => !r.ok || r.rows === 0 },
   { name: "posts: change author/byline", sql: `update public.posts set author_id = null, standfirst = 'x'`, adminExpect: (r) => r.ok && r.rows === 4, otherExpect: (r) => !r.ok || r.rows === 0 },
   { name: "cron_runs: write", sql: `insert into public.cron_runs (job) values ('refresh-events')`, adminExpect: (r) => !r.ok, otherExpect: (r) => !r.ok },
   { name: "subscribers: read", sql: `select email from public.subscribers`, adminExpect: (r) => r.ok && r.rows === 1, otherExpect: (r) => r.ok && r.rows === 0 },

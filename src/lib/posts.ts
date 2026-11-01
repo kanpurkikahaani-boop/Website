@@ -11,6 +11,8 @@ export interface Author {
   avatarUrl: string | null;
   website: string | null;
   instagram: string | null;
+  /** Byline title, e.g. "Reddit & Medium Lead, Kanpur Ki Kahaani" (column added in 0009). */
+  title: string | null;
 }
 
 export interface KeyFact {
@@ -70,7 +72,8 @@ export interface Post extends PostSummary {
   planVisit: PlanItem[];
 }
 
-const AUTHOR_COLS = "authors(id, slug, name, bio, avatar_url, website, instagram)";
+// `authors(*)`: works both before and after migration 0009 adds `title`.
+const AUTHOR_COLS = "authors(*)";
 const SUMMARY_COLS = `id, slug, title, excerpt, cover_url, cover_alt, city, tags, published_at, reading_minutes, category, author, ${AUTHOR_COLS}`;
 export const FULL_COLS = `${SUMMARY_COLS}, content_html, seo_title, seo_description, updated_at, standfirst, title_emphasis, pull_quote, cover_caption, cover_credit, key_facts, further_reading, glossary, plan_visit`;
 
@@ -85,6 +88,7 @@ function toAuthor(a: unknown): Author | null {
     avatarUrl: (r.avatar_url as string) ?? null,
     website: (r.website as string) ?? null,
     instagram: (r.instagram as string) ?? null,
+    title: (r.title as string) ?? null,
   };
 }
 
@@ -226,14 +230,14 @@ export async function getAllTags() {
 export async function getAuthor(slug: string): Promise<Author | null> {
   const db = createPublicClient();
   if (!db) return null;
-  const { data } = await db.from("authors").select("id, slug, name, bio, avatar_url, website, instagram").eq("slug", slug).maybeSingle();
+  const { data } = await db.from("authors").select("*").eq("slug", slug).maybeSingle();
   return toAuthor(data);
 }
 
 export async function getAllAuthors(): Promise<Author[]> {
   const db = createPublicClient();
   if (!db) return [];
-  const { data } = await db.from("authors").select("id, slug, name, bio, avatar_url, website, instagram").order("name");
+  const { data } = await db.from("authors").select("*").order("name");
   return (data ?? []).map((a) => toAuthor(a)!).filter(Boolean);
 }
 

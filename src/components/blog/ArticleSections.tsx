@@ -180,12 +180,16 @@ export function AuthorBox({ author, name }: { author: Author | null; name: strin
         <h2 id="author-title" className="mt-1 font-display text-xl font-bold text-ink">
           {author ? <Link href={`/blogs/author/${author.slug}`} className="hover:text-primary">{name}</Link> : name}
         </h2>
+        {author?.title && <p className="mt-0.5 text-sm font-semibold text-accent-ink">{author.title}</p>}
         {author?.bio && <p className="mt-1.5 text-[15px]">{author.bio}</p>}
         {author && (
           <Link href={`/blogs?author=${author.slug}`} className="mt-2 inline-block text-sm font-semibold text-primary hover:underline">
             More stories by {name.split(" ")[0]} →
           </Link>
         )}
+        <Link href="/team" className="mt-2 block text-sm font-semibold text-primary hover:underline">
+          Meet the team →
+        </Link>
         <div className="mt-4 rounded-xl bg-dark p-3">
           <p className="mb-1 px-1 text-[10.5px] font-bold uppercase tracking-[0.18em] text-accent">Follow Kanpur Ki Kahaani</p>
           <SocialLinks variant="bar" />

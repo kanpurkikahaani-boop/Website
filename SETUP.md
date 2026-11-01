@@ -33,6 +33,9 @@ Open **SQL Editor → New query** and run each file from `supabase/migrations/`,
 | 5 | `0006_authors_and_post_fields.sql` | The `authors` table (public read, admin-only write), Rakshaa Mukesh's author profile, and the new article fields on `posts` (author, category, standfirst, pull quote, cover credit, key facts, plan-your-visit, glossary, further reading, link report) |
 | 6 | `0007_publish_navaratri.sql` | Publishes **"Why Navaratri in Kanpur Is Something Everyone Must Experience!"** (14 Oct 2026, by Rakshaa Mukesh). Safe to run again: it updates the post in place |
 | 7 | `0008_admin_v6.sql` | Admin editing: Trash (`deleted_at`), cover focal point, revision history, old-URL redirects, the audit log and the sign-in rate limit. Blog images limited to JPG/PNG/WebP, 5 MB. Safe to run again |
+| 8 | `0009_team_authors.sql` | Team ↔ blog: adds a byline title to authors, gives Rakshaa Mukesh her team photo, bio and title ("Reddit & Medium Lead"), and adds Monisha MS (Blog Editor) as an author. Safe to run again |
+
+> **New Supabase project?** Instead of the files one by one, paste `supabase/setup-all-in-one.sql` once — it is 0001–0009 joined in order.
 
 > **Already ran the old `0003_seed_posts.sql`?** That file no longer exists. Just run `0004` and `0005`: `0005` removes those three posts. Blog posts now come only from the admin editor.
 

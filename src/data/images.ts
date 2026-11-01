@@ -29,3 +29,35 @@ export const sectionImages = {
   exploreShopping: { image: "/images/kanpur/gumti-no-5.jpg" as ImagePath, alt: "Bangle stalls at Gumti No. 5, Kanpur", label: "Shopping Streets" },
   exploreOutdoor: { image: "/images/kanpur/green-park-stadium.jpg" as ImagePath, alt: "Green Park Stadium, Kanpur", label: "Outdoor & Sports" },
 };
+
+/**
+ * Image manifest: where each photo comes from and under what licence. `npm run images:verify`
+ * checks every entry exists on disk with the recorded size, and has a source, licence and alt text.
+ */
+export type ImageSource = "own" | "wikimedia" | "unsplash" | "other";
+
+export interface ManifestImage {
+  path: string;
+  width: number;
+  height: number;
+  alt: string;
+  source: ImageSource;
+  license: string;
+  /** Shown on a credits page (team photos are our own, so no). */
+  credit?: boolean;
+}
+
+const OWN = "© Kanpur Ki Kahaani team, used with permission";
+
+/** The team's own portraits (/team). Original files, no AI processing — only next/image resizing + CSS cropping. */
+export const teamPhotos: ManifestImage[] = [
+  { path: "/images/team/monisha-ms.jpg", width: 413, height: 531, alt: "Portrait of Monisha MS, Blog Editor at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
+  { path: "/images/team/chinmayi-srinivasan.jpg", width: 1367, height: 2048, alt: "Portrait of Chinmayi Srinivasan, Web Designer at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
+  { path: "/images/team/piyusha-taunk.jpg", width: 865, height: 865, alt: "Portrait of Piyusha Taunk, Content Strategist at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
+  { path: "/images/team/rakshaa-mukesh.jpg", width: 1280, height: 853, alt: "Portrait of Rakshaa Mukesh, Reddit & Medium Lead at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
+  { path: "/images/team/lakshmi-gayathri.jpg", width: 1536, height: 2048, alt: "Portrait of Lakshmi Gayathri, Instagram & Facebook Lead at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
+  { path: "/images/team/aksheet-dhanvijay.jpg", width: 928, height: 1027, alt: "Portrait of Aksheet Dhanvijay, Outreach Lead at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
+  { path: "/images/team/kallu-hasika-reddy.jpg", width: 960, height: 1111, alt: "Portrait of Kallu Hasika Reddy, SEO & Promotions Lead at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
+];
+
+export const imageManifest: ManifestImage[] = [...teamPhotos];

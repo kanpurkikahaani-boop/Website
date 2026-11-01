@@ -115,6 +115,7 @@ export function ArticleView({
                 ) : (
                   <strong className="text-ink">{post.author}</strong>
                 )}
+                {post.authorInfo?.title && <span className="text-muted"> · {post.authorInfo.title}</span>}
               </span>
             </span>
             <span>
@@ -219,7 +220,13 @@ export function ArticleView({
           datePublished: post.publishedAt,
           dateModified: post.updatedAt,
           author: post.authorInfo
-            ? { "@type": "Person", name: post.author, url: absoluteUrl(`/blogs/author/${post.authorInfo.slug}`) }
+            ? {
+                "@type": "Person",
+                name: post.author,
+                url: absoluteUrl(`/blogs/author/${post.authorInfo.slug}`),
+                ...(post.authorInfo.title ? { jobTitle: post.authorInfo.title.replace(/, Kanpur Ki Kahaani$/, "") } : {}),
+                ...(post.authorInfo.avatarUrl ? { image: post.authorInfo.avatarUrl.startsWith("/") ? absoluteUrl(post.authorInfo.avatarUrl) : post.authorInfo.avatarUrl } : {}),
+              }
             : { "@type": "Organization", name: post.author, url: site.url },
           publisher: {
             "@type": "Organization",

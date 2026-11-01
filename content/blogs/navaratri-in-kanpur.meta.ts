@@ -11,7 +11,7 @@ export const navaratriPost = {
   slug: "navaratri-in-kanpur",
   title: "Why Navaratri in Kanpur Is Something Everyone Must Experience!",
   titleEmphasis: "Everyone Must Experience",
-  author: { slug: "rakshaa-mukesh", name: "Rakshaa Mukesh", bio: "Writer and storyteller for Kanpur Ki Kahaani." },
+  author: { slug: "rakshaa-mukesh", name: "Rakshaa Mukesh", bio: "Responsible for leading Kanpur's digital presence on Reddit and Medium, creating engaging content and discussions to build awareness and interest in the city. Focused on leveraging these platforms to showcase Kanpur's culture, attractions, and unique identity to a wider audience." },
   publishedAt: "2026-10-14T10:00:00+05:30",
   city: "kanpur",
   category: "celebrations",

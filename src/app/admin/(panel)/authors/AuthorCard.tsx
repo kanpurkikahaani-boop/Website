@@ -13,6 +13,7 @@ export interface AuthorRow {
   avatarUrl: string;
   website: string;
   instagram: string;
+  title: string;
   posts: number;
 }
 
@@ -31,7 +32,7 @@ export function AuthorCard({ author }: { author: AuthorRow }) {
       onSubmit={(e) => {
         e.preventDefault();
         start(async () => {
-          const r = await updateAuthor({ id: a.id, name: a.name, bio: a.bio, avatarUrl: a.avatarUrl, website: a.website, instagram: a.instagram });
+          const r = await updateAuthor({ id: a.id, name: a.name, bio: a.bio, avatarUrl: a.avatarUrl, website: a.website, instagram: a.instagram, title: a.title });
           setMsg(r.ok ? { ok: true, text: "Saved." } : { ok: false, text: r.error });
           if (r.ok) router.refresh();
         });
@@ -53,6 +54,7 @@ export function AuthorCard({ author }: { author: AuthorRow }) {
       </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <label className="text-xs font-semibold text-muted">Name<input value={a.name} onChange={(e) => set("name", e.target.value)} className={input} /></label>
+        <label className="text-xs font-semibold text-muted sm:col-span-2">Byline title<input value={a.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Blog Editor, Kanpur Ki Kahaani" className={input} /></label>
         <label className="text-xs font-semibold text-muted">Instagram handle<input value={a.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="@handle" className={input} /></label>
         <label className="text-xs font-semibold text-muted sm:col-span-2">Bio<textarea value={a.bio} onChange={(e) => set("bio", e.target.value)} rows={3} maxLength={600} className={input} /></label>
         <label className="text-xs font-semibold text-muted">Website<input value={a.website} onChange={(e) => set("website", e.target.value)} placeholder="https://" className={input} /></label>

@@ -17,6 +17,7 @@ export const ogPages: Record<string, { title: string; eyebrow: string }> = {
   campus: { title: "Campus Life", eyebrow: "Stay & Live" },
   privacy: { title: "Privacy", eyebrow: "Kanpur Ki Kahaani" },
   blogs: { title: "From Our Blogs", eyebrow: "Stories" },
+  team: { title: "Meet the Team", eyebrow: "The Storytellers" },
   ...Object.fromEntries(
     cities.map((c) => [`city-${c.slug}`, { title: `${c.name} — ${c.tagline}`, eyebrow: `Nearby city · ~${c.distanceKm} km from Kanpur` }]),
   ),

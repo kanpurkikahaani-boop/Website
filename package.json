@@ -16,7 +16,8 @@
     "test:rls": "node scripts/test-rls.mjs",
     "build:navaratri": "tsx scripts/build-navaratri-post.ts",
     "check:links": "tsx scripts/check-links.ts",
-    "test:e2e": "bash tests/run-e2e.sh"
+    "test:e2e": "bash tests/run-e2e.sh",
+    "images:verify": "tsx scripts/verify-images.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

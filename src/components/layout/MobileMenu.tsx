@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ChevronDown, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { blogsLink, navGroups, groupFor, playlistLink } from "@/data/nav";
+import { blogsLink, navGroups, groupFor, playlistLink, teamLink } from "@/data/nav";
 import { SpotifyIcon } from "@/components/ui/BrandIcons";
 import { cn } from "@/lib/utils";
 
@@ -127,6 +127,16 @@ export function MobileMenu({ open, onClose, pathname }: { open: boolean; onClose
             )}
           >
             {blogsLink.label}
+          </Link>
+          <Link
+            href={teamLink.href}
+            aria-current={pathname === teamLink.href ? "page" : undefined}
+            className={cn(
+              "block rounded-xl px-4 py-3 text-base font-semibold",
+              pathname === teamLink.href ? "bg-primary-soft text-primary" : "text-ink",
+            )}
+          >
+            {teamLink.label}
           </Link>
           <Link
             href={playlistLink.href}

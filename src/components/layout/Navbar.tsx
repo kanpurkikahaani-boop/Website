@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Menu } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { blogsLink, navGroups, groupFor, playlistLink, type NavGroup } from "@/data/nav";
+import { blogsLink, navGroups, groupFor, playlistLink, teamLink, type NavGroup } from "@/data/nav";
 import { SpotifyIcon } from "@/components/ui/BrandIcons";
 import { cn } from "@/lib/utils";
 import { MobileMenu } from "./MobileMenu";
@@ -82,6 +82,18 @@ export function Navbar({ logo }: { logo: React.ReactNode }) {
                 {blogsLink.label}
               </Link>
             </li>
+            <li>
+              <Link
+                href={teamLink.href}
+                aria-current={pathname === teamLink.href ? "page" : undefined}
+                className={cn(
+                  "rounded-full px-4 py-2 text-[14.5px] font-medium transition-colors",
+                  pathname === teamLink.href ? "bg-primary-soft text-primary" : "text-ink hover:text-primary",
+                )}
+              >
+                {teamLink.label}
+              </Link>
+            </li>
             <li className="relative">
               <Link
                 href={playlistLink.href}
@@ -96,7 +108,7 @@ export function Navbar({ logo }: { logo: React.ReactNode }) {
               </Link>
               <span
                 role="tooltip"
-                className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-dark px-2.5 py-1 text-xs font-medium text-cream opacity-0 shadow transition-opacity peer-hover:opacity-100 peer-focus-visible:opacity-100"
+                className="pointer-events-none absolute right-0 top-full z-50 mt-2 whitespace-nowrap rounded-md bg-dark px-2.5 py-1 text-xs font-medium text-cream opacity-0 shadow transition-opacity peer-hover:opacity-100 peer-focus-visible:opacity-100"
               >
                 City Playlist
               </span>

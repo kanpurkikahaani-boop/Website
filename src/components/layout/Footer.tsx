@@ -14,7 +14,7 @@ export function Footer() {
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream/70">{site.description}</p>
           <SocialLinks variant="footer" className="mt-5" />
         </div>
-        <FooterCol title="Home" links={[{ label: "Home", href: "/" }, { label: "How to Reach", href: "/#reach" }, { label: "Blogs", href: "/blogs" }, { label: "City Playlist", href: "/playlist", spotify: true }, { label: "Newsletter", href: "/#newsletter" }]} />
+        <FooterCol title="Home" links={[{ label: "Home", href: "/" }, { label: "How to Reach", href: "/#reach" }, { label: "Blogs", href: "/blogs" }, { label: "Meet the Team", href: "/team" }, { label: "City Playlist", href: "/playlist", spotify: true }, { label: "Newsletter", href: "/#newsletter" }]} />
         {navGroups.map((g) => (
           <FooterCol key={g.label} title={g.label} links={g.items} />
         ))}

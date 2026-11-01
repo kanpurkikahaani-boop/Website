@@ -9,7 +9,9 @@ const schema = z.object({
   id: z.string().uuid(),
   name: z.string().trim().min(2, "Enter the writer's name").max(120),
   bio: z.string().trim().max(600).default(""),
-  avatarUrl: z.union([z.literal(""), z.string().url().startsWith("https://")]).default(""),
+  // Uploaded photos are https:// Storage URLs; team photos live on the site under /images/team/.
+  avatarUrl: z.union([z.literal(""), z.string().url().startsWith("https://"), z.string().regex(/^\/images\/[a-z0-9/_-]+\.(jpg|jpeg|png|webp)$/)]).default(""),
+  title: z.string().trim().max(120).default(""),
   website: z.union([z.literal(""), z.string().url().startsWith("https://", "Use an https:// link")]).default(""),
   instagram: z.string().trim().max(60).regex(/^@?[A-Za-z0-9._]*$/, "Just the handle, e.g. @kanpurkikahaani").default(""),
 });
@@ -23,7 +25,7 @@ export async function updateAuthor(input: z.input<typeof schema>): Promise<{ ok:
   if (!db) return { ok: false, error: "Supabase is not configured" };
   const { data, error } = await db
     .from("authors")
-    .update({ name: a.name, bio: a.bio, avatar_url: a.avatarUrl || null, website: a.website || null, instagram: a.instagram.replace(/^@/, "") || null })
+    .update({ name: a.name, bio: a.bio, avatar_url: a.avatarUrl || null, website: a.website || null, instagram: a.instagram.replace(/^@/, "") || null, ...(a.title ? { title: a.title } : {}) })
     .eq("id", a.id)
     .select("slug")
     .single();

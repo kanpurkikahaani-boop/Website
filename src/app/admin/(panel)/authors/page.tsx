@@ -7,7 +7,7 @@ export const metadata = { title: "Authors" };
 export default async function AuthorsPage() {
   const db = await createSessionClient();
   const [{ data: authors, error }, { data: posts }] = await Promise.all([
-    db!.from("authors").select("id, slug, name, bio, avatar_url, website, instagram").order("name"),
+    db!.from("authors").select("*").order("name"),
     db!.from("posts").select("author_id").is("deleted_at", null),
   ]);
   const counts = new Map<string, number>();
@@ -27,7 +27,7 @@ export default async function AuthorsPage() {
         {(authors ?? []).map((a) => (
           <AuthorCard
             key={a.id}
-            author={{ id: a.id, slug: a.slug, name: a.name, bio: a.bio ?? "", avatarUrl: a.avatar_url ?? "", website: a.website ?? "", instagram: a.instagram ?? "", posts: counts.get(a.id) ?? 0 }}
+            author={{ id: a.id, slug: a.slug, name: a.name, bio: a.bio ?? "", avatarUrl: a.avatar_url ?? "", website: a.website ?? "", instagram: a.instagram ?? "", title: a.title ?? "", posts: counts.get(a.id) ?? 0 }}
           />
         ))}
       </div>

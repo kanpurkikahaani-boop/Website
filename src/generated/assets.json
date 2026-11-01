@@ -1,4 +1,12 @@
 {
   "hasLogo": true,
-  "images": []
+  "images": [
+    "/images/team/aksheet-dhanvijay.jpg",
+    "/images/team/chinmayi-srinivasan.jpg",
+    "/images/team/kallu-hasika-reddy.jpg",
+    "/images/team/lakshmi-gayathri.jpg",
+    "/images/team/monisha-ms.jpg",
+    "/images/team/piyusha-taunk.jpg",
+    "/images/team/rakshaa-mukesh.jpg"
+  ]
 }

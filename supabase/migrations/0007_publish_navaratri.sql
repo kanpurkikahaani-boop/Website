@@ -3,7 +3,7 @@
 -- Run after 0006_authors_and_post_fields.sql.
 
 insert into public.authors (slug, name, bio)
-values ($kkk$rakshaa-mukesh$kkk$, $kkk$Rakshaa Mukesh$kkk$, $kkk$Writer and storyteller for Kanpur Ki Kahaani.$kkk$)
+values ($kkk$rakshaa-mukesh$kkk$, $kkk$Rakshaa Mukesh$kkk$, $kkk$Responsible for leading Kanpur's digital presence on Reddit and Medium, creating engaging content and discussions to build awareness and interest in the city. Focused on leveraging these platforms to showcase Kanpur's culture, attractions, and unique identity to a wider audience.$kkk$)
 on conflict (slug) do nothing;
 
 insert into public.posts (

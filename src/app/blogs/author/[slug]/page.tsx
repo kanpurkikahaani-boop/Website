@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/sections/Breadcrumbs";
@@ -42,9 +43,12 @@ export default async function AuthorPage({ params }: PageProps<"/blogs/author/[s
         <div className="container-site flex flex-col items-center gap-5 py-14 text-center md:flex-row md:text-left">
           <AuthorAvatar author={author} name={author.name} size={96} />
           <div>
-            <p className="eyebrow text-accent">Writer</p>
+            <p className="eyebrow text-accent">{author.title?.replace(/, Kanpur Ki Kahaani$/, "") || "Writer"}</p>
             <h1 className="mt-2 text-[36px] font-bold text-white md:text-[48px]">{author.name}</h1>
             {author.bio && <p className="mt-2 max-w-xl text-cream/80">{author.bio}</p>}
+            <Link href="/team" className="mt-3 inline-block text-sm font-semibold text-accent hover:underline">
+              Meet the team →
+            </Link>
           </div>
         </div>
       </section>
@@ -82,7 +86,8 @@ export default async function AuthorPage({ params }: PageProps<"/blogs/author/[s
             name: author.name,
             url: absoluteUrl(`/blogs/author/${author.slug}`),
             ...(author.bio ? { description: author.bio } : {}),
-            ...(author.avatarUrl ? { image: author.avatarUrl } : {}),
+            ...(author.avatarUrl ? { image: author.avatarUrl.startsWith("/") ? absoluteUrl(author.avatarUrl) : author.avatarUrl } : {}),
+            ...(author.title ? { jobTitle: author.title.replace(/, Kanpur Ki Kahaani$/, "") } : {}),
             sameAs: [author.website, author.instagram].filter(Boolean),
             worksFor: { "@type": "Organization", name: site.name, url: site.url },
           },
