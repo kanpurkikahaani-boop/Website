@@ -3,6 +3,7 @@ import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { isAdminUser } from "@/lib/admin-check";
 import { audit } from "./audit";
+import { needsSecondFactor } from "./mfa";
 import { ADMIN_HINT_COOKIE, ADMIN_SEEN_COOKIE, hintCookieOptions, safeNext, seenCookieOptions } from "./session-rules";
 
 /**
@@ -22,8 +23,7 @@ export async function finishAdminSignIn(supabase: SupabaseClient, user: User | n
   jar.set(ADMIN_SEEN_COOKIE, String(Date.now()), seenCookieOptions);
   jar.set(ADMIN_HINT_COOKIE, "1", hintCookieOptions);
   const dest = safeNext(next);
-  const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-  if (aal?.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
+  if (await needsSecondFactor(supabase)) {
     return `/admin/login?step=mfa&next=${encodeURIComponent(dest)}`;
   }
   await audit("login", user!.email!, { detail: method });

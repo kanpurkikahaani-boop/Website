@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isAdminUser } from "@/lib/admin-check";
 import { ADMIN_HINT_COOKIE, ADMIN_SEEN_COOKIE, checkSessionAge, seenCookieOptions } from "@/lib/admin/session-rules";
+import { needsSecondFactor } from "@/lib/admin/mfa";
 import { hardenCookie } from "@/lib/supabase/cookie-options";
 
 const PUBLIC_ADMIN_PATHS = ["/admin/login", "/admin/auth/callback"];
@@ -74,8 +75,7 @@ export async function proxy(request: NextRequest) {
     return noindex(res);
   }
 
-  const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-  if (aal?.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
+  if (await needsSecondFactor(supabase)) {
     const res = redirectToLogin(request, undefined, true, "mfa");
     response.cookies.getAll().forEach((c) => res.cookies.set(c)); // keep refreshed session cookies
     return noindex(res);

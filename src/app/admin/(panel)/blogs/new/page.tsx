@@ -1,4 +1,5 @@
-import { EMPTY_RICH_FIELDS, PostEditor } from "@/components/admin/PostEditor";
+import { PostEditor } from "@/components/admin/PostEditor";
+import { EMPTY_RICH_FIELDS } from "@/lib/admin/editor-defaults";
 import { getAuthorOptions, getSiteRoutes } from "@/lib/posts-admin";
 
 export const metadata = { title: "New post" };

@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import { isAdminUser } from "./admin-check";
+import { needsSecondFactor } from "./admin/mfa";
 import { ADMIN_SEEN_COOKIE, checkSessionAge } from "./admin/session-rules";
 import { createSessionClient } from "./supabase/server";
 
@@ -19,8 +20,7 @@ export async function getAdminUser(): Promise<User | null> {
   // Same limits as the proxy: 7-day sessions, 12 h idle, and 2-step verification once enrolled.
   const seen = (await cookies()).get(ADMIN_SEEN_COOKIE)?.value;
   if (checkSessionAge(data.user.last_sign_in_at, seen) !== "ok") return null;
-  const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-  if (aal?.nextLevel === "aal2" && aal.currentLevel !== "aal2") return null;
+  if (await needsSecondFactor(supabase)) return null;
   return data.user;
 }
 

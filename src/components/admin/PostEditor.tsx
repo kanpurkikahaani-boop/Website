@@ -52,25 +52,11 @@ export interface AuthorOption {
   name: string;
 }
 
-/** Empty values for the rich fields (new posts). */
-export const EMPTY_RICH_FIELDS = {
-  authorId: "",
-  category: "",
-  standfirst: "",
-  titleEmphasis: "",
-  pullQuote: "",
-  coverCaption: "",
-  coverCredit: "",
-  coverFocal: "",
-  keyFacts: [] as KeyFact[],
-  furtherReading: [] as ReadingItem[],
-  glossary: [] as GlossaryItem[],
-  planVisit: [] as PlanItem[],
-};
 
 const clean = <T,>(rows: T[]) => rows.filter((r) => Object.values(r as Record<string, string>).some((v) => String(v ?? "").trim())) as T[];
 
 const AUTOSAVE_MS = 20_000;
+const HANDOFF_KEY = "kkk-editor-handoff";
 
 /** datetime-local (interpreted as IST) → ISO string */
 function istToIso(local: string) {
@@ -89,7 +75,6 @@ function ago(ms: number) {
 type Toast = { kind: "ok" | "error"; text: string } | null;
 
 export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { initial: EditorPost; authors: AuthorOption[]; routes?: SiteRoute[] }) {
-  const router = useRouter();
   const [authors, setAuthors] = useState(initialAuthors);
   const [newAuthor, setNewAuthor] = useState("");
   const [post, setPost] = useState<EditorPost>(initial);
@@ -107,7 +92,10 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
   const [historyOpen, setHistoryOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [backup, setBackup] = useState<{ title: string; json: Record<string, unknown>; at: number } | null>(null);
+  const router = useRouter();
   const idRef = useRef(initial.id);
+  // Bumped on every edit, so a save knows whether more was typed while it was in flight.
+  const versionRef = useRef(0);
   const [postId, setPostId] = useState(initial.id);
   const backupKey = initial.id ? `kkk-post-backup-${initial.id}` : null;
 
@@ -119,7 +107,10 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
       attributes: { class: "prose-kkk article-body min-h-[480px] px-6 py-5 focus:outline-none", "aria-label": "Post body" },
       transformPastedHTML: cleanPastedHtml,
     },
-    onUpdate: () => setDirty(true),
+    onUpdate: () => {
+      versionRef.current++;
+      setDirty(true);
+    },
   });
 
   const showToast = (t: Toast) => {
@@ -133,6 +124,7 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
       if (key === "title" && !slugTouched) next.slug = slugifyTitle(String(value));
       return next;
     });
+    versionRef.current++;
     setDirty(true);
   };
 
@@ -154,6 +146,7 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
           setDrawerOpen(true);
           return resolve(false);
         }
+        const version = versionRef.current;
         startSave(async () => {
           setError(null);
           const res = await savePost({
@@ -161,7 +154,9 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
             title: post.title,
             slug: post.slug,
             excerpt: post.excerpt,
-            contentJson: editor.getJSON() as Record<string, unknown>,
+            // Plain JSON copy: ProseMirror attrs are null-prototype objects, which server actions
+            // can't serialize (the server would receive opaque references instead of data).
+            contentJson: JSON.parse(JSON.stringify(editor.getJSON())) as Record<string, unknown>,
             coverUrl: post.coverUrl,
             coverAlt: post.coverAlt,
             coverFocal: post.coverFocal || null,
@@ -188,31 +183,44 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
             if (!opts.quiet) showToast({ kind: "error", text: res.error });
             return resolve(false);
           }
-          setDirty(false);
+          const typedMeanwhile = versionRef.current !== version;
+          setDirty(typedMeanwhile); // edits made during the save stay "unsaved" and autosave next time
           setLastSaved(Date.now());
           setPost((p) => ({ ...p, status: target }));
           if (backupKey) localStorage.removeItem(backupKey);
+          let toastText: Toast = null;
           if (!opts.quiet) {
             const future = post.publishedAt && Date.parse(istToIso(post.publishedAt)) > Date.now();
-            showToast({
+            toastText = {
               kind: "ok",
               text:
                 target === "draft"
                   ? post.status === "published" ? "Unpublished — it's a draft again." : "Draft saved."
                   : future ? `Scheduled for ${istLabel(post.publishedAt)} IST.`
                   : post.status === "published" ? "Updated — the live post now shows your changes." : "Published — it's live on the site.",
-            });
+            };
+            showToast(toastText);
           }
           if (!idRef.current) {
             idRef.current = res.id;
             setPostId(res.id);
+          }
+          // A new post moves to its edit URL once a save lands with nothing typed meanwhile. The
+          // move reloads the editor from the server, so lock the canvas first: no keystroke is lost.
+          if (!initial.id && !typedMeanwhile && window.location.pathname.endsWith("/new")) {
+            editor.setEditable(false);
+            try {
+              sessionStorage.setItem(HANDOFF_KEY, JSON.stringify({ id: res.id, savedAt: Date.now(), toast: toastText }));
+            } catch {
+              /* storage blocked: the edit page just shows "All changes saved" */
+            }
             router.replace(`/admin/blogs/${res.id}/edit`);
           }
           if (opts.preview) window.open(`/admin/blogs/${res.id}/preview`, "_blank", "noopener");
           resolve(true);
         });
       }),
-    [editor, post, router, backupKey],
+    [editor, post, backupKey, initial.id, router],
   );
 
   const saveRef = useRef(save);
@@ -250,6 +258,25 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
       editor.off("blur", autosave);
     };
   }, [editor, autosave]);
+
+  // Coming from /new: keep the "Saved · …" time and the confirmation message across the move.
+  useEffect(() => {
+    if (!initial.id) return;
+    const t = setTimeout(() => {
+      try {
+        const raw = sessionStorage.getItem(HANDOFF_KEY);
+        if (!raw) return;
+        sessionStorage.removeItem(HANDOFF_KEY);
+        const h = JSON.parse(raw) as { id: string; savedAt: number; toast: Toast };
+        if (h.id !== initial.id) return;
+        setLastSaved(h.savedAt);
+        if (h.toast) showToast(h.toast);
+      } catch {
+        /* nothing to restore */
+      }
+    }, 0);
+    return () => clearTimeout(t);
+  }, [initial.id]);
 
   // Offer to restore a browser backup of unsaved edits to a live post.
   useEffect(() => {

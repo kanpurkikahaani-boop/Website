@@ -15,7 +15,8 @@
     "test:news": "tsx scripts/test-news-classify.ts && tsx scripts/test-news-pipeline.ts",
     "test:rls": "node scripts/test-rls.mjs",
     "build:navaratri": "tsx scripts/build-navaratri-post.ts",
-    "check:links": "tsx scripts/check-links.ts"
+    "check:links": "tsx scripts/check-links.ts",
+    "test:e2e": "bash tests/run-e2e.sh"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -45,6 +46,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.23.1",
