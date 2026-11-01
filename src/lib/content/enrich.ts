@@ -41,9 +41,9 @@ export function enrichArticleHtml(html: string) {
     return `<figure class="kkk-figure"><img${a}${b}><figcaption class="kkk-caption">${title}</figcaption></figure>`;
   });
 
-  // 4. External links announce that they open a new tab (the ↗ icon itself is CSS).
+  // 4. External links (and internal ones set to open a new tab) announce it (the ↗ icon itself is CSS).
   out = out.replace(/<a([^>]*?)href="([^"]+)"([^>]*)>([\s\S]*?)<\/a>/g, (m, a: string, href: string, b: string, text: string) =>
-    isExternalHref(href) && !text.includes("sr-only") ? `<a${a}href="${href}"${b}>${text}<span class="sr-only"> (opens in new tab)</span></a>` : m,
+    (isExternalHref(href) || /target="_blank"/.test(a + b)) && !text.includes("sr-only") ? `<a${a}href="${href}"${b}>${text}<span class="sr-only"> (opens in new tab)</span></a>` : m,
   );
   return out;
 }

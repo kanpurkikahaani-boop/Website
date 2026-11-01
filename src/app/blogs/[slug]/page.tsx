@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Clock } from "lucide-react";
 import { Breadcrumbs } from "@/components/sections/Breadcrumbs";
 import { InlineSignup } from "@/components/sections/InlineSignup";
@@ -28,7 +28,7 @@ import { hasLogo } from "@/lib/assets";
 import { cityName } from "@/lib/city-names";
 import { extractToc } from "@/lib/content/enrich";
 import { htmlToText } from "@/lib/content/sanitize";
-import { getAdjacentPosts, getAllPublished, getPostBySlug, getRelatedPosts } from "@/lib/posts";
+import { getAdjacentPosts, getAllPublished, getPostBySlug, getRedirectSlug, getRelatedPosts } from "@/lib/posts";
 import { buildMetadata } from "@/lib/seo";
 import { formatDate } from "@/lib/utils";
 
@@ -85,7 +85,12 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export default async function BlogPostPage({ params }: PageProps<"/blogs/[slug]">) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-  if (!post) notFound();
+  if (!post) {
+    // Renamed posts: the old URL answers with a 301 to the current one.
+    const moved = await getRedirectSlug(slug);
+    if (moved) permanentRedirect(`/blogs/${moved}`);
+    notFound();
+  }
   const [related, adjacent] = await Promise.all([getRelatedPosts(post, 3), getAdjacentPosts(post)]);
   const url = absoluteUrl(`/blogs/${post.slug}`);
   const place = cityName(post.city);
@@ -156,7 +161,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blogs/[slug]"
 
         <figure className="container-site mt-8 max-w-[1080px]">
           <div className="relative aspect-[16/9] overflow-hidden rounded-2xl">
-            <ImageWithFallback src={cover} alt={post.coverAlt ?? post.title} label={post.title} sublabel={place} fill priority sizes="(min-width: 1080px) 1040px, 100vw" className="object-cover" />
+            <ImageWithFallback src={cover} alt={post.coverAlt ?? post.title} label={post.title} sublabel={place} fill priority sizes="(min-width: 1080px) 1040px, 100vw" className="object-cover" style={post.coverFocal ? { objectPosition: post.coverFocal } : undefined} />
           </div>
           {(post.coverCaption || post.coverCredit) && (
             <figcaption className="mt-2 text-center text-xs text-muted">

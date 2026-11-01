@@ -1,16 +1,17 @@
 import { EMPTY_RICH_FIELDS, PostEditor } from "@/components/admin/PostEditor";
-import { getAuthorOptions } from "@/lib/posts-admin";
+import { getAuthorOptions, getSiteRoutes } from "@/lib/posts-admin";
 
 export const metadata = { title: "New post" };
 
 export default async function NewPostPage() {
-  const authors = await getAuthorOptions();
+  const [authors, routes] = await Promise.all([getAuthorOptions(), getSiteRoutes()]);
   return (
     <>
       <p className="eyebrow">Blogs</p>
       <h1 className="mb-8 mt-1 text-[32px] font-bold text-primary">New post</h1>
       <PostEditor
         authors={authors}
+        routes={routes}
         initial={{
           title: "",
           slug: "",

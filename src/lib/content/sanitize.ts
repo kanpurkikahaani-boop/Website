@@ -42,6 +42,8 @@ export function sanitizeBlogHtml(html: string) {
         const out: Record<string, string> = { href };
         if (attribs.title) out.title = attribs.title;
         if (external) Object.assign(out, { target: "_blank", rel: "noopener noreferrer", class: "ext" });
+        // Internal links open in the same tab unless the editor's "open in new tab" toggle was on.
+        else if (attribs.target === "_blank") Object.assign(out, { target: "_blank", rel: "noopener noreferrer" });
         return { tagName, attribs: out };
       },
       iframe: (tagName, attribs) => ({ tagName, attribs: { ...attribs, loading: "lazy" } }),

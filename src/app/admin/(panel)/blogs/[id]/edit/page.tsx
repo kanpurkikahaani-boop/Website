@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 import { PostEditor } from "@/components/admin/PostEditor";
-import { getAuthorOptions, getPostForAdmin, isoToIstLocal } from "@/lib/posts-admin";
+import { getAuthorOptions, getPostForAdmin, getSiteRoutes, isoToIstLocal } from "@/lib/posts-admin";
 
 export const metadata = { title: "Edit post" };
 
 export default async function EditPostPage({ params }: PageProps<"/admin/blogs/[id]/edit">) {
   const { id } = await params;
-  const [p, authors] = await Promise.all([getPostForAdmin(id), getAuthorOptions()]);
+  const [p, authors, routes] = await Promise.all([getPostForAdmin(id), getAuthorOptions(), getSiteRoutes()]);
   if (!p) notFound();
   return (
     <>
@@ -35,12 +35,14 @@ export default async function EditPostPage({ params }: PageProps<"/admin/blogs/[
           pullQuote: p.pull_quote ?? "",
           coverCaption: p.cover_caption ?? "",
           coverCredit: p.cover_credit ?? "",
+          coverFocal: p.cover_focal ?? "",
           keyFacts: p.key_facts ?? [],
           furtherReading: p.further_reading ?? [],
           glossary: p.glossary ?? [],
           planVisit: p.plan_visit ?? [],
         }}
         authors={authors}
+        routes={routes}
       />
     </>
   );

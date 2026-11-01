@@ -63,6 +63,7 @@ export interface Post extends PostSummary {
   pullQuote: string | null;
   coverCaption: string | null;
   coverCredit: string | null;
+  coverFocal: string | null;
   keyFacts: KeyFact[];
   furtherReading: ReadingItem[];
   glossary: GlossaryItem[];
@@ -123,6 +124,7 @@ function toPost(r: Row): Post {
     pullQuote: (r.pull_quote as string) ?? null,
     coverCaption: (r.cover_caption as string) ?? null,
     coverCredit: (r.cover_credit as string) ?? null,
+    coverFocal: (r.cover_focal as string) ?? null,
     keyFacts: arr<KeyFact>(r.key_facts),
     furtherReading: arr<ReadingItem>(r.further_reading),
     glossary: arr<GlossaryItem>(r.glossary),
@@ -180,9 +182,20 @@ export async function getLatestPosts(n = 3) {
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   const db = createPublicClient();
   if (!db) return null;
-  const { data, error } = await db.from("posts").select(FULL_COLS).eq("slug", slug).maybeSingle();
+  let { data, error } = await db.from("posts").select(`${FULL_COLS}, cover_focal`).eq("slug", slug).maybeSingle();
+  // Before migration 0008 runs, cover_focal doesn't exist yet: read the post without it.
+  if (error?.code === "42703") ({ data, error } = await db.from("posts").select(FULL_COLS).eq("slug", slug).maybeSingle());
   if (error) console.error("[posts] get failed:", error.message);
-  return data ? toPost(data) : null;
+  return data ? toPost(data as unknown as Row) : null;
+}
+
+/** An old slug that now redirects (301) to a post's current slug, if any. */
+export async function getRedirectSlug(oldSlug: string): Promise<string | null> {
+  const db = createPublicClient();
+  if (!db) return null;
+  const { data } = await db.from("post_redirects").select("posts(slug)").eq("old_slug", oldSlug).maybeSingle();
+  const target = (Array.isArray(data?.posts) ? data.posts[0] : data?.posts) as { slug?: string } | null | undefined;
+  return target?.slug && target.slug !== oldSlug ? target.slug : null;
 }
 
 /** All published slugs + dates, for the sitemap, RSS and static generation. */
