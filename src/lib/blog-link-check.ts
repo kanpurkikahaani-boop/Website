@@ -10,7 +10,7 @@ import { createServiceClient } from "@/lib/supabase/admin";
  */
 export async function runBlogLinkCheck(budgetMs = 45_000) {
   const db = createServiceClient();
-  if (!db) return { skipped: true, reason: "SUPABASE_SERVICE_ROLE_KEY not set", checked: [] as string[] };
+  if (!db) return { skipped: true, reason: "SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_SECRET_KEY) not set", checked: [] as string[] };
   const started = Date.now();
   const { data, error } = await db
     .from("posts")

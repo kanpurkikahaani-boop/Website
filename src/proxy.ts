@@ -4,6 +4,7 @@ import { isAdminUser } from "@/lib/admin-check";
 import { ADMIN_HINT_COOKIE, ADMIN_SEEN_COOKIE, checkSessionAge, seenCookieOptions } from "@/lib/admin/session-rules";
 import { needsSecondFactor } from "@/lib/admin/mfa";
 import { hardenCookie } from "@/lib/supabase/cookie-options";
+import { supabaseAnonKey, supabaseUrl } from "@/lib/supabase/config";
 
 const PUBLIC_ADMIN_PATHS = ["/admin/login", "/admin/auth/callback"];
 
@@ -36,8 +37,8 @@ export async function proxy(request: NextRequest) {
   };
   noindex(response);
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = supabaseUrl;
+  const key = supabaseAnonKey;
   const isPublic = PUBLIC_ADMIN_PATHS.some((p) => pathname.startsWith(p));
 
   if (!url || !key) {

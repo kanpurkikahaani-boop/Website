@@ -6,7 +6,7 @@ type RemotePattern = NonNullable<NonNullable<NextConfig["images"]>["remotePatter
 function storagePatterns(): RemotePattern[] {
   const patterns: RemotePattern[] = [{ protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" }];
   try {
-    const u = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "");
+    const u = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "");
     if (!u.hostname.endsWith(".supabase.co")) {
       patterns.push({ protocol: u.protocol.replace(":", "") as "http" | "https", hostname: u.hostname, port: u.port, pathname: "/storage/v1/object/public/**" });
     }

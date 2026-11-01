@@ -14,7 +14,7 @@ FAKE=$!
 # `npx next start` spawns a child next-server: stop the whole process group, not just npx.
 cleanup() { kill $FAKE 2>/dev/null || true; [ -n "${APP:-}" ] && kill -- -"$APP" 2>/dev/null || true; }
 trap cleanup EXIT
-set -a; source tests/support/e2e.env; set +a
+set -a; source "${E2E_ENV:-tests/support/e2e.env}"; set +a
 rm -rf .next/cache/fetch-cache
 npm run build > /tmp/kkk-e2e-build.log 2>&1 || { tail -40 /tmp/kkk-e2e-build.log; exit 1; }
 setsid npx next start -p 3100 > /tmp/kkk-e2e-app.log 2>&1 &

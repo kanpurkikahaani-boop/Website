@@ -12,7 +12,7 @@ const DAY = 24 * 60 * 60 * 1000;
  */
 export async function runBlogHousekeeping(now = Date.now()) {
   const db = createServiceClient();
-  if (!db) return { skipped: true as const, reason: "SUPABASE_SERVICE_ROLE_KEY not set" };
+  if (!db) return { skipped: true as const, reason: "SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_SECRET_KEY) not set" };
 
   const { data: due, error } = await db
     .from("posts")
