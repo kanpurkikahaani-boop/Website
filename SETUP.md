@@ -1,6 +1,8 @@
 # SETUP — turning on v2 (newsletter, admin blog, daily news)
 
-These steps need your accounts, so only you can do them. Do them **in order**. The site keeps working at every step: until Supabase is connected, the blog shows the three original stories and the news page shows the newspaper directory and a "fresh headlines are on their way" message.
+These steps need your accounts, so only you can do them. Do them **in order**. The site keeps working at every step: until Supabase is connected, the blog shows a "Coming soon" page and the news page shows the newspaper directory and a "fresh headlines are on their way" message.
+
+> **Live site shows "Coming soon" on /blogs, or "Sign-in isn't set up yet" on /admin/login?** The Supabase keys or `ADMIN_EMAIL` are missing in Vercel (step 6), or the deployment hasn't been redone since you added them. Environment variables only take effect after a **Redeploy**.
 
 You'll need about 30–45 minutes, a Google account, and access to Vercel.
 
@@ -30,6 +32,7 @@ Open **SQL Editor → New query** and run each file from `supabase/migrations/`,
 | 4 | `0005_remove_seed_posts.sql` | Deletes the three pre-written stories if an earlier version inserted them. Safe to run either way |
 | 5 | `0006_authors_and_post_fields.sql` | The `authors` table (public read, admin-only write), Rakshaa Mukesh's author profile, and the new article fields on `posts` (author, category, standfirst, pull quote, cover credit, key facts, plan-your-visit, glossary, further reading, link report) |
 | 6 | `0007_publish_navaratri.sql` | Publishes **"Why Navaratri in Kanpur Is Something Everyone Must Experience!"** (14 Oct 2026, by Rakshaa Mukesh). Safe to run again: it updates the post in place |
+| 7 | `0008_admin_v6.sql` | Admin editing: Trash (`deleted_at`), cover focal point, revision history, old-URL redirects, the audit log and the sign-in rate limit. Blog images limited to JPG/PNG/WebP, 5 MB. Safe to run again |
 
 > **Already ran the old `0003_seed_posts.sql`?** That file no longer exists. Just run `0004` and `0005`: `0005` removes those three posts. Blog posts now come only from the admin editor.
 
@@ -49,15 +52,18 @@ Use exactly the same address for `ADMIN_EMAIL` in step 6. Both checks must match
 - the app checks `ADMIN_EMAIL`;
 - the database checks the `admins` table.
 
-## 4. Turn on sign-in (Google + magic link)
+## 4. Turn on sign-in (Google + email/password)
 
-### 4a. Site URLs
+### 4a. Site URL and redirect URLs
 
-**Authentication → URL Configuration**:
+A wrong value here is the most common cause of a login loop. In **Authentication → URL Configuration**:
 - **Site URL:** `https://kanpurkikahaani.site`
-- **Redirect URLs** (add both):
-  - `https://kanpurkikahaani.site/admin/auth/callback`
-  - `http://localhost:3000/admin/auth/callback` (for local testing)
+- **Redirect URLs** (add all three):
+  - `https://kanpurkikahaani.site/**`
+  - `http://localhost:3000/**` (local testing)
+  - `https://*-<your-vercel-team>.vercel.app/**` (preview deployments; replace `<your-vercel-team>` with the team slug in your preview URLs)
+
+The site sends people back to `/admin/auth/callback` (and `/auth/callback` also works); both are covered by the patterns above.
 
 ### 4b. Google sign-in
 
@@ -71,15 +77,32 @@ Use exactly the same address for `ADMIN_EMAIL` in step 6. Both checks must match
    - **Authorized redirect URI:** copy it from Supabase **Authentication → Providers → Google**. It looks like `https://<your-project>.supabase.co/auth/v1/callback`.
 4. Copy the **Client ID** and **Client secret** into Supabase **Authentication → Providers → Google**, toggle it **on**, and save.
 
-### 4c. Magic link
+### 4c. Create the admin user, then close sign-ups
 
-This is the email fallback and is on by default (**Authentication → Providers → Email**). Leave "Confirm email" **on**: the admin check requires a verified address.
+1. **Authentication → Users → Add user → Create new user**:
+   - Email: the same address as `ADMIN_EMAIL` (your kanpurkikahaani Google account).
+   - Password: a long, unique one (this is the backup to Google sign-in).
+   - Tick **Auto Confirm User**. The admin check only accepts a *verified* email.
+   - (Or use **Invite user** and set the password from the email link.)
+2. **Authentication → Sign In / Providers → User Signups**: turn **off** "Allow new users to sign up". Strangers can then not even create an account. Google sign-in still works for your account: Supabase links the Google login to the existing user with the same verified email.
+3. Keep **Providers → Email** on (password sign-in and "Forgot password?" use it), with **Confirm email** on.
 
-Supabase's built-in email sender is rate-limited. If magic links are slow, you can add your own SMTP under **Project Settings → Auth → SMTP**. This is optional.
+Supabase's built-in email sender is rate-limited (a few emails per hour). If reset emails are slow, add your own SMTP under **Project Settings → Auth → SMTP**. This is optional.
+
+### 4d. 2-step verification (recommended)
+
+Authenticator-app codes (TOTP) are on by default in Supabase (**Authentication → Multi-Factor**). After your first sign-in, open `/admin/settings` → **Enable 2-step verification** and scan the QR code. From then on every sign-in also asks for the 6-digit code.
+
+### 4e. What the site enforces
+
+- Only `ADMIN_EMAIL` with a verified email gets in; any other account is signed out at once ("This account doesn't have team access.").
+- 5 wrong passwords in 15 minutes (per IP + email) → a cool-down message.
+- Sessions end after **7 days**, or after **12 hours** without opening the admin.
+- Supabase's session cookies are httpOnly, SameSite=Lax and Secure.
 
 ## 5. Generate two secrets
 
-Run this twice (Terminal on Mac/Linux, or any online "random hex" generator you trust) and keep both outputs:
+Run this three times (Terminal on Mac/Linux, or any online "random hex" generator you trust) and keep all three outputs:
 
 ```bash
 openssl rand -hex 32
@@ -87,6 +110,7 @@ openssl rand -hex 32
 
 - The first is `CRON_SECRET`. It protects the daily news refresh.
 - The second is `UNSUBSCRIBE_SECRET`. It signs newsletter unsubscribe links.
+- The third is `PREVIEW_SECRET`. It signs the 1-hour preview links the editor opens.
 
 ## 6. Add the environment variables in Vercel
 
@@ -101,6 +125,7 @@ Go to Vercel → your project → **Settings → Environment Variables**. Add ea
 | `ADMIN_EMAIL` | the email from step 3 |
 | `CRON_SECRET` | from step 5 |
 | `UNSUBSCRIBE_SECRET` | from step 5 |
+| `PREVIEW_SECRET` | from step 5 |
 | `NEXT_PUBLIC_GA_ID` | optional, GA4 ID |
 | `NEXT_PUBLIC_META_PIXEL_ID` | optional, Meta Pixel ID |
 
@@ -111,7 +136,7 @@ Pushing to `main` deploys to production. `vercel.json` registers two daily cron 
 | Time (IST) | Job | What it does |
 |---|---|---|
 | 5:45 AM | `/api/cron/refresh-events` | Archives finished events and re-checks each event's BookMyShow link. A **404** unpublishes the event and flags it in red on `/admin/events`; a blocked check (403) changes nothing. |
-| 6:00 AM | `/api/cron/refresh-news` | Fetches the newspaper feeds |
+| 6:00 AM | `/api/cron/refresh-news` | Fetches the newspaper feeds. Afterwards it also runs the blog housekeeping (`/api/cron/publish-scheduled`): refreshes pages for scheduled posts that went live, and permanently deletes posts that have been in the Trash for 30 days. |
 
 Check both under **Settings → Cron Jobs** after the deploy. Two daily crons is the maximum on Vercel's free (Hobby) plan.
 
@@ -183,3 +208,9 @@ Before Supabase is set up, the site reads the feeds directly (cached for an hour
   3. Supabase Row Level Security, where only verified emails in the `admins` table can see drafts, change posts or events, read subscribers or upload images.
 
   `npm run test:rls` replays the attack tests against a local Postgres.
+
+## Admin area (v6)
+
+- Sign in at **`/admin/login`** (small "Team login" link in the footer). How to use it, with screenshots: [`ADMIN_GUIDE.md`](ADMIN_GUIDE.md).
+- **Scheduled posts** need no cron: set a future publish time and the post becomes visible on its own at that moment (the database hides it until then). `/blogs` updates instantly; the home page and the post page within 5 minutes.
+- **Tests:** `npm run test:rls` (226 database security checks) and `npm run test:e2e` (19 browser tests of the whole admin flow). Both need a local Postgres 16 — see `tests/README.md`.
