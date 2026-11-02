@@ -5,7 +5,7 @@
   "scripts": {
     "predev": "node scripts/scan-assets.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/scan-assets.mjs",
+    "prebuild": "node scripts/scan-assets.mjs && tsx scripts/images/verify.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -17,7 +17,12 @@
     "build:navaratri": "tsx scripts/build-navaratri-post.ts",
     "check:links": "tsx scripts/check-links.ts",
     "test:e2e": "bash tests/run-e2e.sh",
-    "images:verify": "tsx scripts/verify-images.ts"
+    "images:verify": "tsx scripts/images/verify.ts",
+    "images:inventory": "tsx scripts/images/inventory.ts",
+    "images:source": "tsx scripts/images/source.ts",
+    "test:images": "tsx scripts/images/test-candidates.ts",
+    "images:process": "tsx scripts/images/process.ts",
+    "images:report": "tsx scripts/images/report.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -57,6 +62,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
     "pg": "^8.23.1",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"

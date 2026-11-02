@@ -13,11 +13,11 @@ export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const pages = [...new Set([...allNavHrefs, "/privacy"])].map((href) => ({
+  const pages = [...new Set([...allNavHrefs, "/privacy", "/credits"])].map((href) => ({
     url: absoluteUrl(href),
     lastModified: now,
     changeFrequency: (["/events", "/news", "/weather"].includes(href) ? "daily" : "weekly") as "daily" | "weekly",
-    priority: href === "/" ? 1 : href.startsWith("/cities") || href === "/tourism" ? 0.9 : href === "/privacy" ? 0.2 : 0.7,
+    priority: href === "/" ? 1 : href.startsWith("/cities") || href === "/tourism" ? 0.9 : href === "/privacy" || href === "/credits" ? 0.2 : 0.7,
   }));
   const posts = await getAllPublished();
   const blog = posts.map((p) => ({

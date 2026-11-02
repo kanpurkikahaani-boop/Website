@@ -217,3 +217,28 @@ Before Supabase is set up, the site reads the feeds directly (cached for an hour
 - Sign in at **`/admin/login`** (small "Team login" link in the footer). How to use it, with screenshots: [`ADMIN_GUIDE.md`](ADMIN_GUIDE.md).
 - **Scheduled posts** need no cron: set a future publish time and the post becomes visible on its own at that moment (the database hides it until then). `/blogs` updates instantly; the home page and the post page within 5 minutes.
 - **Tests:** `npm run test:rls` (226 database security checks) and `npm run test:e2e` (19 browser tests of the whole admin flow). Both need a local Postgres 16 — see `tests/README.md`.
+
+## Photos (update v5)
+
+Every image slot reads from one photo manifest (`src/data/photos.json`, typed in `src/data/images.ts`). A slot without an approved photo shows the illustrated gradient tile. **A wrong photo is worse than none.**
+
+**Status:** the tooling is built. 0 of 143 slots have photos yet, because sourcing needs network access to Wikimedia Commons / Unsplash / Pexels, which the build environment didn't have.
+
+**To fill the photos (needs network):**
+1. Allow these hosts, or turn on Full network access, in the cloud environment settings, then start a new session:
+   - `commons.wikimedia.org`, `upload.wikimedia.org`
+   - `api.unsplash.com`, `images.unsplash.com`
+   - `api.pexels.com`, `images.pexels.com`
+   - Optional: set `UNSPLASH_ACCESS_KEY` / `PEXELS_API_KEY` (Commons needs no key).
+2. `npm run images:source`: searches each slot, rejects wrong licences, too-small, portrait, AI-tagged and watermarked files and near-duplicates, then saves up to 8 candidates per slot in `review/`.
+3. **A person looks at every candidate** and records the choice, scores (relevance ≥ 4 required), alt text, focal point and AI-check note in `reports/image-selections.json`.
+4. `npm run images:process`: downloads and resizes the chosen photos (`sharp`; no AI, no cropping, metadata stripped) and writes them into the manifest.
+5. `npm run images:verify && npm run images:report`:
+   - `images:verify` checks licence, credit, resolution, alt text, duplicates and AI flags, and also runs before every build;
+   - `images:report` regenerates `reports/image-review.html`, `reports/missing-images.md` and `IMAGE_CREDITS.md`. `/credits` updates itself.
+
+Other commands:
+- `npm run images:inventory`: lists every slot in `reports/image-inventory.json`.
+- `npm run test:images`: tests the candidate filters offline.
+
+`reports/missing-images.md` doubles as a shot list if the team would rather photograph places themselves.

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ImageWithFallback } from "./ImageWithFallback";
+import { PhotoCreditBadge } from "./PhotoCredit";
 import { TagChip } from "./TagChip";
 import { cn } from "@/lib/utils";
 
@@ -68,6 +69,7 @@ export function ImageCard({
             className="object-cover"
           />
         </div>
+        <PhotoCreditBadge imageKey={image} />
       </div>
       <div className="flex flex-1 flex-col p-5">
         {eyebrow && <p className="eyebrow mb-1.5 text-[11px]">{eyebrow}</p>}

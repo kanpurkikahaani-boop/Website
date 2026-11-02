@@ -1,0 +1,4 @@
+{ "photos": [
+  { "id": 101, "width": 5472, "height": 3648, "url": "https://www.pexels.com/photo/fixture-101/", "alt": "Plate of street food with chutney", "photographer": "Fixture Cook", "photographer_url": "https://www.pexels.com/@fixture", "src": { "original": "https://images.pexels.com/photos/101/fixture.jpeg", "medium": "https://images.pexels.com/photos/101/fixture.jpeg?h=350" } },
+  { "id": 102, "width": 5472, "height": 3648, "url": "https://www.pexels.com/photo/fixture-102/", "alt": "Poster with logo and text overlay", "photographer": "Ad Maker", "photographer_url": "https://www.pexels.com/@ad", "src": { "original": "https://images.pexels.com/photos/102/x.jpeg", "medium": "https://images.pexels.com/photos/102/x.jpeg?h=350" } }
+] }

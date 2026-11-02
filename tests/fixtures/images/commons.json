@@ -1,0 +1,38 @@
+{
+  "query": {
+    "pages": {
+      "1": {
+        "pageid": 1, "title": "File:FIXTURE good landscape.jpg",
+        "categories": [{ "title": "Category:Fixture temples" }],
+        "imageinfo": [{ "url": "https://upload.example.test/good.jpg", "thumburl": "https://upload.example.test/good-640.jpg", "descriptionurl": "https://commons.example.test/wiki/File:Good.jpg", "width": 4000, "height": 2667, "mime": "image/jpeg",
+          "extmetadata": { "Artist": { "value": "<a href=\"//commons.example.test/wiki/User:Fixture\">Fixture Photographer</a>" }, "LicenseShortName": { "value": "CC BY-SA 4.0" }, "LicenseUrl": { "value": "https://creativecommons.org/licenses/by-sa/4.0" }, "ImageDescription": { "value": "Temple front at dusk" }, "DateTimeOriginal": { "value": "2018-11-07 18:02:11" } } }]
+      },
+      "2": {
+        "pageid": 2, "title": "File:FIXTURE non-commercial.jpg",
+        "imageinfo": [{ "url": "https://upload.example.test/nc.jpg", "descriptionurl": "https://commons.example.test/wiki/File:Nc.jpg", "width": 4000, "height": 2667, "mime": "image/jpeg",
+          "extmetadata": { "Artist": { "value": "Someone" }, "LicenseShortName": { "value": "CC BY-NC 2.0" } } }]
+      },
+      "3": {
+        "pageid": 3, "title": "File:FIXTURE ai.jpg",
+        "categories": [{ "title": "Category:AI-generated images" }],
+        "imageinfo": [{ "url": "https://upload.example.test/ai.jpg", "descriptionurl": "https://commons.example.test/wiki/File:Ai.jpg", "width": 3000, "height": 2000, "mime": "image/jpeg",
+          "extmetadata": { "Artist": { "value": "Bot" }, "LicenseShortName": { "value": "CC0" } } }]
+      },
+      "4": {
+        "pageid": 4, "title": "File:FIXTURE small.jpg",
+        "imageinfo": [{ "url": "https://upload.example.test/small.jpg", "descriptionurl": "https://commons.example.test/wiki/File:Small.jpg", "width": 800, "height": 533, "mime": "image/jpeg",
+          "extmetadata": { "Artist": { "value": "Someone" }, "LicenseShortName": { "value": "CC BY 3.0" } } }]
+      },
+      "5": {
+        "pageid": 5, "title": "File:FIXTURE portrait.jpg",
+        "imageinfo": [{ "url": "https://upload.example.test/portrait.jpg", "descriptionurl": "https://commons.example.test/wiki/File:Portrait.jpg", "width": 2000, "height": 3000, "mime": "image/jpeg",
+          "extmetadata": { "Artist": { "value": "Someone" }, "LicenseShortName": { "value": "Public domain" } } }]
+      },
+      "6": {
+        "pageid": 6, "title": "File:FIXTURE upscaled.jpg",
+        "imageinfo": [{ "url": "https://upload.example.test/up.jpg", "descriptionurl": "https://commons.example.test/wiki/File:Up.jpg", "width": 5000, "height": 3000, "mime": "image/jpeg",
+          "extmetadata": { "Artist": { "value": "Someone" }, "LicenseShortName": { "value": "CC BY 4.0" }, "ImageDescription": { "value": "Upscaled with Topaz Gigapixel" } } }]
+      }
+    }
+  }
+}

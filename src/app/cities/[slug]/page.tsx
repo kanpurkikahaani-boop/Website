@@ -15,6 +15,7 @@ import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ImageCard } from "@/components/ui/ImageCard";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
+import { PhotoCreditLine } from "@/components/ui/PhotoCredit";
 import { FadeUp } from "@/components/ui/FadeUp";
 import { buttonClass } from "@/components/ui/Button";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -60,6 +61,7 @@ export default async function CityPage({ params }: PageProps<"/cities/[slug]">) 
         <ImageWithFallback src={city.heroImage} alt={city.heroAlt} label={city.name} tone="dusk" hideLabel fill priority sizes="100vw" className="object-cover" />
         <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-dark/90 via-dark/60 to-dark/10" />
         <div aria-hidden className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-dark/80 to-transparent" />
+        <PhotoCreditLine imageKey={city.heroImage} className="absolute bottom-2 right-3 z-10 max-w-[60%] text-right text-[10.5px] text-cream/70" />
         <div className="container-site relative pb-16 pt-28">
           <p className="eyebrow text-accent">Nearby city · ~{city.distanceKm} km from Kanpur</p>
           <h1 className="mt-3 text-[44px] font-bold leading-none text-white md:text-[68px]">{city.name}</h1>

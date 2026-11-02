@@ -5,6 +5,8 @@ import { InlineSignup } from "@/components/sections/InlineSignup";
 import { ShareButtons } from "@/components/sections/ShareButtons";
 import { ImageCard } from "@/components/ui/ImageCard";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
+import { indexedPhoto } from "@/lib/photo-index";
+import { PhotoCreditLine } from "@/components/ui/PhotoCredit";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
 import { ArticleToc, MobileToc } from "@/components/blog/ArticleToc";
@@ -137,11 +139,11 @@ export function ArticleView({
           <div className="relative aspect-[16/9] overflow-hidden rounded-2xl">
             <ImageWithFallback src={cover} alt={post.coverAlt ?? post.title} label={post.title} sublabel={place} fill priority sizes="(min-width: 1080px) 1040px, 100vw" className="object-cover" style={post.coverFocal ? { objectPosition: post.coverFocal } : undefined} />
           </div>
-          {(post.coverCaption || post.coverCredit) && (
+          {(post.coverCaption || post.coverCredit || indexedPhoto(cover)) && (
             <figcaption className="mt-2 text-center text-xs text-muted">
               {post.coverCaption}
-              {post.coverCaption && post.coverCredit && " — "}
-              {post.coverCredit}
+              {post.coverCaption && (post.coverCredit || indexedPhoto(cover)) && " — "}
+              {post.coverCredit || <PhotoCreditLine imageKey={cover} />}
             </figcaption>
           )}
         </figure>

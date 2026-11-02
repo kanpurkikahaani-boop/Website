@@ -23,6 +23,9 @@ export function Footer() {
         <div className="container-site flex flex-col gap-2 py-5 text-xs text-cream/70 sm:flex-row sm:items-center sm:justify-between">
           <p>© {site.year} {site.name} · Created for an academic digital marketing project</p>
           <div className="flex gap-5">
+            <Link href="/credits" className="hover:text-accent">
+              Photo credits
+            </Link>
             <Link href="/privacy" className="hover:text-accent">
               Privacy
             </Link>

@@ -3,6 +3,7 @@
 import Image, { type ImageProps } from "next/image";
 import { useId, useState } from "react";
 import { imageExists } from "@/lib/assets";
+import { indexedPhoto } from "@/lib/photo-index";
 import { cn } from "@/lib/utils";
 
 type Props = Omit<ImageProps, "src" | "alt"> & {
@@ -40,7 +41,11 @@ function pickTone(label: string): keyof typeof tones {
 export function ImageWithFallback({ src, alt, label, sublabel, tone, hideLabel, className, fill, ...rest }: Props) {
   const [failed, setFailed] = useState(false);
   const pid = `jaali-${useId().replace(/:/g, "")}`;
-  const present = (imageExists(src) || src.startsWith("https://")) && !failed;
+  // Local images show only once approved in the photo manifest (src/data/photos.json);
+  // admin-uploaded https images (blog covers) show as-is.
+  const photo = src.startsWith("/") ? indexedPhoto(src) : undefined;
+  const resolved = photo?.src ?? src;
+  const present = (photo ? photo.src.startsWith("https://") || imageExists(photo.src) : src.startsWith("https://")) && !failed;
 
   if (!present) {
     const t = tones[tone ?? pickTone(label)];
@@ -80,12 +85,15 @@ export function ImageWithFallback({ src, alt, label, sublabel, tone, hideLabel, 
 
   return (
     <Image
-      src={src}
+      src={resolved}
       alt={alt}
       fill={fill}
       className={className}
       onError={() => setFailed(true)}
+      {...(photo?.blurDataURL ? { placeholder: "blur" as const, blurDataURL: photo.blurDataURL } : {})}
+      {...(!fill && photo ? { width: photo.width, height: photo.height } : {})}
       {...rest}
+      style={{ ...(photo?.objectPosition ? { objectPosition: photo.objectPosition } : {}), ...rest.style }}
     />
   );
 }

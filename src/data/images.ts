@@ -30,34 +30,107 @@ export const sectionImages = {
   exploreOutdoor: { image: "/images/kanpur/green-park-stadium.jpg" as ImagePath, alt: "Green Park Stadium, Kanpur", label: "Outdoor & Sports" },
 };
 
-/**
- * Image manifest: where each photo comes from and under what licence. `npm run images:verify`
- * checks every entry exists on disk with the recorded size, and has a source, licence and alt text.
- */
-export type ImageSource = "own" | "wikimedia" | "unsplash" | "other";
+import photoData from "./photos.json";
 
-export interface ManifestImage {
-  path: string;
+/**
+ * Photo manifest — the single source of truth for every photo on the site (v5).
+ *
+ * Keyed by the image path the data files and pages already point at (e.g.
+ * "/images/kanpur/jk-temple.jpg"), so a slot's data never changes when its photo does.
+ * Entries are written by `scripts/images/process.ts` after a human has looked at the photo,
+ * and checked by `npm run images:verify` (runs before every build).
+ *
+ * A path with no entry renders the gradient fallback tile — a wrong photo is worse than none.
+ */
+export type ImageSource = "own" | "wikimedia" | "unsplash" | "pexels" | "flickr";
+
+export interface PhotoAlternate {
+  sourcePageUrl: string;
+  thumbUrl?: string;
+  author?: string;
+  license?: string;
+  scores?: { relevance: number; quality: number; fit: number };
+  note?: string;
+}
+
+export interface Photo {
+  /** Local path under /public, or an images.unsplash.com URL (Unsplash must be hotlinked). */
+  src: string;
   width: number;
   height: number;
   alt: string;
+  caption?: string;
+  /** CSS object-position keeping the subject in frame at every aspect ratio. */
+  objectPosition: string;
+  /** Tiny plain-downscaled JPEG data URL (no AI), for placeholder="blur". */
+  blurDataURL?: string;
+  /** What the photo actually shows. */
+  subject: string;
+  /** True when it shows the dish / area / festival rather than the exact named place. */
+  representative: boolean;
   source: ImageSource;
+  sourcePageUrl?: string;
+  author?: string;
+  authorUrl?: string;
   license: string;
-  /** Shown on a credits page (team photos are our own, so no). */
+  licenseUrl?: string;
+  /** Non-AI technical changes only, e.g. "Resized; format converted". */
+  changes?: string;
+  captureDate?: string;
+  camera?: string;
+  /** Evidence it is a real, unedited photograph (EXIF, photographer, date…). */
+  aiCheck?: string;
+  relevanceNote?: string;
+  alternates?: PhotoAlternate[];
+  /** Listed on /credits (team portraits: false). */
   credit?: boolean;
+  /** Unsplash only: the download_location endpoint that was triggered on selection. */
+  downloadLocation?: string;
 }
 
 const OWN = "© Kanpur Ki Kahaani team, used with permission";
 
 /** The team's own portraits (/team). Original files, no AI processing — only next/image resizing + CSS cropping. */
-export const teamPhotos: ManifestImage[] = [
-  { path: "/images/team/monisha-ms.jpg", width: 413, height: 531, alt: "Portrait of Monisha MS, Blog Editor at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
-  { path: "/images/team/chinmayi-srinivasan.jpg", width: 1367, height: 2048, alt: "Portrait of Chinmayi Srinivasan, Web Designer at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
-  { path: "/images/team/piyusha-taunk.jpg", width: 865, height: 865, alt: "Portrait of Piyusha Taunk, Content Strategist at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
-  { path: "/images/team/rakshaa-mukesh.jpg", width: 1280, height: 853, alt: "Portrait of Rakshaa Mukesh, Reddit & Medium Lead at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
-  { path: "/images/team/lakshmi-gayathri.jpg", width: 1536, height: 2048, alt: "Portrait of Lakshmi Gayathri, Instagram & Facebook Lead at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
-  { path: "/images/team/aksheet-dhanvijay.jpg", width: 928, height: 1027, alt: "Portrait of Aksheet Dhanvijay, Outreach Lead at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
-  { path: "/images/team/kallu-hasika-reddy.jpg", width: 960, height: 1111, alt: "Portrait of Kallu Hasika Reddy, SEO & Promotions Lead at Kanpur Ki Kahaani", source: "own", license: OWN, credit: false },
+const team = (file: string, width: number, height: number, name: string, role: string): [string, Photo] => [
+  `/images/team/${file}.jpg`,
+  {
+    src: `/images/team/${file}.jpg`,
+    width,
+    height,
+    alt: `Portrait of ${name}, ${role} at Kanpur Ki Kahaani`,
+    objectPosition: "50% 30%",
+    subject: `${name}, ${role}`,
+    representative: false,
+    source: "own",
+    license: OWN,
+    changes: "None (served by next/image)",
+    aiCheck: "Team's own photograph, supplied by the team",
+    credit: false,
+  },
 ];
 
-export const imageManifest: ManifestImage[] = [...teamPhotos];
+export const teamPhotoEntries: [string, Photo][] = [
+  team("monisha-ms", 413, 531, "Monisha MS", "Blog Editor"),
+  team("chinmayi-srinivasan", 1367, 2048, "Chinmayi Srinivasan", "Web Designer"),
+  team("piyusha-taunk", 865, 865, "Piyusha Taunk", "Content Strategist"),
+  team("rakshaa-mukesh", 1280, 853, "Rakshaa Mukesh", "Reddit & Medium Lead"),
+  team("lakshmi-gayathri", 1536, 2048, "Lakshmi Gayathri", "Instagram & Facebook Lead"),
+  team("aksheet-dhanvijay", 928, 1027, "Aksheet Dhanvijay", "Outreach Lead"),
+  team("kallu-hasika-reddy", 960, 1111, "Kallu Hasika Reddy", "SEO & Promotions Lead"),
+];
+
+/** Every photo, keyed by image path. Site photos come from photos.json (generated); team photos above. */
+export const photos: Record<string, Photo> = {
+  ...(photoData as Record<string, Photo>),
+  ...Object.fromEntries(teamPhotoEntries),
+};
+
+export const photoFor = (key: string): Photo | undefined => photos[key];
+
+/** One-line credit, e.g. "Photo: Jane Doe, CC BY-SA 4.0, via Wikimedia Commons (resized)". */
+export function creditLine(p: Photo): string {
+  if (p.source === "own") return p.license;
+  const via = { wikimedia: "via Wikimedia Commons", unsplash: "on Unsplash", pexels: "on Pexels", flickr: "via Flickr" }[p.source];
+  const lic = p.source === "unsplash" || p.source === "pexels" ? "" : `, ${p.license}`;
+  return `Photo: ${p.author ?? "unknown"}${lic} ${via}${p.changes && p.source !== "unsplash" ? " (resized)" : ""}`;
+}
