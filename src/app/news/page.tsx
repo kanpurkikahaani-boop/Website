@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/PageHero";
 import { Section } from "@/components/ui/Section";
@@ -32,6 +34,7 @@ export default async function NewsPage({ searchParams }: PageProps<"/news">) {
       <Section>
         <NewsView filters={filters} path="/news" pageTitle="Kanpur News" />
       </Section>
+      <FaqSection title={faqPageInfo.news.title} items={faqs.news} />
     </>
   );
 }

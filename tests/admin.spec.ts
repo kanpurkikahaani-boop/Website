@@ -255,6 +255,7 @@ test.describe("writing and publishing", () => {
 test.describe("admin shortcuts on the live site", () => {
   test("edit pill, + New post and admin bar appear only for the admin", async ({ page }) => {
     await passwordSignIn(page);
+    await page.waitForURL("**/admin/blogs"); // let sign-in finish before navigating away
     await page.goto("/blogs/navaratri-in-kanpur");
     await expect(page.getByRole("link", { name: "✎ Edit this post" })).toHaveAttribute("href", /\/admin\/blogs\/[0-9a-f-]+\/edit/);
     await expect(page.getByText("Signed in as team")).toBeVisible();

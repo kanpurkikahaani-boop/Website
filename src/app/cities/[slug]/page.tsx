@@ -8,6 +8,8 @@ import { PlaceGrid } from "@/components/sections/PlaceGrid";
 import { TravelCards } from "@/components/sections/TravelCards";
 import { Timeline } from "@/components/sections/Timeline";
 import { WeatherWidget, ForecastRow } from "@/components/sections/WeatherWidget";
+import { FaqSection } from "@/components/faq/FaqSection";
+import { cityFaqs } from "@/data/faqs";
 import { MapEmbed } from "@/components/sections/MapEmbed";
 import { ShareButtons } from "@/components/sections/ShareButtons";
 import { CityCard } from "@/components/sections/CityCard";
@@ -173,12 +175,13 @@ export default async function CityPage({ params }: PageProps<"/cities/[slug]">) 
             </div>
           </div>
           <div className="min-w-0">
-            <SectionHeader eyebrow="Map" title={`Find ${city.name}`} />
+            <SectionHeader id="map-title" eyebrow="Map" title={`Find ${city.name}`} />
             <MapEmbed query={`${city.name}, Uttar Pradesh`} title={`Map of ${city.name}, Uttar Pradesh`} height={360} />
           </div>
         </div>
       </Section>
 
+      <FaqSection title={`${city.name} — Frequently Asked Questions`} items={cityFaqs(city)} livePlace={{ lat: city.lat, lon: city.lon, label: city.name }} />
       <Section tone="alt" labelledBy="others-title">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <SectionHeader id="others-title" eyebrow="Keep exploring" title="Explore Other Cities" />

@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/PageHero";
 import { PlaceGrid } from "@/components/sections/PlaceGrid";
@@ -53,6 +55,7 @@ export default function TourismPage() {
           "Places to visit in Kanpur",
         )}
       />
+      <FaqSection title={faqPageInfo.tourism.title} items={faqs.tourism} />
     </>
   );
 }

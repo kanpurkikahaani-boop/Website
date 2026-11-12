@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/PageHero";
 import { StayList } from "@/components/sections/StayList";
@@ -43,6 +45,7 @@ export default function AccommodationPage() {
           Not sure where to base yourself? <InlineLink href="/tourism#planner">Plan your days first</InlineLink>
         </p>
       </Section>
+      <FaqSection title={faqPageInfo.accommodation.title} items={faqs.accommodation} />
     </>
   );
 }

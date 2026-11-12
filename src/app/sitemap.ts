@@ -13,7 +13,7 @@ export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const pages = [...new Set([...allNavHrefs, "/privacy", "/credits"])].map((href) => ({
+  const pages = [...new Set([...allNavHrefs, "/privacy", "/credits", "/faq"])].map((href) => ({
     url: absoluteUrl(href),
     lastModified: now,
     changeFrequency: (["/events", "/news", "/weather"].includes(href) ? "daily" : "weekly") as "daily" | "weekly",

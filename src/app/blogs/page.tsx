@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Search } from "lucide-react";
@@ -156,6 +158,7 @@ export default async function BlogsPage({ searchParams }: PageProps<"/blogs">) {
           </>
         )}
       </Section>
+      <FaqSection title={faqPageInfo.blogs.title} items={faqs.blogs} />
     </>
   );
 }

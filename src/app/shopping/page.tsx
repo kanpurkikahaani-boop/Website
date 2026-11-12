@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/PageHero";
 import { Section } from "@/components/ui/Section";
@@ -46,6 +48,7 @@ export default function ShoppingPage() {
           "Markets in Kanpur",
         )}
       />
+      <FaqSection title={faqPageInfo.shopping.title} items={faqs.shopping} />
     </>
   );
 }

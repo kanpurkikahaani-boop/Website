@@ -26,6 +26,8 @@ import { site, socials, absoluteUrl } from "@/data/site";
 import { buildMetadata, touristDestinationJsonLd } from "@/lib/seo";
 import { formatDate } from "@/lib/utils";
 import { hasLogo } from "@/lib/assets";
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import { getLatestPosts } from "@/lib/posts";
 import { cityName } from "@/lib/city-names";
 
@@ -242,6 +244,7 @@ export default async function HomePage() {
         </>
       )}
 
+      <FaqSection title={faqPageInfo.home.title} items={faqs.home} livePlace={{ lat: site.kanpur.lat, lon: site.kanpur.lon, label: "Kanpur" }} />
       <NewsletterBand />
       <p className="bg-bg py-6 text-center text-sm">
         The people behind these stories:{" "}

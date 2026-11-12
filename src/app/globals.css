@@ -288,3 +288,30 @@ h4 {
     transform: none;
   }
 }
+
+/* FAQ accordion (FaqSection): "+" turns into "×"; smooth height where the browser supports it. */
+.faq-item[open] .faq-plus {
+  transform: rotate(45deg);
+}
+.faq-item {
+  interpolate-size: allow-keywords;
+}
+.faq-item::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition: block-size 0.3s ease, content-visibility 0.3s allow-discrete;
+}
+.faq-item[open]::details-content {
+  block-size: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .faq-item::details-content,
+  .faq-plus {
+    transition: none;
+  }
+}
+@media (hover: none) {
+  .faq-copy {
+    opacity: 1;
+  }
+}

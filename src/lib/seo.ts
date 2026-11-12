@@ -110,3 +110,16 @@ export function touristDestinationJsonLd(input: {
       : {}),
   };
 }
+
+/** FAQPage structured data. Answer text must match the visible (static) answer exactly. */
+export function faqJsonLd(items: { question: string; answerText: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((i) => ({
+      "@type": "Question",
+      name: i.question,
+      acceptedAnswer: { "@type": "Answer", text: i.answerText },
+    })),
+  };
+}

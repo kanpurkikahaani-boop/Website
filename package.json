@@ -5,7 +5,8 @@
   "scripts": {
     "predev": "node scripts/scan-assets.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/scan-assets.mjs && tsx scripts/images/verify.ts",
+    "prebuild": "node scripts/scan-assets.mjs && tsx scripts/images/verify.ts && tsx scripts/seo/faq-coverage.ts --warn-only",
+    "seo:faq": "tsx scripts/seo/faq-coverage.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -41,6 +42,7 @@
     "embla-carousel-fade": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^14.7.1",
+    "leaflet": "^1.9.4",
     "lucide-react": "^1.62.0",
     "mammoth": "^1.13.0",
     "next": "16.4.3",
@@ -54,6 +56,7 @@
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@tailwindcss/turbopack": "^4",
+    "@types/leaflet": "^1.9.12",
     "@types/node": "^20",
     "@types/pg": "^8.23.1",
     "@types/react": "^19",

@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/sections/PageHero";
@@ -60,6 +62,7 @@ export default function CelebrationsPage() {
           Want exact dates? <InlineLink href="/events">See upcoming events</InlineLink>
         </p>
       </Section>
+      <FaqSection title={faqPageInfo.celebrations.title} items={faqs.celebrations} />
     </>
   );
 }

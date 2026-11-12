@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/PageHero";
 import { Timeline } from "@/components/sections/Timeline";
@@ -65,6 +67,7 @@ export default function CultureHistoryPage() {
           "Heritage landmarks in Kanpur",
         )}
       />
+      <FaqSection title={faqPageInfo.culture.title} items={faqs.culture} />
     </>
   );
 }

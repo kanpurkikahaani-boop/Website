@@ -20,8 +20,22 @@ export interface WeatherData {
     humidity: number;
     windSpeed: number;
     code: number;
+    /** Local observation time from Open-Meteo, e.g. "2026-11-03T14:15" (IST). */
+    time?: string;
   };
-  daily: { date: string; code: number; max: number; min: number }[];
+  daily: {
+    date: string;
+    code: number;
+    max: number;
+    min: number;
+    /** Highest chance of rain during the day, % */
+    rainChance?: number;
+    sunrise?: string;
+    sunset?: string;
+    uvMax?: number;
+  }[];
+  /** Next 24 hours from the current hour. */
+  hourly: { time: string; temp: number; rainChance: number; code: number }[];
   fetchedAt: number;
 }
 
@@ -31,6 +45,8 @@ type State =
   | { status: "error"; data?: undefined; error: string };
 
 const CACHE_MS = 30 * 60 * 1000;
+/** Bump when WeatherData changes shape, so old session caches are ignored. */
+const CACHE_VERSION = "v2";
 const memoryCache = new Map<string, WeatherData>();
 const inflight = new Map<string, Promise<WeatherData>>();
 
@@ -38,27 +54,78 @@ export function weatherUrl(lat: number, lon: number) {
   return (
     `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
     `&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code` +
-    `&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FKolkata`
+    `&hourly=temperature_2m,precipitation_probability,weather_code` +
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max` +
+    `&forecast_days=7&timezone=Asia%2FKolkata`
   );
 }
 
 interface OpenMeteoResponse {
   current: {
+    time?: string;
     temperature_2m: number;
     apparent_temperature: number;
     relative_humidity_2m: number;
     wind_speed_10m: number;
     weather_code: number;
   };
+  hourly?: {
+    time: string[];
+    temperature_2m: number[];
+    precipitation_probability: (number | null)[];
+    weather_code: number[];
+  };
   daily: {
     time: string[];
     weather_code: number[];
     temperature_2m_max: number[];
     temperature_2m_min: number[];
+    precipitation_probability_max?: (number | null)[];
+    sunrise?: string[];
+    sunset?: string[];
+    uv_index_max?: (number | null)[];
+  };
+}
+
+/** Convert an Open-Meteo response (timezone Asia/Kolkata) into our shape. Exported for tests. */
+export function parseOpenMeteo(json: OpenMeteoResponse, fetchedAt = Date.now()): WeatherData {
+  const nowHour = (json.current.time ?? "").slice(0, 13); // "YYYY-MM-DDTHH"
+  const hours = json.hourly;
+  let start = hours ? hours.time.findIndex((t) => t.slice(0, 13) >= nowHour) : -1;
+  if (start < 0) start = 0;
+  return {
+    current: {
+      temperature: json.current.temperature_2m,
+      apparentTemperature: json.current.apparent_temperature,
+      humidity: json.current.relative_humidity_2m,
+      windSpeed: json.current.wind_speed_10m,
+      code: json.current.weather_code,
+      time: json.current.time,
+    },
+    daily: json.daily.time.map((date, i) => ({
+      date,
+      code: json.daily.weather_code[i],
+      max: json.daily.temperature_2m_max[i],
+      min: json.daily.temperature_2m_min[i],
+      rainChance: json.daily.precipitation_probability_max?.[i] ?? undefined,
+      sunrise: json.daily.sunrise?.[i],
+      sunset: json.daily.sunset?.[i],
+      uvMax: json.daily.uv_index_max?.[i] ?? undefined,
+    })),
+    hourly: hours
+      ? hours.time.slice(start, start + 24).map((time, k) => ({
+          time,
+          temp: hours.temperature_2m[start + k],
+          rainChance: hours.precipitation_probability[start + k] ?? 0,
+          code: hours.weather_code[start + k],
+        }))
+      : [],
+    fetchedAt,
   };
 }
 
 function readCache(key: string): WeatherData | undefined {
+  key = `${CACHE_VERSION}:${key}`;
   const mem = memoryCache.get(key);
   if (mem && Date.now() - mem.fetchedAt < CACHE_MS) return mem;
   try {
@@ -76,7 +143,11 @@ function readCache(key: string): WeatherData | undefined {
   return undefined;
 }
 
-async function fetchWeather(lat: number, lon: number): Promise<WeatherData> {
+/**
+ * `ephemeral`: the visitor's own location — kept in memory only, never written to browser
+ * storage (no coordinates are stored), and never sent anywhere except to Open-Meteo.
+ */
+async function fetchWeather(lat: number, lon: number, ephemeral = false): Promise<WeatherData> {
   const key = `${lat},${lon}`;
   const cached = readCache(key);
   if (cached) return cached;
@@ -86,26 +157,10 @@ async function fetchWeather(lat: number, lon: number): Promise<WeatherData> {
   const p = (async () => {
     const res = await fetch(weatherUrl(lat, lon));
     if (!res.ok) throw new Error(`Weather service responded ${res.status}`);
-    const json = (await res.json()) as OpenMeteoResponse;
-    const data: WeatherData = {
-      current: {
-        temperature: json.current.temperature_2m,
-        apparentTemperature: json.current.apparent_temperature,
-        humidity: json.current.relative_humidity_2m,
-        windSpeed: json.current.wind_speed_10m,
-        code: json.current.weather_code,
-      },
-      daily: json.daily.time.map((date, i) => ({
-        date,
-        code: json.daily.weather_code[i],
-        max: json.daily.temperature_2m_max[i],
-        min: json.daily.temperature_2m_min[i],
-      })),
-      fetchedAt: Date.now(),
-    };
-    memoryCache.set(key, data);
-    try {
-      sessionStorage.setItem(`kkk-weather:${key}`, JSON.stringify(data));
+    const data = parseOpenMeteo((await res.json()) as OpenMeteoResponse);
+    memoryCache.set(`${CACHE_VERSION}:${key}`, data);
+    if (!ephemeral) try {
+      sessionStorage.setItem(`kkk-weather:${CACHE_VERSION}:${key}`, JSON.stringify(data));
     } catch {
       // ignore
     }
@@ -121,7 +176,7 @@ async function fetchWeather(lat: number, lon: number): Promise<WeatherData> {
 }
 
 /** Shared weather hook used by the home info strip, /weather and the city pages. */
-export function useWeather(lat: number, lon: number): State & { retry: () => void } {
+export function useWeather(lat: number, lon: number, opts: { ephemeral?: boolean } = {}): State & { retry: () => void } {
   const [state, setState] = useState<State>({ status: "loading" });
   const [attempt, setAttempt] = useState(0);
 
@@ -134,7 +189,7 @@ export function useWeather(lat: number, lon: number): State & { retry: () => voi
       return;
     }
     setState({ status: "loading" });
-    fetchWeather(lat, lon)
+    fetchWeather(lat, lon, opts.ephemeral)
       .then((data) => !cancelled && setState({ status: "success", data }))
       .catch((e: unknown) =>
         !cancelled &&
@@ -143,7 +198,7 @@ export function useWeather(lat: number, lon: number): State & { retry: () => voi
     return () => {
       cancelled = true;
     };
-  }, [lat, lon, attempt]);
+  }, [lat, lon, attempt, opts.ephemeral]);
 
   return { ...state, retry: () => setAttempt((a) => a + 1) };
 }

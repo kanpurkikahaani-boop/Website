@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/PageHero";
 import { SpotifyEmbed } from "@/components/sections/SpotifyEmbed";
@@ -40,6 +42,7 @@ export default function PlaylistPage() {
           </p>
         </div>
       </Section>
+      <FaqSection title={faqPageInfo.playlist.title} items={faqs.playlist} />
     </>
   );
 }

@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Route } from "lucide-react";
@@ -119,6 +121,7 @@ export default function NearbyPage() {
           touristDestinationJsonLd({ name: c.name, description: c.shortIntro, path: `/cities/${c.slug}`, lat: c.lat, lon: c.lon }),
         )}
       />
+      <FaqSection title={faqPageInfo.nearby.title} items={faqs.nearby} />
     </>
   );
 }

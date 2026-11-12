@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import type { Metadata } from "next";
@@ -115,6 +117,7 @@ export default function TeamPage() {
           mainEntity: org,
         }}
       />
+      <FaqSection title={faqPageInfo.team.title} items={faqs.team} />
     </>
   );
 }

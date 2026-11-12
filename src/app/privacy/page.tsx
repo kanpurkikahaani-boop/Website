@@ -57,7 +57,7 @@ const sections: { h: string; body: React.ReactNode }[] = [
   },
   {
     h: "Embedded content and links",
-    body: "Maps, videos and music are embedded from Google Maps, YouTube (privacy-enhanced mode) and Spotify, and load only when you scroll to them or press play. News headlines link to the original publishers' websites, whose own privacy policies apply. Live weather comes from Open-Meteo using fixed city coordinates — we never ask for your location.",
+    body: "Maps, videos and music are embedded from Google Maps, YouTube (privacy-enhanced mode) and Spotify, and load only when you scroll to them or press play. News headlines link to the original publishers' websites, whose own privacy policies apply. Live weather comes from Open-Meteo. On the weather page you can tap “Use my location”: only then does your browser ask for your position, and it sends it — rounded to about a kilometre — straight to Open-Meteo for the forecast and to BigDataCloud for the place name. It never reaches our servers and is never stored; we only remember, on your device, that you chose this option. The rain radar map loads from OpenStreetMap and RainViewer.",
   },
   {
     h: "Booking links",

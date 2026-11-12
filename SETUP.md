@@ -242,3 +242,23 @@ Other commands:
 - `npm run test:images`: tests the candidate filters offline.
 
 `reports/missing-images.md` doubles as a shot list if the team would rather photograph places themselves.
+
+## Weather page: maps, radar and location (update v8)
+
+Nothing to set up — no keys. The visitor's browser calls these free services directly; our servers never see the requests.
+
+| Service | Used for | Terms to respect |
+|---|---|---|
+| [Open-Meteo](https://open-meteo.com/) | Forecasts (current, hourly, 7-day) | Free for non-commercial use with attribution ("Data: Open-Meteo" under the forecast). |
+| [RainViewer](https://www.rainviewer.com/) public API (`api.rainviewer.com/public/weather-maps.json`) | Rain radar frames, past ~2 hours | Free public API; attribution "Radar © RainViewer" is shown on the map; radar zoom is capped (we use level 7). **VERIFY** the current terms at rainviewer.com/api.html — this build session couldn't open them. |
+| OpenStreetMap tiles (`tile.openstreetmap.org`) | Radar base map | OSM Tile Usage Policy: visible "© OpenStreetMap contributors" attribution (shown), light use only, no bulk downloading, valid Referer (browsers send one). If traffic grows, switch to a commercial tile provider. **VERIFY** at operations.osmfoundation.org/policies/tiles. |
+| BigDataCloud client-side reverse geocoding (`api.bigdatacloud.net/data/reverse-geocode-client`) | The place name after "Use my location" | Free, no key, only for calls made from the visitor's browser. Falls back to "Your location". **VERIFY** terms at bigdatacloud.com. (Open-Meteo's geocoding API searches by name only, so it can't do this.) |
+| [IMD](https://mausam.imd.gov.in) | Link only, for official warnings and radar | — |
+
+**Privacy:** "Use my location" asks the browser for a position only after a click. Coordinates are rounded to ~1 km, kept in memory only and sent only to Open-Meteo and BigDataCloud. Only the *choice* is remembered (`localStorage` key `kkk-weather-use-location`). Weather caches for a chosen location are never written to browser storage.
+
+## FAQs (update v8)
+
+- All FAQ text lives in `src/data/faqs.ts` (city pages use the `cityFaqs()` template). Answers use `[words](/link)` for links.
+- `npm run seo:faq` writes `reports/faq-keyword-coverage.md` and runs before every build as a warning. It checks keyword coverage, ≤3 uses per page, answer length (40–100 words) and an internal link per answer, and that the misspellings people search for are never written anywhere.
+- Items marked `// VERIFY` in `faqs.ts` are time-sensitive (distances, festival dates, metro route) — recheck them once a year.

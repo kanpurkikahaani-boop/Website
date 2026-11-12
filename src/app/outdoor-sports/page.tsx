@@ -1,3 +1,6 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
+import { site } from "@/data/site";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/PageHero";
 import { Section } from "@/components/ui/Section";
@@ -45,6 +48,7 @@ export default function OutdoorPage() {
           "Parks and sports venues in Kanpur",
         )}
       />
+      <FaqSection title={faqPageInfo.outdoor.title} items={faqs.outdoor} livePlace={{ lat: site.kanpur.lat, lon: site.kanpur.lon, label: "Kanpur" }} />
     </>
   );
 }

@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/PageHero";
 import { FilterableCards } from "@/components/sections/FilterableCards";
@@ -43,6 +45,7 @@ export default function FoodPage() {
           Hungry for more? <InlineLink href="/blogs">Read our latest stories</InlineLink>
         </p>
       </Section>
+      <FaqSection title={faqPageInfo.food.title} items={faqs.food} />
     </>
   );
 }

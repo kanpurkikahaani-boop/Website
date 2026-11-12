@@ -10,13 +10,16 @@ export function WeatherWidget({
   lon,
   place,
   compact,
+  ephemeral,
 }: {
   lat: number;
   lon: number;
   place: string;
   compact?: boolean;
+  /** The visitor's own location: never cached in browser storage. */
+  ephemeral?: boolean;
 }) {
-  const w = useWeather(lat, lon);
+  const w = useWeather(lat, lon, { ephemeral });
 
   return (
     <div
@@ -99,8 +102,8 @@ function Current({ data, compact, place }: { data: NonNullable<ReturnType<typeof
 }
 
 /** 7-day forecast row. */
-export function ForecastRow({ lat, lon, compact }: { lat: number; lon: number; compact?: boolean }) {
-  const w = useWeather(lat, lon);
+export function ForecastRow({ lat, lon, compact, ephemeral }: { lat: number; lon: number; compact?: boolean; ephemeral?: boolean }) {
+  const w = useWeather(lat, lon, { ephemeral });
   if (w.status === "error") return null;
   const days = w.status === "success" ? w.data.daily.slice(0, 7) : Array.from({ length: 7 }, () => null);
   return (

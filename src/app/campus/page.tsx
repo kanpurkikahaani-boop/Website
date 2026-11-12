@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import type { Metadata } from "next";
 import { Lightbulb } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
@@ -81,6 +83,7 @@ export default function CampusPage() {
           })),
         }}
       />
+      <FaqSection title={faqPageInfo.campus.title} items={faqs.campus} />
     </>
   );
 }

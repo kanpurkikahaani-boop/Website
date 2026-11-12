@@ -1,3 +1,5 @@
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs } from "@/data/faqs";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/PageHero";
 import { EventList } from "@/components/sections/EventList";
@@ -75,6 +77,7 @@ export default async function EventsPage() {
         />
       </Section>
       {eventLd.length > 0 && <JsonLd data={eventLd} />}
+      <FaqSection title={faqPageInfo.events.title} items={faqs.events} />
     </>
   );
 }

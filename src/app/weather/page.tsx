@@ -8,12 +8,14 @@ import { TagChip } from "@/components/ui/TagChip";
 import { cities } from "@/data/cities";
 import { site } from "@/data/site";
 import { buildMetadata } from "@/lib/seo";
+import { FaqSection } from "@/components/faq/FaqSection";
+import { faqPageInfo, faqs, weatherGroups } from "@/data/faqs";
 import { WeatherClient } from "./WeatherClient";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Kanpur Weather Today & 7-Day Forecast – Best Time to Visit | Kanpur Ki Kahaani",
+  title: "Kanpur Weather Today & Tomorrow – Live Rain Radar & Forecast | Kanpur Ki Kahaani",
   description:
-    "Live Kanpur weather, a 7-day forecast and conditions in Lucknow, Agra, Prayagraj, Varanasi and Ayodhya — plus the best time to visit Kanpur, season by season.",
+    "Live Kanpur weather now: current temperature, rain today, tomorrow's forecast, hourly and 7-day outlook, and a live rain radar. Check the weather at your location too.",
   path: "/weather",
   ogImage: "/og/weather",
 });
@@ -38,7 +40,7 @@ export default function WeatherPage() {
         crumbs={[{ name: "Live", href: "/events" }, { name: "Weather" }]}
       />
       <Section labelledBy="now-title">
-        <SectionHeader id="now-title" eyebrow="Right now" title="Current Conditions" intro="Switch cities to check the weather before a trip from Kanpur." />
+        <SectionHeader id="now-title" eyebrow="Live" title="Kanpur weather right now" intro="Switch cities, or use your location, to check conditions before you head out." />
         <WeatherClient cities={options} />
       </Section>
       <Section tone="alt" labelledBy="seasons-title">
@@ -57,6 +59,13 @@ export default function WeatherPage() {
           ))}
         </ul>
       </Section>
+      <FaqSection
+        title={faqPageInfo.weather.title}
+        items={faqs.weather}
+        groups={weatherGroups}
+        livePlace={{ lat: site.kanpur.lat, lon: site.kanpur.lon, label: "Kanpur" }}
+        followSelectedPlace
+      />
     </>
   );
 }
