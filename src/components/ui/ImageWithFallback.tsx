@@ -86,7 +86,7 @@ export function ImageWithFallback({ src, alt, label, sublabel, tone, hideLabel, 
   return (
     <Image
       src={resolved}
-      alt={alt}
+      alt={photo?.alt ?? alt}
       fill={fill}
       className={className}
       onError={() => setFailed(true)}

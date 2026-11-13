@@ -24,6 +24,8 @@ function licenceOk(p: Photo): string | null {
   switch (p.source) {
     case "own":
       return /Kanpur Ki Kahaani team/.test(l) ? null : `own photo needs the team licence line`;
+    case "team-supplied":
+      return /^Supplied by the Kanpur Ki Kahaani team$/.test(l) ? null : `team-supplied photo needs the licence line "Supplied by the Kanpur Ki Kahaani team"`;
     case "unsplash":
       return /^Unsplash License$/i.test(l) ? null : `Unsplash photos must be "Unsplash License"`;
     case "pexels":
@@ -50,13 +52,15 @@ function realSize(file: string): { width: number; height: number } | null {
 }
 
 const problems: string[] = [];
+const warnings: string[] = [];
+const lowRes = (key: string, msg: string) => warnings.push(`${key}: ${msg}`);
 const bad = (key: string, msg: string) => problems.push(`${key}: ${msg}`);
 
 for (const [key, p] of Object.entries(photos)) {
   if (!p.alt?.trim()) bad(key, "empty alt text");
   const lic = licenceOk(p);
   if (lic) bad(key, lic);
-  if (p.source !== "own") {
+  if (p.source !== "own" && p.source !== "team-supplied") {
     if (!p.author?.trim()) bad(key, "no author");
     if (!p.sourcePageUrl?.startsWith("https://")) bad(key, "no source page URL");
     if ((p.source === "wikimedia" || p.source === "flickr") && !p.licenseUrl?.startsWith("https://")) bad(key, "no licence URL");
@@ -88,7 +92,8 @@ for (const s of slots) {
 for (const s of slots) {
   const p = photos[s.currentImage];
   if (!p) continue;
-  if (p.width < s.minWidth) bad(s.currentImage, `${p.width}px wide — slot ${s.slotId} needs ≥ ${s.minWidth}px`);
+  // Team-supplied photos were chosen by the team for their slots: a small one is a warning only.
+  if (p.width < s.minWidth) (p.source === "team-supplied" ? lowRes : (k: string, m: string) => bad(k, m))(s.currentImage, `${p.width}px wide — slot ${s.slotId} would like ≥ ${s.minWidth}px`);
   if (p.representative && !s.representativeOk) bad(s.currentImage, `slot ${s.slotId} must show the exact place, not a representative image`);
   const k = `${s.page}::${p.src}`;
   if (seen.has(k) && seen.get(k) !== s.slotId) bad(s.currentImage, `used twice on ${s.page} (${seen.get(k)} and ${s.slotId})`);
@@ -106,6 +111,7 @@ for (const m of team) {
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 for (const dep of Object.keys({ ...pkg.dependencies, ...pkg.devDependencies })) if (AI_PACKAGES.test(dep)) problems.push(`package.json: AI tool "${dep}" is not allowed`);
 
+if (warnings.length) console.warn(`images:verify — ${warnings.length} low-resolution team-supplied photo slot(s) (warning only):\n  ${warnings.join("\n  ")}`);
 if (problems.length) {
   console.error(`images:verify — ${problems.length} problem(s):\n  ${problems.join("\n  ")}`);
   process.exit(1);

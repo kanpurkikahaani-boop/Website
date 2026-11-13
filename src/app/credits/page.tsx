@@ -13,6 +13,7 @@ export const metadata: Metadata = buildMetadata({
 
 const SOURCE: Record<Photo["source"], string> = {
   own: "Our team",
+  "team-supplied": "Supplied by our team",
   wikimedia: "Wikimedia Commons",
   unsplash: "Unsplash",
   pexels: "Pexels",

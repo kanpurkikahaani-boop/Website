@@ -1,6 +1,6 @@
 # Missing images
 
-143 of 143 slots still show the gradient fallback tile (123 distinct photos needed).
+87 of 143 slots still show the gradient fallback tile (87 distinct photos needed).
 
 **Why:** no candidate has been approved yet. Sourcing needs network access to Wikimedia Commons / Unsplash / Pexels, which this environment does not have — see SETUP.md → “Photos”. A slot also stays here if no correct, licensed, non-AI photo scores ≥ 4 on relevance: a wrong photo is worse than none.
 
@@ -8,40 +8,18 @@ Each line is also a shot list our team can photograph ourselves (landscape, natu
 
 ## /
 
-- **Bithoor Ghats** — `/images/kanpur/hero-bithoor-ghats.jpg` (16:9 full-bleed, ≥ 2400px): Dawn over the Ganga from the ghats of Bithoor, Kanpur
-- **JK Temple** — `/images/kanpur/hero-jk-temple.jpg` (16:9 full-bleed, ≥ 2400px): JK Temple's white marble spires lit at dusk
-- **Kanpur Memorial Church** — `/images/kanpur/hero-memorial-church.jpg` (16:9 full-bleed, ≥ 2400px): Red-brick Gothic facade of Kanpur Memorial Church
-- **Phool Bagh** — `/images/kanpur/hero-phool-bagh.jpg` (16:9 full-bleed, ≥ 2400px): Phool Bagh gardens and memorial on Mall Road, Kanpur
-- **Beyond Kanpur** — `/images/varanasi/hero-beyond-kanpur.jpg` (16:9 full-bleed, ≥ 2400px): Evening aarti lamps on the Varanasi ghats — a trip beyond Kanpur
 - **The Manchester of the East** — `/images/kanpur/about-kanpur.jpg` (4:3, ≥ 1200px): Kanpur's riverfront and city skyline along the Ganga
 - **Tourism & Itinerary Planner** — `/images/kanpur/explore-tourism.jpg` (4:3, ≥ 1200px): Visitors at the Bithoor ghats near Kanpur
-- **Culture & History** — `/images/kanpur/lal-imli-mill.jpg` (4:3, ≥ 1200px): Red-brick clock tower of the Lal Imli woollen mill
-- **Celebrations** — `/images/kanpur/ganga-mela.jpg` (4:3, ≥ 1200px): Crowds celebrating Ganga Mela at Sarsaiya Ghat
-- **Food & Night Life** — `/images/kanpur/arya-nagar-chaat.jpg` (4:3, ≥ 1200px): Plate of aloo tikki chaat with chutneys in Arya Nagar
-- **Shopping Streets** — `/images/kanpur/gumti-no-5.jpg` (4:3, ≥ 1200px): Stacks of colourful glass bangles at Gumti No. 5 market
-- **Outdoor & Sports** — `/images/kanpur/green-park-stadium.jpg` (4:3, ≥ 1200px): Floodlit cricket ground at Green Park Stadium, Kanpur
-- **Lucknow** — `/images/lucknow/hero.jpg` (4:3, ≥ 1200px): Rumi Darwaza and the old city skyline of Lucknow at sunset
-- **Agra** — `/images/agra/hero.jpg` (4:3, ≥ 1200px): The Taj Mahal reflected in its long water channel at dawn
-- **Prayagraj** — `/images/prayagraj/hero.jpg` (4:3, ≥ 1200px): Pilgrim boats gathered at the Triveni Sangam at dawn, Prayagraj
-- **Varanasi** — `/images/varanasi/hero.jpg` (4:3, ≥ 1200px): Lamps and crowds on the Varanasi ghats during the evening Ganga Aarti
-- **Ayodhya** — `/images/ayodhya/hero.jpg` (4:3, ≥ 1200px): Diyas glowing along the Saryu ghats of Ayodhya during Deepotsav
+- **Culture & History** — `/images/kanpur/explore-culture.jpg` (4:3, ≥ 1200px): Culture & History
+- **Celebrations** — `/images/kanpur/explore-celebrations.jpg` (4:3, ≥ 1200px): Celebrations
+- **Food & Night Life** — `/images/kanpur/explore-food.jpg` (4:3, ≥ 1200px): Food & Night Life
+- **Shopping Streets** — `/images/kanpur/explore-shopping.jpg` (4:3, ≥ 1200px): Shopping Streets
+- **Outdoor & Sports** — `/images/kanpur/explore-outdoor.jpg` (4:3, ≥ 1200px): Outdoor & Sports
 
 ## /tourism
 
-- **JK Temple (Shri Radhakrishna Mandir)** — `/images/kanpur/jk-temple.jpg` (4:3, ≥ 1200px): Marble spires of JK Temple, Kanpur
-- **Bithoor Ghats** — `/images/kanpur/bithoor-ghats.jpg` (4:3, ≥ 1200px): Volunteers cleaning steps of the ghats at Bithoor
-- **Nana Rao Park** — `/images/kanpur/nana-rao-park.jpg` (4:3, ≥ 1200px): Green lawns and trees in Nana Rao Park
 - **Kanpur Sangrahalaya (Museum)** — `/images/kanpur/kanpur-sangrahalaya.jpg` (4:3, ≥ 1200px): Gallery of historic sculptures inside Kanpur Sangrahalaya museum
-- **Jajmau Mound & Ghats** — `/images/kanpur/jajmau-mound.jpg` (4:3, ≥ 1200px): Archaeological mound at Jajmau
-- **Allen Forest Zoo** — `/images/kanpur/allen-forest-zoo.jpg` (4:3, ≥ 1200px): Forest walking trail inside Allen Forest Zoo
-- **Moti Jheel** — `/images/kanpur/moti-jheel.jpg` (4:3, ≥ 1200px): Lakeside walking path at Moti Jheel
-- **Kanpur Memorial Church** — `/images/kanpur/kanpur-memorial-church.jpg` (4:3, ≥ 1200px): Red-brick Kanpur Memorial Church
-- **Phool Bagh & Ganesh Shankar Vidyarthi Memorial** — `/images/kanpur/phool-bagh.jpg` (4:3, ≥ 1200px): Phool Bagh garden on Mall Road
-- **Naveen Market** — `/images/kanpur/naveen-market.jpg` (4:3, ≥ 1200px): Clothing stores and shoppers in Naveen Market, Kanpur
-- **Sisamau Bazaar** — `/images/kanpur/sisamau-bazaar.jpg` (4:3, ≥ 1200px): Brassware and spice stalls in Sisamau Bazaar
 - **Arya Nagar Food Lane** — `/images/kanpur/arya-nagar-food-lane.jpg` (4:3, ≥ 1200px): Evening chaat stalls in Arya Nagar, Kanpur
-- **Ganga Barrage** — `/images/kanpur/ganga-barrage.jpg` (4:3, ≥ 1200px): Sunset over the Ganga from the Kanpur Ganga Barrage
-- **Blue World Theme Park** — `/images/kanpur/blue-world-theme-park.jpg` (4:3, ≥ 1200px): Water slides and pools at Blue World Theme Park, Kanpur
 
 ## /cities/lucknow
 
@@ -58,7 +36,6 @@ Each line is also a shot list our team can photograph ourselves (landscape, natu
 - **Chikankari at Aminabad** — `/images/lucknow/aminabad.jpg` (4:3, ≥ 1200px): Racks of white chikankari kurtas in Aminabad
 - **Chowk** — `/images/lucknow/chowk.jpg` (4:3, ≥ 1200px): Narrow lane with chikan and attar shops in Chowk, Lucknow
 - **Hazratganj** — `/images/lucknow/hazratganj-shopping.jpg` (4:3, ≥ 1200px): Shopfronts and arcades along Hazratganj, Lucknow — chikankari and boutique stores
-- **Lucknow — The City of Nawabs** — `/images/lucknow/hero.jpg` (16:9 full-bleed, ≥ 1920px): Rumi Darwaza and the old city skyline of Lucknow at sunset
 - **About Lucknow** — `/images/lucknow/about.jpg` (4:3, ≥ 1200px): Arched corridors inside the Bara Imambara complex, Lucknow
 
 ## /cities/agra
@@ -73,7 +50,6 @@ Each line is also a shot list our team can photograph ourselves (landscape, natu
 - **Mughlai Feast** — `/images/agra/mughlai.jpg` (4:3, ≥ 1200px, representative OK): Mughlai curries and naan
 - **Marble Inlay Workshops** — `/images/agra/marble-inlay.jpg` (4:3, ≥ 1200px): Artisan setting semi-precious stones into white marble
 - **Sadar Bazaar** — `/images/agra/sadar-bazaar.jpg` (4:3, ≥ 1200px): Evening crowds in Sadar Bazaar, Agra
-- **Agra — The City of the Taj** — `/images/agra/hero.jpg` (16:9 full-bleed, ≥ 1920px): The Taj Mahal reflected in its long water channel at dawn
 - **About Agra** — `/images/agra/about.jpg` (4:3, ≥ 1200px): Marble jaali screens inside Agra Fort overlooking the Yamuna
 
 ## /cities/prayagraj
@@ -88,7 +64,6 @@ Each line is also a shot list our team can photograph ourselves (landscape, natu
 - **Kulhad Lassi & Rabri** — `/images/prayagraj/lassi.jpg` (4:3, ≥ 1200px, representative OK): Lassi in a clay kulhad topped with cream
 - **Civil Lines Market** — `/images/prayagraj/civil-lines.jpg` (4:3, ≥ 1200px): Shops along Civil Lines, Prayagraj
 - **Katra Market** — `/images/prayagraj/katra.jpg` (4:3, ≥ 1200px): Busy Katra market near Allahabad University
-- **Prayagraj — Where three rivers meet** — `/images/prayagraj/hero.jpg` (16:9 full-bleed, ≥ 1920px): Pilgrim boats gathered at the Triveni Sangam at dawn, Prayagraj
 - **About Prayagraj** — `/images/prayagraj/about.jpg` (4:3, ≥ 1200px): Anand Bhawan museum in Prayagraj
 
 ## /cities/varanasi
@@ -106,7 +81,6 @@ Each line is also a shot list our team can photograph ourselves (landscape, natu
 - **Banarasi Silk Sarees** — `/images/varanasi/banarasi-silk.jpg` (4:3, ≥ 1200px): Banarasi silk sarees with gold zari on a loom
 - **Vishwanath Gali** — `/images/varanasi/vishwanath-gali.jpg` (4:3, ≥ 1200px): Narrow lane of small shops near Kashi Vishwanath
 - **Godowlia Market** — `/images/varanasi/godowlia.jpg` (4:3, ≥ 1200px): Crowded crossroads market at Godowlia, Varanasi
-- **Varanasi — The eternal city on the Ganga** — `/images/varanasi/hero.jpg` (16:9 full-bleed, ≥ 1920px): Lamps and crowds on the Varanasi ghats during the evening Ganga Aarti
 - **About Varanasi** — `/images/varanasi/about.jpg` (4:3, ≥ 1200px): Boats moored beneath the ghats of Varanasi in morning light
 
 ## /cities/ayodhya
@@ -122,34 +96,14 @@ Each line is also a shot list our team can photograph ourselves (landscape, natu
 - **Satvik Bhojanalaya Thali** — `/images/ayodhya/thali.jpg` (4:3, ≥ 1200px, representative OK): Simple satvik vegetarian thali
 - **Ram Path Bazaar** — `/images/ayodhya/ram-path.jpg` (4:3, ≥ 1200px): Souvenir and puja shops lining Ram Path, Ayodhya
 - **Temple Lane Sweets** — `/images/ayodhya/hanuman-garhi-sweets.jpg` (4:3, ≥ 1200px): Sweet shops with stacked peda and laddu trays on the lane near Hanuman Garhi, Ayodhya
-- **Ayodhya — The city of Shri Ram** — `/images/ayodhya/hero.jpg` (16:9 full-bleed, ≥ 1920px): Diyas glowing along the Saryu ghats of Ayodhya during Deepotsav
 - **About Ayodhya** — `/images/ayodhya/about.jpg` (4:3, ≥ 1200px): Temple spires above the lanes of Ayodhya
-
-## /culture-history
-
-- **Kanpur Memorial Church** — `/images/kanpur/kanpur-memorial-church.jpg` (4:3, ≥ 1200px): Red-brick Kanpur Memorial Church
-- **JK Temple** — `/images/kanpur/jk-temple.jpg` (4:3, ≥ 1200px): Marble spires of JK Temple, Kanpur
-- **Jajmau Mound** — `/images/kanpur/jajmau-mound.jpg` (4:3, ≥ 1200px): Archaeological mound at Jajmau
-- **Lal Imli Mill** — `/images/kanpur/lal-imli-mill.jpg` (4:3, ≥ 1200px): Red-brick clock tower of the Lal Imli woollen mill
-- **Brahmavart Ghat, Bithoor** — `/images/kanpur/brahmavart-ghat.jpg` (4:3, ≥ 1200px): Brahmavart Ghat on the Ganga at Bithoor
-- **Phool Bagh** — `/images/kanpur/phool-bagh.jpg` (4:3, ≥ 1200px): Phool Bagh garden on Mall Road
 
 ## /celebrations
 
-- **Holi** — `/images/kanpur/holi.jpg` (4:3, ≥ 1200px, representative OK): People throwing coloured powder during Holi in Kanpur
-- **Ganga Mela** — `/images/kanpur/ganga-mela.jpg` (4:3, ≥ 1200px, representative OK): Crowds celebrating Ganga Mela at Sarsaiya Ghat
-- **Durga Puja & Dussehra** — `/images/kanpur/durga-puja.jpg` (4:3, ≥ 1200px, representative OK): Illuminated Durga Puja pandal in Kanpur
 - **Diwali** — `/images/kanpur/diwali.jpg` (4:3, ≥ 1200px, representative OK): Diyas and lights decorating a Kanpur market for Diwali
-- **Dev Deepawali** — `/images/kanpur/dev-deepawali.jpg` (4:3, ≥ 1200px, representative OK): Rows of lit diyas on the ghats for Dev Deepawali
-- **Chhath & Kartik Purnima** — `/images/kanpur/chhath.jpg` (4:3, ≥ 1200px, representative OK): Devotees offering prayers in the river during Chhath
 
 ## /food-nightlife
 
-- **Thaggu Ke Laddu** — `/images/kanpur/thaggu-ke-laddu.jpg` (4:3, ≥ 1200px, representative OK): Trays of laddus at a sweet shop counter in Bada Chauraha, Kanpur
-- **Arya Nagar Chaat Bhandar** — `/images/kanpur/arya-nagar-chaat.jpg` (4:3, ≥ 1200px, representative OK): Plate of aloo tikki chaat with chutneys in Arya Nagar
-- **Midnight Handi Biryani Carts** — `/images/kanpur/handi-biryani.jpg` (4:3, ≥ 1200px, representative OK): Biryani served from a large brass handi at a street cart
-- **Kulhad Chai & Bun-Maska Corner** — `/images/kanpur/kulhad-chai.jpg` (4:3, ≥ 1200px, representative OK): Kulhad clay cups of tea with buttered bun
-- **Kachori-Sabzi & Jalebi** — `/images/kanpur/kachori-sabzi.jpg` (4:3, ≥ 1200px, representative OK): Kachoris with potato curry and jalebi on a leaf plate
 - **Mall Road Mughlai Kitchens** — `/images/kanpur/mughlai.jpg` (4:3, ≥ 1200px, representative OK): Bowls of nihari and korma with sheermal bread
 - **Swaroop Nagar Thali House** — `/images/kanpur/thali.jpg` (4:3, ≥ 1200px, representative OK): A North Indian vegetarian thali with many small bowls
 - **Civil Lines Heritage Dining** — `/images/kanpur/heritage-dining.jpg` (4:3, ≥ 1200px, representative OK): Verandah dining in a colonial bungalow restaurant
@@ -158,31 +112,12 @@ Each line is also a shot list our team can photograph ourselves (landscape, natu
 - **Kakadeo Study Cafe** — `/images/kanpur/student-cafe.jpg` (4:3, ≥ 1200px, representative OK): Students studying with cold coffee in a cafe
 - **Civil Lines Bake House** — `/images/kanpur/bakery.jpg` (4:3, ≥ 1200px, representative OK): Display of cakes and pastries at a bakery cafe
 - **Swaroop Nagar Rooftops** — `/images/kanpur/rooftop.jpg` (4:3, ≥ 1200px, representative OK): Rooftop lounge with string lights at night
-- **Z Square Late Shows** — `/images/kanpur/z-square.jpg` (4:3, ≥ 1200px, representative OK): Interior atrium of Z Square Mall, Kanpur
-- **Ganga Barrage After Dark** — `/images/kanpur/barrage-night.jpg` (4:3, ≥ 1200px, representative OK): Lights of the Ganga Barrage reflected in the river at night
-
-## /shopping
-
-- **Naveen Market** — `/images/kanpur/naveen-market.jpg` (4:3, ≥ 1200px): Clothing stores and shoppers in Naveen Market, Kanpur
-- **Sisamau Bazaar** — `/images/kanpur/sisamau-bazaar.jpg` (4:3, ≥ 1200px): Brassware and spice stalls in Sisamau Bazaar
-- **Gumti No. 5** — `/images/kanpur/gumti-no-5.jpg` (4:3, ≥ 1200px): Stacks of colourful glass bangles at Gumti No. 5 market
-- **Bada Chauraha** — `/images/kanpur/bada-chauraha.jpg` (4:3, ≥ 1200px): Busy crossroads market at Bada Chauraha, Kanpur
-- **Arya Nagar Market** — `/images/kanpur/arya-nagar-market.jpg` (4:3, ≥ 1200px): Evening shoppers at Arya Nagar market
-- **Z Square Mall** — `/images/kanpur/z-square.jpg` (4:3, ≥ 1200px): Interior atrium of Z Square Mall, Kanpur
-- **Jajmau Leather Market** — `/images/kanpur/jajmau-leather.jpg` (4:3, ≥ 1200px): Leather bags and jackets displayed in a Jajmau outlet
 
 ## /outdoor-sports
 
 - **Green Park Stadium** — `/images/kanpur/green-park-stadium.jpg` (4:3, ≥ 1200px): Floodlit cricket ground at Green Park Stadium, Kanpur
-- **Allen Forest Zoo** — `/images/kanpur/allen-forest-zoo.jpg` (4:3, ≥ 1200px): Forest walking trail inside Allen Forest Zoo
-- **Moti Jheel Promenade** — `/images/kanpur/moti-jheel.jpg` (4:3, ≥ 1200px): Lakeside walking path at Moti Jheel
 - **Bithoor Riverfront** — `/images/kanpur/bithoor-boating.jpg` (4:3, ≥ 1200px): Rowing boats on the Ganga at Bithoor
-- **Nana Rao Park** — `/images/kanpur/nana-rao-park.jpg` (4:3, ≥ 1200px): Green lawns and trees in Nana Rao Park
 - **Kamla Club Sports Grounds** — `/images/kanpur/sports-arena.jpg` (4:3, ≥ 1200px): Outdoor tennis courts at a sports club
-
-## /blogs
-
-- **From Our Blogs** — `/images/kanpur/blog-cover.jpg` (16:9, ≥ 1920px, representative OK): A wide Kanpur scene (e.g. the Ganga at Bithoor). Used when a post has no cover image
 
 ## /blogs/navaratri-in-kanpur
 

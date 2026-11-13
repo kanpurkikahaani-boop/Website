@@ -23,11 +23,11 @@ export const heroSlides: Slide[] = [
 export const sectionImages = {
   aboutKanpur: { image: "/images/kanpur/about-kanpur.jpg" as ImagePath, alt: "Kanpur's riverfront and city skyline along the Ganga", label: "The Manchester of the East" },
   exploreTourism: { image: "/images/kanpur/explore-tourism.jpg" as ImagePath, alt: "Visitors at the Bithoor ghats near Kanpur", label: "Tourism & Itinerary Planner" },
-  exploreCulture: { image: "/images/kanpur/lal-imli-mill.jpg" as ImagePath, alt: "Lal Imli mill clock tower, Kanpur", label: "Culture & History" },
-  exploreCelebrations: { image: "/images/kanpur/ganga-mela.jpg" as ImagePath, alt: "Colour-filled streets during Ganga Mela in Kanpur", label: "Celebrations" },
-  exploreFood: { image: "/images/kanpur/arya-nagar-chaat.jpg" as ImagePath, alt: "Plate of chaat in Kanpur", label: "Food & Night Life" },
-  exploreShopping: { image: "/images/kanpur/gumti-no-5.jpg" as ImagePath, alt: "Bangle stalls at Gumti No. 5, Kanpur", label: "Shopping Streets" },
-  exploreOutdoor: { image: "/images/kanpur/green-park-stadium.jpg" as ImagePath, alt: "Green Park Stadium, Kanpur", label: "Outdoor & Sports" },
+  exploreCulture: { image: "/images/kanpur/explore-culture.jpg" as ImagePath, alt: "Lal Imli mill clock tower, Kanpur", label: "Culture & History" },
+  exploreCelebrations: { image: "/images/kanpur/explore-celebrations.jpg" as ImagePath, alt: "Colour-filled streets during Ganga Mela in Kanpur", label: "Celebrations" },
+  exploreFood: { image: "/images/kanpur/explore-food.jpg" as ImagePath, alt: "Plate of chaat in Kanpur", label: "Food & Night Life" },
+  exploreShopping: { image: "/images/kanpur/explore-shopping.jpg" as ImagePath, alt: "Bangle stalls at Gumti No. 5, Kanpur", label: "Shopping Streets" },
+  exploreOutdoor: { image: "/images/kanpur/explore-outdoor.jpg" as ImagePath, alt: "Green Park Stadium, Kanpur", label: "Outdoor & Sports" },
 };
 
 import photoData from "./photos.json";
@@ -42,7 +42,10 @@ import photoData from "./photos.json";
  *
  * A path with no entry renders the gradient fallback tile — a wrong photo is worse than none.
  */
-export type ImageSource = "own" | "wikimedia" | "unsplash" | "pexels" | "flickr";
+/** "team-supplied": photos the team handed us (update v9) — not claimed as the team's own work. */
+export type ImageSource = "own" | "team-supplied" | "wikimedia" | "unsplash" | "pexels" | "flickr";
+
+export const TEAM_SUPPLIED = "Supplied by the Kanpur Ki Kahaani team";
 
 export interface PhotoAlternate {
   sourcePageUrl: string;
@@ -130,6 +133,7 @@ export const photoFor = (key: string): Photo | undefined => photos[key];
 /** One-line credit, e.g. "Photo: Jane Doe, CC BY-SA 4.0, via Wikimedia Commons (resized)". */
 export function creditLine(p: Photo): string {
   if (p.source === "own") return p.license;
+  if (p.source === "team-supplied") return `Photo: ${TEAM_SUPPLIED}`;
   const via = { wikimedia: "via Wikimedia Commons", unsplash: "on Unsplash", pexels: "on Pexels", flickr: "via Flickr" }[p.source];
   const lic = p.source === "unsplash" || p.source === "pexels" ? "" : `, ${p.license}`;
   return `Photo: ${p.author ?? "unknown"}${lic} ${via}${p.changes && p.source !== "unsplash" ? " (resized)" : ""}`;

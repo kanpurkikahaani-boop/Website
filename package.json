@@ -7,6 +7,7 @@
     "dev": "next dev",
     "prebuild": "node scripts/scan-assets.mjs && tsx scripts/images/verify.ts && tsx scripts/seo/faq-coverage.ts --warn-only",
     "seo:faq": "tsx scripts/seo/faq-coverage.ts",
+    "images:team": "tsx scripts/images/apply-team-photos.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

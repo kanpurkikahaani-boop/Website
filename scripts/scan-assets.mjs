@@ -38,8 +38,8 @@ const photos = existsSync(join(root, "src", "data", "photos.json")) ? JSON.parse
 const index = Object.fromEntries(
   Object.entries(photos).map(([key, p]) => {
     const lic = p.source === "unsplash" || p.source === "pexels" ? "" : `, ${p.license}`;
-    const credit = p.source === "own" ? p.license : `Photo: ${p.author ?? "unknown"}${lic} ${VIA[p.source] ?? ""}`.trim();
-    return [key, { src: p.src, width: p.width, height: p.height, objectPosition: p.objectPosition, blurDataURL: p.blurDataURL, credit, representative: !!p.representative }];
+    const credit = p.source === "own" ? p.license : p.source === "team-supplied" ? "Photo: Supplied by the Kanpur Ki Kahaani team" : `Photo: ${p.author ?? "unknown"}${lic} ${VIA[p.source] ?? ""}`.trim();
+    return [key, { src: p.src, width: p.width, height: p.height, alt: p.alt, objectPosition: p.objectPosition, blurDataURL: p.blurDataURL, credit, representative: !!p.representative }];
   }),
 );
 writeFileSync(join(root, "src", "generated", "photo-index.json"), JSON.stringify(index) + "\n");

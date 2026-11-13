@@ -5,6 +5,8 @@ export interface IndexedPhoto {
   src: string;
   width: number;
   height: number;
+  /** Describes the actual photo; used instead of the slot's own alt when present. */
+  alt?: string;
   objectPosition?: string;
   blurDataURL?: string;
   credit: string;
