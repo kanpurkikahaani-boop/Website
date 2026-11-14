@@ -4,7 +4,10 @@
  */
 import { mkdirSync } from "node:fs";
 import { expect, test, type Browser, type BrowserContext, type Page } from "@playwright/test";
+import pg from "pg";
 import sharp from "sharp";
+
+const { Client } = pg;
 
 const ADMIN = { email: "team@kanpurkikahaani.site", password: "Correct-Horse-Battery-9" };
 // A normal desktop browser (Playwright's default "HeadlessChrome" is — correctly — treated as a bot).
@@ -244,6 +247,7 @@ test.describe("v10 view counts", () => {
     const a = await visitor(browser);
     await a.page.goto(`/blogs/${slug}`);
     await expect(countText(a.page)).toHaveText(label(base + 1));
+    await expect(a.page.getByTestId("view-badge")).toHaveText(label(base + 1)); // also next to the reading time
     await a.page.reload();
     await expect(countText(a.page)).toHaveText(label(base + 1)); // refresh doesn't double-count
     await a.page.goto(`/blogs/${slug}`);
@@ -278,6 +282,31 @@ test.describe("v10 view counts", () => {
     const cross = await a.page.request.post(`/api/views/${slug}`, { headers: { "sec-fetch-site": "cross-site" } });
     expect(cross.status()).toBe(403);
     for (const x of [a, b, bot, team, c]) await x.ctx.close();
+  });
+});
+
+test.describe("v10.1 view counts when the database isn't migrated", () => {
+  test("readers see no broken counter; the team is told what to fix", async ({ browser }) => {
+    const pg = new Client({ host: process.env.PGHOST ?? "/var/lib/postgresql/kkk", port: Number(process.env.PGPORT ?? 54329), user: process.env.PGUSER ?? "postgres", database: process.env.PGDATABASE ?? "kkk_e2e" });
+    await pg.connect();
+    await pg.query("alter table public.post_view_counts rename to post_view_counts_off");
+    try {
+      const reader = await visitor(browser);
+      await reader.page.goto(`/blogs/${slug}`);
+      await expect(reader.page.getByTestId("view-count-help")).toBeAttached();
+      await expect(reader.page.getByTestId("view-count-help")).toHaveText("");
+      await expect(reader.page.getByTestId("view-badge")).toHaveCount(0);
+      const team = await visitor(browser);
+      await signIn(team.page);
+      await team.page.goto(`/blogs/${slug}`);
+      await expect(team.page.getByTestId("view-count-help")).toContainText("0010_views_and_syndication.sql");
+      await team.page.goto("/admin/blogs");
+      await expect(team.page.getByTestId("views-problem")).toContainText("0010_views_and_syndication.sql");
+      for (const x of [reader, team]) await x.ctx.close();
+    } finally {
+      await pg.query("alter table public.post_view_counts_off rename to post_view_counts");
+      await pg.end();
+    }
   });
 });
 

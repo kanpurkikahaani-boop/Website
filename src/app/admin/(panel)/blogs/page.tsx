@@ -4,6 +4,7 @@ import { PostRowActions } from "@/components/admin/PostRowActions";
 import type { LinkReport } from "@/lib/link-check";
 import { hrefsIn } from "@/lib/link-check";
 import { displayStatus } from "@/lib/admin/post-status";
+import { supabaseServiceKey } from "@/lib/supabase/config";
 import { createSessionClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
@@ -44,7 +45,12 @@ export default async function AdminBlogsPage({ searchParams }: PageProps<"/admin
   const { data, error } = await query;
   const { count: trashCount } = await db!.from("posts").select("id", { count: "exact", head: true }).not("deleted_at", "is", null);
   // Public view counts (migration 0010). A separate query, so the list still loads without it.
-  const { data: viewRows } = await db!.from("post_view_counts").select("post_id, views");
+  const { data: viewRows, error: viewsError } = await db!.from("post_view_counts").select("post_id, views");
+  const viewsProblem = viewsError
+    ? "View counts are off: the view-count tables are missing. Run supabase/migrations/0010_views_and_syndication.sql in the Supabase SQL editor (SETUP.md → Update v10), then reload."
+    : !supabaseServiceKey()
+      ? "View counts aren't being recorded: add the Supabase server key (SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY) in Vercel and redeploy."
+      : null;
   const views = new Map((viewRows ?? []).map((v) => [v.post_id as string, Number(v.views)]));
 
   const rows = (data ?? [])
@@ -82,6 +88,7 @@ export default async function AdminBlogsPage({ searchParams }: PageProps<"/admin
         </div>
       </div>
       {notice && <p role="status" className="mt-4 rounded-xl bg-[#e3f1e6] px-4 py-3 text-sm text-[#21603a]">{notice}</p>}
+      {viewsProblem && <p role="alert" data-testid="views-problem" className="mt-4 rounded-xl bg-primary-soft px-4 py-3 text-sm text-primary">{viewsProblem}</p>}
 
       <form role="search" className="mt-6 flex flex-wrap items-end gap-3" action="/admin/blogs">
         {trash && <input type="hidden" name="view" value="trash" />}

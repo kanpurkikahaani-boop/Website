@@ -8,7 +8,7 @@ import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 import { indexedPhoto } from "@/lib/photo-index";
 import { PhotoCreditLine } from "@/components/ui/PhotoCredit";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { ViewCount } from "./ViewCount";
+import { ViewBadge, ViewCount } from "./ViewCount";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
 import { ArticleToc, MobileToc } from "@/components/blog/ArticleToc";
 import {
@@ -132,6 +132,7 @@ export function ArticleView({
             <span className="inline-flex items-center gap-1.5">
               <Clock size={14} aria-hidden className="text-accent" /> {post.readingMinutes} min read
             </span>
+            <ViewBadge slug={post.slug} record={!preview} />
           </div>
           <ShareButtons className="mt-5 flex-wrap justify-center" url={url} title={post.title} context={`blog_${post.slug}`} />
         </header>
