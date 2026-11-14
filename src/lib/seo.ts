@@ -5,22 +5,26 @@ interface BuildMetaInput {
   title: string;
   description: string;
   path: string;
-  /** Path of a route-level opengraph-image, if the page has its own */
+  /** Path of a route-level opengraph-image (or an absolute photo URL, e.g. a post's cover) */
   ogImage?: string;
+  /** Pixel size of ogImage when it isn't the 1200×630 generated card (omit when unknown). */
+  ogImageSize?: { width: number; height: number } | null;
+  ogImageAlt?: string;
   type?: "website" | "article";
   publishedTime?: string;
 }
 
 /** Shared metadata builder: title, description, canonical, OG and Twitter tags. */
-export function buildMetadata({ title, description, path, ogImage, type = "website", publishedTime }: BuildMetaInput): Metadata {
+export function buildMetadata({ title, description, path, ogImage, ogImageSize, ogImageAlt, type = "website", publishedTime }: BuildMetaInput): Metadata {
   const url = absoluteUrl(path);
-  const images = [{ url: ogImage ?? "/opengraph-image", width: 1200, height: 630, alt: title }];
+  const size = ogImageSize === undefined ? { width: 1200, height: 630 } : ogImageSize ?? {};
+  const images = [{ url: ogImage ?? "/opengraph-image", ...size, alt: ogImageAlt ?? title }];
   return {
     title: { absolute: title },
     description,
     alternates: {
       canonical: url,
-      types: { "application/rss+xml": [{ url: "/blogs/rss.xml", title: `${site.name} — Stories` }] },
+      types: { "application/rss+xml": [{ url: "/rss.xml", title: `${site.name} — Stories` }] },
     },
     openGraph: {
       title,

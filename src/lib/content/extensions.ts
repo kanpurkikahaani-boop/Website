@@ -1,7 +1,9 @@
 import StarterKit from "@tiptap/starter-kit";
 import Heading from "@tiptap/extension-heading";
 import Image from "@tiptap/extension-image";
+import { FontFamily, FontSize, TextStyle } from "@tiptap/extension-text-style";
 import Youtube from "@tiptap/extension-youtube";
+import { FigureImage } from "./figure";
 
 /** Headings keep an `id` so the article's table of contents can link to them. */
 const HeadingWithId = Heading.extend({
@@ -33,7 +35,13 @@ export const blogExtensions = [
     },
   }),
   HeadingWithId,
-  // `title` doubles as the caption (rendered as <figcaption>).
+  // Older posts: a plain image whose `title` doubles as the caption (enrich.ts makes it a figure).
   Image.configure({ HTMLAttributes: { loading: "lazy" } }),
+  // New images (v10): figure with editable caption, width, alignment and re-croppable source.
+  FigureImage,
+  // Fonts and sizes (v10): <span style="font-family / font-size">, limited by the sanitizer.
+  TextStyle,
+  FontFamily,
+  FontSize,
   Youtube.configure({ nocookie: true, modestBranding: true, HTMLAttributes: { class: "kkk-video" } }),
 ];

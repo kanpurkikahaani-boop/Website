@@ -51,6 +51,11 @@ export const metadata: Metadata = {
     "Uttar Pradesh travel guide",
   ],
   formatDetection: { telephone: false },
+  // Blog feed on every page (pages using buildMetadata set it too).
+  alternates: { types: { "application/rss+xml": [{ url: "/rss.xml", title: `${site.name} — Stories` }] } },
+  // Google Search Console: paste the content value of Google's HTML-tag verification into
+  // GOOGLE_SITE_VERIFICATION (see SETUP.md → Search Console). Nothing is output when it's unset.
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
 };
 
 export const viewport: Viewport = {

@@ -2,7 +2,7 @@
 
 import type { Editor } from "@tiptap/react";
 import { FileUp, History, X } from "lucide-react";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { listRevisions, restoreRevision, type RevisionSummary } from "@/app/admin/(panel)/blogs/actions";
 import { isExternalHref } from "@/lib/content/enrich";
 import { cn } from "@/lib/utils";
@@ -175,49 +175,6 @@ export function LinkPanel({ editor, routes, onClose }: { editor: Editor; routes:
       </div>
       {error && <p role="alert" className="mt-1.5 text-xs text-primary">{error}</p>}
     </div>
-  );
-}
-
-/* ── Image dialog: alt text required, optional caption ─────────────────────── */
-
-export function ImageDialog({ file, onCancel, onInsert, uploading }: { file: File | null; onCancel: () => void; onInsert: (alt: string, caption: string) => void; uploading: boolean }) {
-  const ref = useRef<HTMLDialogElement>(null);
-  const [alt, setAlt] = useState("");
-  const [caption, setCaption] = useState("");
-  const preview = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
-  useEffect(() => {
-    if (file) ref.current?.showModal();
-    else ref.current?.close();
-    return () => {
-      if (preview) URL.revokeObjectURL(preview);
-    };
-  }, [file, preview]);
-  return (
-    <dialog ref={ref} onCancel={onCancel} aria-labelledby="img-dialog-title" className="m-auto w-[min(92vw,480px)] rounded-2xl border border-border bg-surface p-6 backdrop:bg-dark/50">
-      <form
-        method="dialog"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (alt.trim()) onInsert(alt.trim(), caption.trim());
-        }}
-      >
-        <h2 id="img-dialog-title" className="text-xl font-bold text-primary">Add image</h2>
-        {/* eslint-disable-next-line @next/next/no-img-element -- local preview before upload */}
-        {preview && <img src={preview} alt="" className="mt-3 max-h-56 w-full rounded-xl object-contain" />}
-        <label className="mt-4 block text-sm font-semibold text-ink">
-          Alt text <span className="font-normal text-muted">(required — describe the photo for people who can&apos;t see it)</span>
-          <input value={alt} onChange={(e) => setAlt(e.target.value)} required maxLength={200} className={cn(input, "mt-1.5")} />
-        </label>
-        <label className="mt-3 block text-sm font-semibold text-ink">
-          Caption <span className="font-normal text-muted">(optional, shown under the photo — add the credit here)</span>
-          <input value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={240} className={cn(input, "mt-1.5")} placeholder="Representative image — Photo: Name, CC BY-SA 4.0" />
-        </label>
-        <div className="mt-5 flex justify-end gap-2">
-          <button type="button" onClick={onCancel} className={btn}>Cancel</button>
-          <button type="submit" disabled={!alt.trim() || uploading} className={primaryBtn}>{uploading ? "Uploading…" : "Insert image"}</button>
-        </div>
-      </form>
-    </dialog>
   );
 }
 

@@ -1,4 +1,6 @@
 import "server-only";
+import type { JSONContent } from "@tiptap/core";
+import { renderPostContent } from "@/lib/content/render";
 import { createPublicClient } from "@/lib/supabase/public";
 
 export type CitySlug = "kanpur" | "lucknow" | "agra" | "prayagraj" | "varanasi" | "ayodhya";
@@ -114,10 +116,27 @@ function toSummary(r: Row): PostSummary {
   };
 }
 
+/**
+ * The body HTML to show. When the row includes `content_json`, it is rendered fresh with the
+ * current renderer (so rendering fixes reach older posts without re-saving); otherwise the
+ * stored, already-sanitized `content_html` is used.
+ */
+function bodyHtml(r: Row): string {
+  const doc = r.content_json as JSONContent | null | undefined;
+  if (doc && typeof doc === "object" && Array.isArray(doc.content)) {
+    try {
+      return renderPostContent(doc).html;
+    } catch (e) {
+      console.error("[posts] re-render failed, using stored HTML:", e instanceof Error ? e.message : e);
+    }
+  }
+  return String(r.content_html ?? "");
+}
+
 export function toPost(r: Row): Post {
   return {
     ...toSummary(r),
-    html: String(r.content_html ?? ""),
+    html: bodyHtml(r),
     seoTitle: (r.seo_title as string) ?? null,
     seoDescription: (r.seo_description as string) ?? null,
     author: toAuthor(r.authors)?.name ?? String(r.author ?? "Kanpur Ki Kahaani"),
@@ -186,7 +205,7 @@ export async function getLatestPosts(n = 3) {
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   const db = createPublicClient();
   if (!db) return null;
-  let { data, error } = await db.from("posts").select(`${FULL_COLS}, cover_focal`).eq("slug", slug).maybeSingle();
+  let { data, error } = await db.from("posts").select(`${FULL_COLS}, cover_focal, content_json`).eq("slug", slug).maybeSingle();
   // Before migration 0008 runs, cover_focal doesn't exist yet: read the post without it.
   if (error?.code === "42703") ({ data, error } = await db.from("posts").select(FULL_COLS).eq("slug", slug).maybeSingle());
   if (error) console.error("[posts] get failed:", error.message);

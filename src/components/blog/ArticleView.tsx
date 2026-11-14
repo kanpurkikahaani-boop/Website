@@ -8,6 +8,7 @@ import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 import { indexedPhoto } from "@/lib/photo-index";
 import { PhotoCreditLine } from "@/components/ui/PhotoCredit";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { ViewCount } from "./ViewCount";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
 import { ArticleToc, MobileToc } from "@/components/blog/ArticleToc";
 import {
@@ -163,6 +164,7 @@ export function ArticleView({
               {/* content_html is sanitized on the server (allowlist) before it is stored */}
               <div dangerouslySetInnerHTML={{ __html: rest }} />
             </div>
+            <ViewCount slug={post.slug} title={post.title} record={!preview} />
 
             <div className="lg:hidden">
               <div className="mt-10">

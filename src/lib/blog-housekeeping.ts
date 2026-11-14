@@ -24,7 +24,7 @@ export async function runBlogHousekeeping(now = Date.now()) {
   if (error) return { skipped: true as const, reason: error.message };
   for (const p of due ?? []) revalidatePath(`/blogs/${p.slug}`);
   if (due?.length) {
-    for (const path of ["/", "/blogs", "/sitemap.xml", "/blogs/rss.xml", "/celebrations"]) revalidatePath(path);
+    for (const path of ["/", "/blogs", "/sitemap.xml", "/blogs/rss.xml", "/rss.xml", "/feed", "/celebrations"]) revalidatePath(path);
     revalidatePath("/blogs/author/[slug]", "page");
   }
 

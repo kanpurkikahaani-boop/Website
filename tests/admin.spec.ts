@@ -4,6 +4,7 @@
  * call goes through the real migrations + Row Level Security in Postgres.
  */
 import { expect, test, type Page } from "@playwright/test";
+import sharp from "sharp";
 
 const SUPA = "http://127.0.0.1:54400";
 const ADMIN = { email: "team@kanpurkikahaani.site", password: "Correct-Horse-Battery-9" };
@@ -156,20 +157,24 @@ test.describe("writing and publishing", () => {
     await expect(page.getByLabel("Post body")).toContainText("Kanpur wakes up early for this.");
     editUrl = page.url();
 
-    // Image upload: alt text is required before inserting.
-    await page.locator('input[type=file][accept="image/jpeg,image/png,image/webp"]').first().setInputFiles({ name: "Ganga Ghat.PNG", mimeType: "image/png", buffer: PNG });
-    const insert = page.getByRole("button", { name: "Insert image" });
-    await expect(insert).toBeDisabled();
-    const dialog = page.getByRole("dialog", { name: "Add image" });
+    // Image upload (v10: crop step first): alt text is required before inserting.
+    const photo = await sharp({ create: { width: 640, height: 400, channels: 3, background: "#c86a4b" } }).png().toBuffer();
+    await page.locator('[role=toolbar][aria-label=Formatting] input[type=file]').setInputFiles({ name: "Ganga Ghat.PNG", mimeType: "image/png", buffer: photo });
+    const dialog = page.getByRole("dialog", { name: "Crop and add image" });
+    const insert = dialog.getByRole("button", { name: "Insert image" });
+    await expect(insert).toBeEnabled();
+    await insert.click();
+    await expect(dialog.getByRole("alert")).toContainText("Add alt text");
     await dialog.getByLabel(/Alt text/).fill("Sunrise over the Ganga at Bithoor");
     await dialog.getByLabel(/Caption/).fill("Representative image");
     await insert.click();
-    await expect(body.locator("img[alt='Sunrise over the Ganga at Bithoor']")).toHaveAttribute("src", /blog-images\/[0-9a-f-]+\/ganga-ghat-[0-9a-f]{8}\.png/);
+    await expect(body.locator("img[alt='Sunrise over the Ganga at Bithoor']")).toHaveAttribute("src", /blog-images\/[0-9a-f-]+\/ganga-ghat-cropped-[0-9a-f]{8}\.png/);
+    await expect(body.locator("figcaption")).toHaveText("Representative image");
 
     // Preview opens the real template behind a signed token, marked as a draft.
     const [preview] = await Promise.all([context.waitForEvent("page"), page.getByRole("button", { name: "Preview ↗" }).click()]);
-    await preview.waitForLoadState();
-    expect(preview.url()).toMatch(new RegExp(`/blogs/${slug}\\?preview=`));
+    // The tab opens on the click (popup blockers) and loads the preview once the save lands.
+    await preview.waitForURL(new RegExp(`/blogs/${slug}\\?preview=`));
     await expect(preview.getByText(/Preview — draft, not visible to readers/)).toBeVisible();
     await expect(preview.locator("h1")).toHaveText(title);
     await preview.close();
@@ -186,7 +191,7 @@ test.describe("writing and publishing", () => {
   test("edit a live post and restore an older revision", async ({ page, request }) => {
     await page.goto(editUrl);
     const body = page.getByLabel("Post body");
-    await body.click();
+    await body.getByText("Kanpur wakes up early for this.").click(); // the text, not the (large) image
     await page.keyboard.press("End");
     await page.keyboard.type(" EDITED-LINE");
     await page.getByRole("button", { name: "Update", exact: true }).click();
@@ -271,6 +276,7 @@ test.describe("admin shortcuts on the live site", () => {
 
   test("after sign-out the back button doesn't reveal admin pages", async ({ page }) => {
     await passwordSignIn(page);
+    await page.waitForURL("**/admin/blogs"); // let sign-in finish before navigating away
     await page.goto("/admin/blogs");
     await signOut(page);
     await page.goBack(); // admin pages are no-store, so the browser asks again and is sent to login

@@ -22,7 +22,11 @@ export async function generateMetadata({ params }: PageProps<"/blogs/[slug]">): 
     title: post.seoTitle || `${post.title} | Kanpur Ki Kahaani`,
     description: post.seoDescription || post.excerpt,
     path: `/blogs/${post.slug}`,
-    ogImage: `/blogs/${post.slug}/opengraph-image`,
+    // The post's own cover photo when it has one (shared links show the real picture), else the
+    // generated title card.
+    ogImage: post.coverUrl?.startsWith("https://") ? post.coverUrl : `/blogs/${post.slug}/opengraph-image`,
+    ogImageSize: post.coverUrl?.startsWith("https://") ? null : undefined,
+    ogImageAlt: post.coverUrl ? (post.coverAlt ?? post.title) : undefined,
     type: "article",
     publishedTime: post.publishedAt,
   });

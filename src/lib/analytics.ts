@@ -13,7 +13,9 @@ export type AnalyticsEvent =
   | "share_click"
   | "social_click"
   | "bms_city_click"
-  | "bms_event_click";
+  | "bms_event_click"
+  | "blog_read"
+  | "outbound_click";
 
 type Params = Record<string, string | number | boolean | undefined>;
 

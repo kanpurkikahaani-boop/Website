@@ -26,7 +26,12 @@ const sections: { h: string; body: React.ReactNode }[] = [
         </li>
         <li>
           <strong>Analytics (optional):</strong> if enabled, Google Analytics and the Meta Pixel record anonymous usage, such as pages viewed, buttons
-          clicked, approximate location and device type, so we can see what&apos;s useful.
+          clicked, stories read to the end, links followed to other websites, approximate location and device type, so we can see what&apos;s useful.
+        </li>
+        <li>
+          <strong>Story view counts:</strong> to show how many people have read each story, your browser gets a random ID in a first-party cookie
+          (<code>kkk_vid</code>, kept for a year). We store only a scrambled (hashed) form of it, for 2 days, so the same person isn&apos;t counted twice in 24
+          hours. It isn&apos;t linked to your email, IP address or anything else, and isn&apos;t used for advertising.
         </li>
         <li>
           <strong>Basic security logs:</strong> your IP address is used briefly to limit repeated signup attempts. It isn&apos;t stored with your email.

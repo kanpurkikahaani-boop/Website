@@ -1,4 +1,10 @@
 import sanitizeHtml from "sanitize-html";
+import { supabaseUrl } from "@/lib/supabase/config";
+import { FONT_FAMILY_PATTERNS, FONT_SIZE_PATTERNS } from "./fonts";
+
+/** Our own uploads (Supabase Storage). Always https in production; a local test stack may be http. */
+const OWN_STORAGE = supabaseUrl ? `${supabaseUrl}/storage/v1/object/public/` : null;
+const imgSrcOk = (src: string) => src.startsWith("https://") || Boolean(OWN_STORAGE && src.startsWith(OWN_STORAGE));
 
 const YOUTUBE_EMBED = /^https:\/\/(www\.)?(youtube-nocookie\.com|youtube\.com)\/embed\/[A-Za-z0-9_-]{6,}/;
 
@@ -14,8 +20,8 @@ export function sanitizeBlogHtml(html: string) {
       h2: ["id"],
       h3: ["id"],
       h4: ["id"],
-      span: ["class"],
-      figure: ["class"],
+      span: ["class", "style"],
+      figure: ["class", "style"],
       figcaption: ["class"],
       blockquote: ["class"],
       img: ["src", "alt", "title", "width", "height", "loading"],
@@ -27,14 +33,21 @@ export function sanitizeBlogHtml(html: string) {
       div: ["kkk-video"],
       span: ["day-badge", "sr-only"],
       a: ["ext"],
-      figure: ["kkk-figure"],
+      figure: ["kkk-figure", "align-left", "align-center", "align-right", "is-sized"],
       figcaption: ["kkk-caption"],
       blockquote: ["pull-quote"],
     },
+    // Only the editor's own fonts/sizes and figure widths; anything else in `style` is dropped.
+    allowedStyles: {
+      span: { "font-family": FONT_FAMILY_PATTERNS, "font-size": FONT_SIZE_PATTERNS },
+      figure: { width: [/^(?:[2-9]\d|100)%$/] },
+    },
     allowedSchemes: ["http", "https", "mailto"],
-    allowedSchemesByTag: { img: ["https"] },
+    // https only; plain http just for our own storage (local test stacks), checked below.
+    allowedSchemesByTag: { img: ["https", "http"] },
     allowProtocolRelative: false,
-    exclusiveFilter: (frame) => frame.tag === "iframe" && !YOUTUBE_EMBED.test(frame.attribs.src ?? ""),
+    exclusiveFilter: (frame) =>
+      (frame.tag === "iframe" && !YOUTUBE_EMBED.test(frame.attribs.src ?? "")) || (frame.tag === "img" && !imgSrcOk(frame.attribs.src ?? "")),
     transformTags: {
       a: (tagName, attribs) => {
         const href = attribs.href ?? "#";

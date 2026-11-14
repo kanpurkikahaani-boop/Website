@@ -18,6 +18,8 @@ function revalidatePost(slug?: string, authorSlug?: string | null) {
   revalidatePath("/");
   revalidatePath("/sitemap.xml");
   revalidatePath("/blogs/rss.xml");
+  revalidatePath("/rss.xml");
+  revalidatePath("/feed");
   revalidatePath("/blogs/author/[slug]", "page");
   if (authorSlug) revalidatePath(`/blogs/author/${authorSlug}`);
   revalidatePath("/celebrations");

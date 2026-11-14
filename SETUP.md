@@ -262,3 +262,61 @@ Nothing to set up — no keys. The visitor's browser calls these free services d
 - All FAQ text lives in `src/data/faqs.ts` (city pages use the `cityFaqs()` template). Answers use `[words](/link)` for links.
 - `npm run seo:faq` writes `reports/faq-keyword-coverage.md` and runs before every build as a warning. It checks keyword coverage, ≤3 uses per page, answer length (40–100 words) and an internal link per answer, and that the misspellings people search for are never written anywhere.
 - Items marked `// VERIFY` in `faqs.ts` are time-sensitive (distances, festival dates, metro route) — recheck them once a year.
+
+## Update v10 — blog editor, views, syndication, analytics
+
+### 1. Run the database migration (once)
+Supabase → **SQL Editor** → paste the whole of `supabase/migrations/0010_views_and_syndication.sql` → **Run**. It adds the view counter, the syndication tracker and an audit-log action. It is safe to run again.
+
+Optional check (in the SQL editor): `select public.record_post_view('navaratri-in-kanpur', repeat('a', 64));` twice returns the same number (a visitor is counted once per 24 hours). Delete the test row afterwards with `delete from public.post_view_seen where visitor = repeat('a', 64);` and fix the count with `update public.post_view_counts set views = views - 1 where post_id = (select id from public.posts where slug = 'navaratri-in-kanpur');`.
+
+The view counter needs the server key that's already in Vercel (`SUPABASE_SECRET_KEY` from the Supabase integration, or `SUPABASE_SERVICE_ROLE_KEY`). Nothing new to add for it.
+
+### 2. Environment variables (Vercel → Project → Settings → Environment Variables)
+All optional — each feature switches on when its variables are present. Keys stay on the server; none is sent to browsers or stored in the repo. Redeploy after adding.
+
+| Variable | For | Where to get it |
+|---|---|---|
+| `NEXT_PUBLIC_GA_ID` | Google Analytics 4 | GA4 → Admin → Data streams → Web → *Measurement ID* (`G-…`) |
+| `GOOGLE_SITE_VERIFICATION` | Search Console | the `content="…"` value of Google's HTML-tag verification |
+| `DEVTO_API_KEY` | DEV (dev.to) | dev.to → Settings → Extensions → *DEV Community API Keys* → generate |
+| `HASHNODE_TOKEN`, `HASHNODE_PUBLICATION_ID` | Hashnode | Hashnode → Account settings → Developer → *Generate new token*; publication ID from your blog's dashboard URL (or the GraphQL playground: `me { publications { edges { node { id } } } }`) |
+| `BLOGGER_BLOG_ID`, `BLOGGER_CLIENT_ID`, `BLOGGER_CLIENT_SECRET`, `BLOGGER_REFRESH_TOKEN` | Blogger | see “Blogger” below |
+| `WPCOM_SITE`, `WPCOM_ACCESS_TOKEN` | WordPress.com | see “WordPress.com” below |
+| `TUMBLR_BLOG`, `TUMBLR_CONSUMER_KEY`, `TUMBLR_CONSUMER_SECRET`, `TUMBLR_TOKEN`, `TUMBLR_TOKEN_SECRET` | Tumblr | see “Tumblr” below |
+| `MEDIUM_TOKEN` | Medium | only an *existing* integration token (Medium → Settings → Security and apps → Integration tokens). Medium stopped issuing new ones. |
+
+### 3. Getting each platform's key (≈5 minutes each)
+These follow each platform's developer pages as of Nov 2026. This build session couldn't open those pages directly, so if a screen looks different, follow the platform's current instructions — the variable names above stay the same. **VERIFY** each one with a draft cross-post first (tick “Save as a draft there”).
+
+- **DEV (dev.to)** — free. Settings → Extensions → generate an API key → `DEVTO_API_KEY`. Copies set the canonical URL to our post.
+- **Hashnode** — create a blog on Hashnode, then Account settings → Developer → generate a Personal Access Token → `HASHNODE_TOKEN`; add the blog's publication ID as `HASHNODE_PUBLICATION_ID`. Copies set `originalArticleURL` (canonical). Some guides say Hashnode now requires a paid plan for publishing by API — if the first cross-post fails with a plan message, that's why; post by hand and add the link instead. **This would be a paid service: decide before upgrading.**
+- **Blogger** — free, but needs a Google Cloud OAuth client (one-time):
+  1. console.cloud.google.com → new project → *APIs & Services* → enable **Blogger API v3**.
+  2. *OAuth consent screen*: External, add yourself as a test user. *Credentials* → **OAuth client ID** → type *Web application*, authorised redirect URI `https://developers.google.com/oauthplayground` → note the client ID and secret.
+  3. developers.google.com/oauthplayground → ⚙ → *Use your own OAuth credentials* (paste them) → scope `https://www.googleapis.com/auth/blogger` → Authorize → *Exchange authorization code for tokens* → copy the **refresh token**.
+  4. Blog ID: in Blogger, the number in the dashboard URL (`blogID=…`).
+  5. Publish the consent screen to “In production” so the refresh token doesn't expire after 7 days (testing-mode tokens do).
+  Blogger can't set a canonical link; the copy opens with the link back.
+- **WordPress.com** — free. developer.wordpress.com/apps → create an app (redirect URL e.g. `https://kanpurkikahaani.site`) → authorise it for your blog via `https://public-api.wordpress.com/oauth2/authorize?client_id=…&redirect_uri=…&response_type=code&blog=YOURBLOG.wordpress.com`, then exchange the code at `https://public-api.wordpress.com/oauth2/token` for an access token → `WPCOM_ACCESS_TOKEN`; `WPCOM_SITE` = `yourblog.wordpress.com`. The API can't set a canonical on WordPress.com plans; the copy opens with the link back.
+- **Tumblr** — free. tumblr.com/oauth/apps → register an app (consumer key/secret) → open the **API console** (api.tumblr.com/console) with them and allow access → it shows the OAuth **token** and **token secret**. `TUMBLR_BLOG` = `yourblog.tumblr.com`. No canonical field; the post opens with the link back and ends with a link card.
+- **Medium** — no new API keys since Medium closed its integration tokens. Use **Import a story** on medium.com with our post's URL (it sets the canonical link automatically), then add the Medium link in the tracker. If you still have an old integration token, set `MEDIUM_TOKEN` and the automatic option works (with canonical).
+- **LinkedIn** — its API can't publish long-form articles for normal accounts (only short posts and link shares, and only for approved developer apps). Publish the article on LinkedIn by hand, ideally starting with “Originally published on Kanpur Ki Kahaani: <link>”, then add the link in the tracker.
+
+Every automatic copy starts with *“Originally published on Kanpur Ki Kahaani”* linking to the post, and every attempt (including failures, with the reason, never the key) is saved in the tracker at **/admin/syndication**.
+
+### 4. Google Analytics 4
+1. analytics.google.com → Admin → *Create property* → *Web* data stream for `https://kanpurkikahaani.site`.
+2. Copy the Measurement ID (`G-…`) into `NEXT_PUBLIC_GA_ID` and redeploy.
+3. Leave **Enhanced measurement** on (default): it records page views, including moving between pages inside the site.
+4. Events we send: `blog_read` (reader reached the end of a story; `post_slug`, `post_title`) and `outbound_click` (a link to another website; `link_url`, `link_domain`, `link_text`). To see them as columns in reports, register `post_slug`, `link_domain` as custom dimensions (Admin → Custom definitions).
+5. Check it works: Reports → Realtime while you browse the site.
+
+### 5. Google Search Console
+1. search.google.com/search-console → *Add property* → **URL prefix** `https://kanpurkikahaani.site/`.
+2. Choose **HTML tag** verification; copy only the `content` value (e.g. `abc123…`) into `GOOGLE_SITE_VERIFICATION`, redeploy, then click **Verify**. (If you use a Domain property instead, verify with the DNS TXT record at your domain registrar.)
+3. *Sitemaps* → enter `sitemap.xml` → Submit. It lists every page and published story and refreshes hourly; `robots.txt` already points to it.
+4. Optional: *URL inspection* → paste a story URL → *Request indexing* after publishing an important story.
+
+### 6. RSS
+The feed is at `/rss.xml` (also `/feed` and the old `/blogs/rss.xml`), linked from every page's `<head>`: title, excerpt, cover image, author, date, link and the full story with the “Originally published on” line. Feed readers, and importers like Medium's, can use it.

@@ -1,6 +1,12 @@
 import Script from "next/script";
+import { AnalyticsEvents } from "./AnalyticsEvents";
 
-/** GA4 + Meta Pixel, loaded only when their env vars are set. */
+/**
+ * GA4 + Meta Pixel, loaded only when their env vars are set. GA4 records page views itself (the
+ * first load, plus in-app navigations through Enhanced measurement → "Page changes based on
+ * browser history events", on by default). Blog reads and outbound clicks are sent by
+ * AnalyticsEvents.
+ */
 export function Analytics() {
   const ga = process.env.NEXT_PUBLIC_GA_ID;
   const pixel = process.env.NEXT_PUBLIC_META_PIXEL_ID;
@@ -10,8 +16,9 @@ export function Analytics() {
         <>
           <Script src={`https://www.googletagmanager.com/gtag/js?id=${ga}`} strategy="afterInteractive" />
           <Script id="ga4-init" strategy="afterInteractive">
-            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','${ga}');`}
+            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config',${JSON.stringify(ga)});`}
           </Script>
+          <AnalyticsEvents />
         </>
       )}
       {pixel && (

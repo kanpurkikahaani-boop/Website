@@ -1,7 +1,7 @@
 "use client";
 
 import Placeholder from "@tiptap/extension-placeholder";
-import { EditorContent, useEditor, type Editor } from "@tiptap/react";
+import { EditorContent, ReactNodeViewRenderer, useEditor, useEditorState, type Editor } from "@tiptap/react";
 import {
   Bold, Heading2, Heading3, History, ImagePlus, Italic, Link2, Link2Off, List, ListOrdered, Minus, Quote, Redo2, Settings2, Underline, Undo2, Video, X,
 } from "lucide-react";
@@ -11,12 +11,17 @@ import { createAuthor, isSlugAvailable, savePost } from "@/app/admin/(panel)/blo
 import { BLOG_CATEGORIES } from "@/lib/blog-categories";
 import type { GlossaryItem, KeyFact, PlanItem, ReadingItem } from "@/lib/posts";
 import { blogExtensions } from "@/lib/content/extensions";
+import { FigureImage, type FigureAttrs } from "@/lib/content/figure";
+import { BLOG_FONTS, BLOG_SIZES, normaliseFont } from "@/lib/content/fonts";
 import { CITY_OPTIONS } from "@/lib/city-names";
 import { slugifyTitle, slugRe } from "@/lib/posts-admin-schema";
 import { uploadBlogImage } from "@/lib/upload-image";
 import { cn } from "@/lib/utils";
-import { cleanPastedHtml, DocxImportButton, FocalPicker, HistoryDrawer, ImageDialog, LinkPanel, SeoPreview, TagInput, type SiteRoute } from "./EditorParts";
+import { cleanPastedHtml, DocxImportButton, FocalPicker, HistoryDrawer, LinkPanel, SeoPreview, TagInput, type SiteRoute } from "./EditorParts";
+import { FigureView, type FigureOptions } from "./FigureView";
+import { ImageCropDialog, type CropRequest, type CropResult } from "./ImageCropDialog";
 import { LinkTools } from "./LinkTools";
+import { SyndicatePanel } from "./SyndicationTools";
 import { RowsEditor } from "./RowsEditor";
 
 export interface EditorPost {
@@ -53,6 +58,16 @@ export interface AuthorOption {
 }
 
 
+const RECROP_EVENT = "kkk:recrop-image";
+
+/** The shared figure node plus the editor-only view (toolbar, resize, re-crop button). */
+const FigureWithView = FigureImage.extend<FigureOptions>({
+  addOptions: () => ({
+    onRecrop: (pos: number, attrs: FigureAttrs) => window.dispatchEvent(new CustomEvent(RECROP_EVENT, { detail: { pos, attrs } })),
+  }),
+  addNodeView: () => ReactNodeViewRenderer(FigureView),
+});
+
 const clean = <T,>(rows: T[]) => rows.filter((r) => Object.values(r as Record<string, string>).some((v) => String(v ?? "").trim())) as T[];
 
 const AUTOSAVE_MS = 20_000;
@@ -84,11 +99,18 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
   const [slugError, setSlugError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, startSave] = useTransition();
+  // Buttons are disabled only for saves the author asked for, never for quiet autosaves: pressing
+  // a button blurs the editor, which autosaves, and a button disabled between mouse-down and
+  // mouse-up swallows the click. Saves run one after another (see `save`).
+  const [manualSaving, setManualSaving] = useState(false);
+  const queue = useRef<Promise<boolean>>(Promise.resolve(true));
   const [lastSaved, setLastSaved] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [toast, setToast] = useState<Toast>(null);
   const [linkOpen, setLinkOpen] = useState(false);
-  const [pendingImage, setPendingImage] = useState<File | null>(null);
+  // Image insert / re-crop (v10): the crop dialog's request, the new file (insert) or node position (re-crop).
+  const [cropReq, setCropReq] = useState<CropRequest | null>(null);
+  const cropTarget = useRef<{ file: File } | { pos: number; attrs: FigureAttrs } | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [backup, setBackup] = useState<{ title: string; json: Record<string, unknown>; at: number } | null>(null);
@@ -100,7 +122,11 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
   const backupKey = initial.id ? `kkk-post-backup-${initial.id}` : null;
 
   const editor = useEditor({
-    extensions: [...blogExtensions, Placeholder.configure({ placeholder: "Start writing the story… (## for a heading, - for a list, > for a quote)" })],
+    extensions: [
+      ...blogExtensions.filter((e) => e.name !== "figureImage"),
+      FigureWithView,
+      Placeholder.configure({ placeholder: "Start writing the story… (## for a heading, - for a list, > for a quote)" }),
+    ],
     content: initial.contentJson ?? undefined,
     immediatelyRender: false,
     editorProps: {
@@ -131,8 +157,8 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
   const isFuture = Boolean(post.publishedAt) && Date.parse(istToIso(post.publishedAt)) > now && now > 0;
   const liveStatus = post.status === "draft" ? "Draft" : isFuture ? "Scheduled" : "Published";
 
-  const save = useCallback(
-    (nextStatus?: "draft" | "published", opts: { quiet?: boolean; preview?: boolean } = {}) =>
+  const saveNow = useCallback(
+    (nextStatus?: "draft" | "published", opts: { quiet?: boolean; preview?: boolean; previewWindow?: Window | null } = {}) =>
       new Promise<boolean>((resolve) => {
         if (!editor) return resolve(false);
         const target = nextStatus ?? post.status;
@@ -181,6 +207,7 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
           if (!res.ok) {
             setError(res.error);
             if (!opts.quiet) showToast({ kind: "error", text: res.error });
+            opts.previewWindow?.close();
             return resolve(false);
           }
           const typedMeanwhile = versionRef.current !== version;
@@ -216,11 +243,35 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
             }
             router.replace(`/admin/blogs/${res.id}/edit`);
           }
-          if (opts.preview) window.open(`/admin/blogs/${res.id}/preview`, "_blank", "noopener");
+          if (opts.preview) {
+            const url = `/admin/blogs/${res.id}/preview`;
+            if (opts.previewWindow && !opts.previewWindow.closed) opts.previewWindow.location.href = url;
+            else window.open(url, "_blank", "noopener");
+          }
           resolve(true);
         });
       }),
     [editor, post, backupKey, initial.id, router],
+  );
+
+  /** Queue saves so an autosave and a button press never run at once (no duplicate new posts). */
+  const save = useCallback(
+    (nextStatus?: "draft" | "published", opts: { quiet?: boolean; preview?: boolean } = {}) => {
+      // Open the preview tab now, while the click still counts as a user action (popup blockers),
+      // and point it at the preview once the save lands.
+      let previewWindow: Window | null = null;
+      if (opts.preview) {
+        previewWindow = window.open("about:blank", "_blank");
+        if (previewWindow) previewWindow.opener = null;
+      }
+      if (!opts.quiet) setManualSaving(true);
+      const run = () => saveNow(nextStatus, { ...opts, previewWindow });
+      const p = queue.current.then(run, run);
+      queue.current = p;
+      if (!opts.quiet) void p.finally(() => setManualSaving(false));
+      return p;
+    },
+    [saveNow],
   );
 
   const saveRef = useRef(save);
@@ -320,6 +371,70 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
     }
   }
 
+  // Re-crop: start from the uncropped original (older images only have their shown file).
+  useEffect(() => {
+    const onRecrop = (e: Event) => {
+      const { pos, attrs } = (e as CustomEvent<{ pos: number; attrs: FigureAttrs }>).detail;
+      cropTarget.current = { pos, attrs };
+      const source = attrs.originalSrc || attrs.src;
+      const ext = /\.(png|webp|jpe?g)(?:\?|$)/i.exec(source)?.[1].toLowerCase();
+      setCropReq({ mode: "recrop", src: source, crop: attrs.originalSrc ? attrs.crop : null, type: ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : "image/jpeg" });
+    };
+    window.addEventListener(RECROP_EVENT, onRecrop);
+    return () => window.removeEventListener(RECROP_EVENT, onRecrop);
+  }, []);
+
+  function startInsert(file: File) {
+    cropTarget.current = { file };
+    setCropReq({ mode: "insert", src: URL.createObjectURL(file), type: file.type });
+  }
+
+  function closeCrop() {
+    if (cropReq?.src.startsWith("blob:")) URL.revokeObjectURL(cropReq.src);
+    cropTarget.current = null;
+    setCropReq(null);
+  }
+
+  async function finishCrop(r: CropResult) {
+    const target = cropTarget.current;
+    if (!editor || !target) return;
+    const ext = r.blob.type === "image/png" ? "png" : r.blob.type === "image/webp" ? "webp" : "jpg";
+    // Re-crops keep the original's name: ".../aarti-1a2b3c4d.png" → "aarti".
+    const base =
+      "file" in target
+        ? target.file.name.replace(/\.[^.]+$/, "")
+        : (target.attrs.originalSrc || target.attrs.src).split("/").pop()!.replace(/\.[^.]+$/, "").replace(/(-cropped)?-[0-9a-f]{8}$/, "") || "image";
+    const cropped = new File([r.blob], `${base}-cropped.${ext}`, { type: r.blob.type });
+    if ("file" in target) {
+      // Keep the uncropped original (for re-cropping later) and the cropped file readers see.
+      const original = await upload(target.file);
+      const src = original && (await upload(cropped));
+      if (!original || !src) return;
+      editor
+        .chain()
+        .focus()
+        .insertContent({
+          type: "figureImage",
+          attrs: { src, alt: r.alt, width: 100, align: "center", originalSrc: original, crop: r.crop, naturalWidth: r.width, naturalHeight: r.height },
+          content: r.caption ? [{ type: "text", text: r.caption }] : [],
+        })
+        .run();
+    } else {
+      const src = await upload(cropped);
+      if (!src) return;
+      const node = editor.state.doc.nodeAt(target.pos);
+      if (node?.type.name !== "figureImage") return;
+      editor
+        .chain()
+        .command(({ tr }) => {
+          tr.setNodeMarkup(target.pos, undefined, { ...node.attrs, src, crop: r.crop, naturalWidth: r.width, naturalHeight: r.height, originalSrc: node.attrs.originalSrc || target.attrs.src });
+          return true;
+        })
+        .run();
+    }
+    closeCrop();
+  }
+
   const slugChangedAfterPublish = initial.status === "published" && initial.slug && post.slug !== initial.slug;
   const titleLen = (post.seoTitle || post.title).length;
   const descLen = post.seoDescription.length;
@@ -340,16 +455,16 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
           <input id="post-date" type="datetime-local" value={post.publishedAt} onChange={(e) => update("publishedAt", e.target.value)} className={inputCls} />
         </Field>
         <div className="mt-4 grid gap-2">
-          <button type="button" disabled={saving || post.title.trim().length < 3} onClick={() => save("published")} className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover disabled:opacity-60">
+          <button type="button" disabled={manualSaving || post.title.trim().length < 3} onClick={() => save("published")} className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover disabled:opacity-60">
             {publishLabel}
           </button>
           {post.status === "published" ? (
-            <button type="button" disabled={saving} onClick={() => save("draft")} className={secondaryBtn}>Unpublish (back to draft)</button>
+            <button type="button" disabled={manualSaving} onClick={() => save("draft")} className={secondaryBtn}>Unpublish (back to draft)</button>
           ) : (
-            <button type="button" disabled={saving || post.title.trim().length < 3} onClick={() => save("draft")} className={secondaryBtn}>Save draft</button>
+            <button type="button" disabled={manualSaving || post.title.trim().length < 3} onClick={() => save("draft")} className={secondaryBtn}>Save draft</button>
           )}
           <div className="grid grid-cols-2 gap-2">
-            <button type="button" disabled={saving || post.title.trim().length < 3} onClick={() => save(undefined, { preview: true })} className={secondaryBtn}>Preview ↗</button>
+            <button type="button" disabled={manualSaving || post.title.trim().length < 3} onClick={() => save(undefined, { preview: true })} className={secondaryBtn}>Preview ↗</button>
             <button type="button" onClick={() => setHistoryOpen(true)} className={cn(secondaryBtn, "inline-flex items-center justify-center gap-1.5")}>
               <History size={14} aria-hidden /> History
             </button>
@@ -451,6 +566,10 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
         <Field label="Credit" htmlFor="post-cover-credit" hint="e.g. Photo: Name, CC BY-SA 4.0, via Wikimedia Commons">
           <input id="post-cover-credit" value={post.coverCredit} onChange={(e) => update("coverCredit", e.target.value)} className={inputCls} />
         </Field>
+      </Section>
+
+      <Section title="Syndicate">
+        <SyndicatePanel postId={postId} live={initial.status === "published" && post.status === "published" && !isFuture} />
       </Section>
 
       <Section title="SEO">
@@ -573,7 +692,7 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
             />
           </div>
           <div className="sticky top-0 z-10 border-y border-border bg-bg">
-            <Toolbar editor={editor} onImage={(f) => setPendingImage(f)} uploading={uploading} onLink={() => setLinkOpen((o) => !o)} linkOpen={linkOpen} />
+            <Toolbar editor={editor} onImage={startInsert} uploading={uploading} onLink={() => setLinkOpen((o) => !o)} linkOpen={linkOpen} />
             {linkOpen && editor && <LinkPanel editor={editor} routes={routes} onClose={() => setLinkOpen(false)} />}
           </div>
           <EditorContent editor={editor} />
@@ -606,17 +725,7 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
         <Settings2 size={16} aria-hidden /> Settings · {liveStatus}
       </button>
 
-      <ImageDialog
-        file={pendingImage}
-        uploading={uploading}
-        onCancel={() => setPendingImage(null)}
-        onInsert={async (alt, caption) => {
-          if (!pendingImage || !editor) return;
-          const url = await upload(pendingImage);
-          setPendingImage(null);
-          if (url) editor.chain().focus().setImage({ src: url, alt, title: caption || undefined }).run();
-        }}
-      />
+      <ImageCropDialog request={cropReq} busy={uploading} onCancel={closeCrop} onDone={finishCrop} />
       <HistoryDrawer
         postId={postId}
         open={historyOpen}
@@ -663,6 +772,61 @@ function Field({ label, htmlFor, hint, error, className, children }: { label: st
   );
 }
 
+/** Font + size dropdowns (v10). Sizes include the heading levels, which change the block type. */
+function TypeControls({ editor }: { editor: Editor }) {
+  const state = useEditorState({
+    editor,
+    selector: ({ editor: e }) => {
+      const ts = e.getAttributes("textStyle") as { fontFamily?: string; fontSize?: string };
+      const level = ([2, 3, 4] as const).find((l) => e.isActive("heading", { level: l }));
+      return { font: normaliseFont(ts.fontFamily), size: level ? `h${level}` : (ts.fontSize ?? "") };
+    },
+  });
+  const fontKnown = BLOG_FONTS.some((f) => normaliseFont(f.value) === state.font);
+  const select = "h-9 rounded-lg border border-border bg-white px-2 text-sm text-ink focus:border-primary focus:outline-none";
+  return (
+    <>
+      <label className="sr-only" htmlFor="tb-font">Font</label>
+      <select
+        id="tb-font"
+        title="Font"
+        value={fontKnown ? state.font : ""}
+        onChange={(e) => {
+          const f = BLOG_FONTS.find((x) => normaliseFont(x.value) === e.target.value);
+          const c = editor.chain().focus();
+          (f?.value ? c.setFontFamily(f.value) : c.unsetFontFamily()).run();
+        }}
+        className={cn(select, "w-[150px]")}
+      >
+        {BLOG_FONTS.map((f) => (
+          <option key={f.label} value={normaliseFont(f.value)} style={f.value && !f.value.startsWith("var(") ? { fontFamily: f.value } : undefined}>
+            {f.label}
+          </option>
+        ))}
+      </select>
+      <label className="sr-only" htmlFor="tb-size">Text size</label>
+      <select
+        id="tb-size"
+        title="Text size"
+        value={state.size}
+        onChange={(e) => {
+          const v = e.target.value;
+          const c = editor.chain().focus();
+          if (v.startsWith("h")) c.setHeading({ level: Number(v.slice(1)) as 2 | 3 | 4 }).unsetFontSize().run();
+          else (v ? c.setParagraph().setFontSize(v) : c.setParagraph().unsetFontSize()).run();
+        }}
+        className={cn(select, "w-[118px]")}
+      >
+        {BLOG_SIZES.map((s) => <option key={s.label} value={s.value}>{s.label}</option>)}
+        <option value="h2">Heading 2</option>
+        <option value="h3">Heading 3</option>
+        <option value="h4">Heading 4</option>
+      </select>
+      <span aria-hidden className="mx-1 h-6 w-px self-center bg-border" />
+    </>
+  );
+}
+
 function Toolbar({ editor, onImage, uploading, onLink, linkOpen }: { editor: Editor | null; onImage: (f: File) => void; uploading: boolean; onLink: () => void; linkOpen: boolean }) {
   const fileId = useId();
   if (!editor) return <div className="h-11" />;
@@ -693,7 +857,8 @@ function Toolbar({ editor, onImage, uploading, onLink, linkOpen }: { editor: Edi
     { label: "Redo", icon: Redo2, run: () => c().redo().run(), disabled: !editor.can().redo() },
   ];
   return (
-    <div role="toolbar" aria-label="Formatting" className="flex flex-wrap gap-0.5 p-1.5">
+    <div role="toolbar" aria-label="Formatting" className="flex flex-wrap items-center gap-0.5 p-1.5">
+      <TypeControls editor={editor} />
       {items.map((it) => (
         <button
           key={it.label}

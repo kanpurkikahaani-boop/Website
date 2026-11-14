@@ -134,14 +134,23 @@ h4 {
   font-size: 16.5px;
   line-height: 1.8;
 }
-.prose-kkk > * + * { margin-top: 1.15em; }
+/*
+ * Block spacing at ANY depth (v10). The published page wraps the body in <div>s (intro / rest),
+ * so a "direct children only" rule never reached its paragraphs and Tailwind's reset left them
+ * with no gap. These rules apply identically inside the editor and on the published page.
+ */
+.prose-kkk :where(p, ul, ol, blockquote, pre, figure, table, div[data-youtube-video]) { margin: 0 0 1.2em; }
+.prose-kkk :where(li > p, blockquote > :last-child, figure > :last-child) { margin-bottom: 0; }
+/* A blank line typed in the editor is an empty paragraph: give it one line of height. */
+.prose-kkk p:empty::before { content: "\00a0"; }
 .prose-kkk h2, .prose-kkk h3, .prose-kkk h4 {
   font-family: var(--font-display);
   color: var(--primary);
   font-weight: 700;
   line-height: 1.2;
-  margin-top: 1.8em;
+  margin: 1.8em 0 0.6em;
 }
+.prose-kkk :where(h2, h3, h4):first-child { margin-top: 0; }
 .prose-kkk h2 { font-size: 26px; }
 .prose-kkk h3 { font-size: 21px; }
 .prose-kkk h4 { font-size: 18px; color: var(--ink); }
@@ -169,9 +178,12 @@ h4 {
 /* ── Article template (v4) ─────────────────────────────────────── */
 .article-body {
   font-size: 18px;
-  line-height: 1.75;
+  line-height: 1.7;
   color: var(--ink);
 }
+/* The first paragraph contains its drop cap, so a short opening line never makes the next
+   paragraph wrap around the big letter. */
+.article-body #introduction > p:first-of-type { display: flow-root; }
 /* Drop cap on the first paragraph of the story */
 .article-body #introduction > p:first-of-type::first-letter {
   float: left;
@@ -220,8 +232,30 @@ h4 {
 }
 .prose-kkk .kkk-figure { margin: 2em -1rem; }
 @media (width >= 64rem) { .prose-kkk .kkk-figure { margin-inline: -3rem; } }
-.prose-kkk .kkk-figure img { width: 100%; border-radius: 1rem; }
-.prose-kkk .kkk-caption { margin-top: 0.5em; padding-inline: 1rem; text-align: center; font-size: 13px; color: var(--muted); }
+.prose-kkk .kkk-figure img { display: block; width: 100%; height: auto; border-radius: 1rem; }
+.prose-kkk .kkk-caption {
+  margin-top: 0.6em;
+  padding-inline: 1rem;
+  text-align: center;
+  font-size: 0.8em;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.prose-kkk .kkk-caption:empty { display: none; }
+
+/* Sized images (v10): width from the editor (25–75%), aligned left / centre / right. */
+.prose-kkk .kkk-figure.is-sized { margin: 0.4em auto 1.4em; max-width: 100%; }
+@media (width >= 40rem) {
+  .prose-kkk .kkk-figure.is-sized.align-left { float: left; margin: 0.35em 1.6em 1em 0; }
+  .prose-kkk .kkk-figure.is-sized.align-right { float: right; margin: 0.35em 0 1em 1.6em; }
+}
+/* Phones: every image is full width, nothing floats, so text never gets squeezed. */
+@media (width < 40rem) {
+  .prose-kkk .kkk-figure.is-sized { width: 100% !important; }
+}
+.prose-kkk :where(h2, h3, h4, hr, .kkk-figure:not(.is-sized)) { clear: both; }
+.prose-kkk::after, .prose-kkk > div:last-child::after { content: ""; display: table; clear: both; }
 
 /* Links inside the article and its boxes */
 .prose-kkk a,

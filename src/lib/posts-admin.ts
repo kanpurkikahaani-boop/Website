@@ -40,7 +40,7 @@ export async function getSiteRoutes(): Promise<{ href: string; label: string }[]
 export async function getPostForPreview(id: string) {
   const db = await createSessionClient();
   if (!db) return null;
-  const { data } = await db.from("posts").select(`${FULL_COLS}, cover_focal, status`).eq("id", id).maybeSingle();
+  const { data } = await db.from("posts").select(`${FULL_COLS}, cover_focal, status, content_json`).eq("id", id).maybeSingle();
   if (!data) return null;
   const row = data as unknown as Row;
   return { post: toPost({ ...row, published_at: row.published_at ?? new Date().toISOString() }), status: String(row.status) };

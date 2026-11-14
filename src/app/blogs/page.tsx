@@ -151,7 +151,7 @@ export default async function BlogsPage({ searchParams }: PageProps<"/blogs">) {
           </nav>
         )}
         <p className="mt-8 text-center text-sm">
-          <a href="/blogs/rss.xml" className="font-semibold text-primary hover:underline">Subscribe via RSS</a>
+          <a href="/rss.xml" className="font-semibold text-primary hover:underline">Subscribe via RSS</a>
           <span className="mx-2">·</span>
           <TagChip>{total} {total === 1 ? "story" : "stories"}</TagChip>
         </p>

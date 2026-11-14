@@ -43,13 +43,16 @@ export default async function AdminBlogsPage({ searchParams }: PageProps<"/admin
         : query.order("updated_at", { ascending: false });
   const { data, error } = await query;
   const { count: trashCount } = await db!.from("posts").select("id", { count: "exact", head: true }).not("deleted_at", "is", null);
+  // Public view counts (migration 0010). A separate query, so the list still loads without it.
+  const { data: viewRows } = await db!.from("post_view_counts").select("post_id, views");
+  const views = new Map((viewRows ?? []).map((v) => [v.post_id as string, Number(v.views)]));
 
   const rows = (data ?? [])
     .map((p) => {
       const status: Status = displayStatus(p.status, p.published_at);
       const author = (Array.isArray(p.authors) ? p.authors[0] : p.authors)?.name ?? p.author;
       const boxes = [p.plan_visit, p.glossary, p.further_reading].reduce((n, a) => n + (Array.isArray(a) ? a.length : 0), 0);
-      return { ...p, status, author, links: hrefsIn(p.content_html ?? "").length + boxes, report: p.link_report as LinkReport | null };
+      return { ...p, status, author, views: views.get(p.id) ?? 0, links: hrefsIn(p.content_html ?? "").length + boxes, report: p.link_report as LinkReport | null };
     })
     .filter((p) => statusFilter === "all" || p.status === statusFilter);
 
@@ -110,7 +113,7 @@ export default async function AdminBlogsPage({ searchParams }: PageProps<"/admin
         <table className="w-full min-w-[980px] text-left text-sm">
           <thead className="bg-dark text-[11px] uppercase tracking-[0.16em] text-accent">
             <tr>
-              {["", "Title", "Author", "Status", "Publish date", "Last edited", "Links", ""].map((h, i) => (
+              {["", "Title", "Author", "Status", "Publish date", "Last edited", "Views", "Links", ""].map((h, i) => (
                 <th key={i} scope="col" className="px-4 py-3 font-bold">{h}</th>
               ))}
             </tr>
@@ -137,6 +140,7 @@ export default async function AdminBlogsPage({ searchParams }: PageProps<"/admin
                 </td>
                 <td className="px-4 py-3">{p.published_at ? ist(p.published_at, p.status === "scheduled") : "—"}</td>
                 <td className="px-4 py-3">{ist(p.updated_at, true)}</td>
+                <td className="px-4 py-3 tabular-nums" data-testid="admin-views">{p.status === "published" ? p.views.toLocaleString("en-IN") : "—"}</td>
                 <td className={cn("px-4 py-3 font-semibold", p.links >= 100 ? "text-[#21603a]" : "text-ink")}>{p.links}</td>
                 <td className="px-4 py-3">
                   <PostRowActions id={p.id} slug={p.slug} title={p.title} status={p.status} trashed={trash} />
@@ -144,7 +148,7 @@ export default async function AdminBlogsPage({ searchParams }: PageProps<"/admin
               </tr>
             ))}
             {!rows.length && (
-              <tr><td colSpan={8} className="px-4 py-10 text-center">{trash ? "The Trash is empty." : q || statusFilter !== "all" ? "No posts match." : "No posts yet — write the first one."}</td></tr>
+              <tr><td colSpan={9} className="px-4 py-10 text-center">{trash ? "The Trash is empty." : q || statusFilter !== "all" ? "No posts match." : "No posts yet — write the first one."}</td></tr>
             )}
           </tbody>
         </table>

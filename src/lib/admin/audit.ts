@@ -4,7 +4,7 @@ import { createSessionClient } from "@/lib/supabase/server";
 
 export type AuditAction =
   | "login" | "login_denied" | "logout" | "create" | "update" | "publish" | "unpublish" | "schedule"
-  | "trash" | "restore" | "purge" | "revision_restore" | "duplicate" | "mfa_enrol" | "mfa_remove";
+  | "trash" | "restore" | "purge" | "revision_restore" | "duplicate" | "mfa_enrol" | "mfa_remove" | "syndicate";
 
 /**
  * Append to admin_audit. Normally written with the admin's own session (RLS: admin-only insert).

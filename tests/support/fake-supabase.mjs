@@ -247,7 +247,8 @@ const q = (id) => {
   return `"${id}"`;
 };
 const RELATIONS = {
-  posts: { authors: { table: "authors", fk: "author_id", to: "id" } },
+  posts: { authors: { table: "authors", fk: "author_id", to: "id" }, post_view_counts: { table: "post_view_counts", fk: "id", to: "post_id" } },
+  post_syndications: { posts: { table: "posts", fk: "post_id", to: "id" } },
   post_redirects: { posts: { table: "posts", fk: "post_id", to: "id" } },
 };
 
@@ -486,6 +487,23 @@ async function handleRest(req, res, url, table) {
   }
 }
 
+/* ───────────────────────── RPC (scalar functions) ───────────────────────── */
+
+async function handleRpc(req, res, fn) {
+  const who = roleFor(req);
+  if (!who) return send(res, 401, { code: "PGRST301", message: "JWT invalid", details: null, hint: null });
+  if (!/^[a-z_]+$/.test(fn)) return send(res, 404, { message: "not found" });
+  const raw = (await readBody(req)).toString();
+  const body = raw ? JSON.parse(raw) : {};
+  const keys = Object.keys(body).filter((k) => /^[a-z_]+$/.test(k));
+  try {
+    const out = await asRole(who, (c) => c.query(`select public.${q(fn)}(${keys.map((k, i) => `${q(k)} => $${i + 1}`).join(", ")}) as r`, keys.map((k) => body[k])));
+    return send(res, 200, out.rows[0]?.r ?? null);
+  } catch (e) {
+    return pgError(res, e, who);
+  }
+}
+
 /* ───────────────────────── Storage ───────────────────────── */
 
 const files = new Map(); // "bucket/path" -> { type, data }
@@ -556,6 +574,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (path === "/__log") return send(res, 200, log);
     if (path.startsWith("/auth/v1/")) return await handleAuth(req, res, url, path);
+    if (path.startsWith("/rest/v1/rpc/")) return await handleRpc(req, res, path.slice("/rest/v1/rpc/".length));
     if (path.startsWith("/rest/v1/")) return await handleRest(req, res, url, path.slice("/rest/v1/".length));
     if (path.startsWith("/storage/v1/")) return await handleStorage(req, res, url, path);
     return send(res, 404, { message: "not found" });

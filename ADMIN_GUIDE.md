@@ -45,7 +45,9 @@ Click **+ New post**. The left side is the page as readers will see it; the righ
 
 - **Title** (big field) and **Standfirst** (the sentence under the title).
 - **Body**: just type. Shortcuts: `## ` + space makes a heading, `- ` starts a list, `> ` makes a quote.
-- **Toolbar**: Heading 2/3, bold, italic, underline, lists, quote, link, remove link, image, YouTube, divider, undo/redo.
+- **Toolbar**: font, text size, Heading 2/3, bold, italic, underline, lists, quote, link, remove link, image, YouTube, divider, undo/redo.
+- **Font and size** (first two boxes on the toolbar): select some text, then pick a font (the site's own Playfair Display or Plus Jakarta Sans, Arial, Georgia, Times New Roman, Verdana, Tahoma, Trebuchet MS or Courier New) or a size (Small, Normal, Large, Extra large, or Heading 2/3/4). The published post shows the same fonts. Use them sparingly — the default font is easiest to read.
+- **Blank lines**: press Enter twice to leave an empty line; it shows on the published post too.
 - **Your work saves itself** every 20 seconds and whenever you click away from a field. The panel says "Saved · 2s ago". If you try to leave with unsaved changes, the browser warns you.
 
 ### Paste from Word or Google Docs
@@ -60,14 +62,33 @@ Select the words, click the **link** button and paste an address. For pages on o
 
 The **Links** panel on the right counts links toward the target of 100 and warns about duplicates, more than 2 links in one sentence, or vague link text. **Suggest links** offers ideas; nothing is added until you click **Accept**.
 
-### Images and alt text
-Click the **image** button, choose a JPG, PNG or WebP photo (max 5 MB; it's resized automatically), then:
+### Images, cropping, size and captions
+Click the **image** button and choose a JPG, PNG or WebP photo (max 5 MB). A **crop** window opens first:
+- Drag the box or its corners, or pick a shape: **Free**, **16:9**, **4:3**, **1:1** or **Original**. Readers only download the cropped part.
 - **Alt text** (required): describe what the photo shows for people who can't see it.
-- **Caption** (optional): shown under the photo. Put the photo credit here, and write "Representative image" if it isn't really from the place in the story.
+- **Caption** (optional): shown under the photo in small italic text. Put the photo credit here, and write "Representative image" if it isn't really from the place in the story.
+
+After inserting, point at (or tap) the photo for its toolbar:
+- **25% / 50% / 75% / 100%** width, or drag the round handle on its side to any size.
+- **Align** left, centre or right. Smaller photos sit beside the text on computers; on phones every photo is full width.
+- **Crop** opens the crop window again (it starts from your original upload, so you can undo a tight crop).
+- **T** edits the alt text; the bin removes the photo.
+- The **caption** is ordinary text under the photo: click it to change it at any time.
 
 ![Image dialog](docs/admin-guide/06-image-dialog.png)
 
 The **Cover image** section on the right works the same way. After uploading, click the most important part of the photo (the **focal point**) so it stays in view when the photo is cropped.
+
+### Views
+Every published story shows "👁 N views" at the end, counted once per reader per 24 hours. Search-engine bots and anyone signed in to the admin aren't counted, and previews never count. The **Views** column in the Blogs list shows the same numbers.
+
+### Sharing a story on other blogs (Syndicate)
+Once a story is published, open **Syndicate** in the editor's right-hand panel:
+- Tick the sites to copy it to (only the ones set up in Vercel can be ticked; see SETUP.md) and press **Cross-post**. Tick "Save as a draft there" to check the copy on that site before it goes public.
+- Every copy starts with "Originally published on Kanpur Ki Kahaani" linking back to the story, and on DEV, Hashnode and Medium it also tells search engines our page is the original.
+- **Posted it somewhere by hand?** (LinkedIn, Medium's "Import a story", Substack…) Add the site name and link so it's tracked.
+
+The **Syndication** page in the admin menu lists every story with all the places it has been published, as clickable links.
 
 ## 5. Preview, publish, schedule
 
