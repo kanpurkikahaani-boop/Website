@@ -9,6 +9,8 @@ import { ImageCard } from "@/components/ui/ImageCard";
 import { FadeUp } from "@/components/ui/FadeUp";
 import { InlineLink } from "@/components/ui/InlineLink";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CiteThisPage } from "@/components/seo/CiteThisPage";
+import { absoluteUrl } from "@/data/site";
 import { landmarks, timeline } from "@/data/history";
 import { buildMetadata, touristAttractionsJsonLd } from "@/lib/seo";
 
@@ -67,6 +69,9 @@ export default function CultureHistoryPage() {
           "Heritage landmarks in Kanpur",
         )}
       />
+      <div className="container-site max-w-[900px] pb-4">
+        <CiteThisPage url={absoluteUrl("/culture-history")} title="Kanpur's History & Heritage: From Jajmau to the Manchester of the East" />
+      </div>
       <FaqSection title={faqPageInfo.culture.title} items={faqs.culture} />
     </>
   );

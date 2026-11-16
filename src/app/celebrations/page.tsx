@@ -8,6 +8,8 @@ import { Section } from "@/components/ui/Section";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { InlineLink } from "@/components/ui/InlineLink";
 import { festivals } from "@/data/festivals";
+import { CiteThisPage } from "@/components/seo/CiteThisPage";
+import { absoluteUrl } from "@/data/site";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -62,6 +64,9 @@ export default function CelebrationsPage() {
           Want exact dates? <InlineLink href="/events">See upcoming events</InlineLink>
         </p>
       </Section>
+      <div className="container-site max-w-[900px] pb-4">
+        <CiteThisPage url={absoluteUrl("/celebrations")} title="Festivals in Kanpur: A Month-by-Month Calendar" />
+      </div>
       <FaqSection title={faqPageInfo.celebrations.title} items={faqs.celebrations} />
     </>
   );

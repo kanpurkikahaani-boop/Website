@@ -12,6 +12,8 @@ import { IconBadge } from "@/components/ui/IconBadge";
 import { TagChip } from "@/components/ui/TagChip";
 import { FadeUp } from "@/components/ui/FadeUp";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CiteThisPage } from "@/components/seo/CiteThisPage";
+import { absoluteUrl } from "@/data/site";
 import { cities } from "@/data/cities";
 import { buildMetadata, touristDestinationJsonLd } from "@/lib/seo";
 
@@ -80,7 +82,10 @@ export default function NearbyPage() {
             </tbody>
           </table>
         </div>
-        <p className="mt-3 text-xs">Times and distances are approximate and depend on route and traffic.</p>
+        <p className="mt-3 text-xs">
+          Times and distances are approximate and depend on route and traffic. Full table with straight-line distances, airports and a CSV download:{" "}
+          <Link href="/guides/distances-from-kanpur" className="font-semibold text-primary underline">Distances from Kanpur</Link>.
+        </p>
       </Section>
 
       <Section labelledBy="circuits-title">
@@ -121,6 +126,9 @@ export default function NearbyPage() {
           touristDestinationJsonLd({ name: c.name, description: c.shortIntro, path: `/cities/${c.slug}`, lat: c.lat, lon: c.lon }),
         )}
       />
+      <div className="container-site max-w-[900px] pb-4">
+        <CiteThisPage url={absoluteUrl("/nearby")} title="Weekend Trips from Kanpur: Lucknow, Agra, Prayagraj, Varanasi & Ayodhya" />
+      </div>
       <FaqSection title={faqPageInfo.nearby.title} items={faqs.nearby} />
     </>
   );

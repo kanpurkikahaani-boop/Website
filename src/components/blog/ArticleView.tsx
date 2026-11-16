@@ -9,6 +9,7 @@ import { indexedPhoto } from "@/lib/photo-index";
 import { PhotoCreditLine } from "@/components/ui/PhotoCredit";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ViewBadge, ViewCount } from "./ViewCount";
+import { CiteThisPage } from "@/components/seo/CiteThisPage";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
 import { ArticleToc, MobileToc } from "@/components/blog/ArticleToc";
 import {
@@ -177,6 +178,7 @@ export function ArticleView({
             <MoreToExplore city={post.city} />
             <TagChips tags={post.tags} />
             <AuthorBox author={post.authorInfo} name={post.author} />
+            {!preview && <CiteThisPage url={url} title={post.title} updated={post.updatedAt.slice(0, 10)} />}
             <InlineSignup />
             <PrevNext newer={adjacent.newer} older={adjacent.older} />
           </div>
