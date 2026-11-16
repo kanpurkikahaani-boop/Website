@@ -32,9 +32,9 @@ import { getLatestPosts } from "@/lib/posts";
 import { cityName } from "@/lib/city-names";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Kanpur Tourism – Things to Do in Kanpur & Weekend Trips Nearby | Kanpur Ki Kahaani",
+  title: "Kanpur – City, Stories & More | Kanpur Ki Kahaani",
   description:
-    "Kanpur tourism guide: places to visit in Kanpur, street food, festivals, a free itinerary planner and weekend trips from Kanpur to Lucknow, Agra and Varanasi.",
+    "Kanpur Ki Kahaani tells the stories of Kanpur, India: its history, heritage, food and festivals, plus local news, events, live weather, blogs and nearby trips.",
   path: "/",
 });
 

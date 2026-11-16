@@ -36,7 +36,7 @@ const notoDeva = Noto_Serif_Devanagari({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — Things to Do in Kanpur & Weekend Trips Nearby`,
+    default: `Kanpur – City, Stories & More | ${site.name}`,
     template: `%s | ${site.name}`,
   },
   description: site.description,

@@ -71,7 +71,7 @@ None.
 
 | Page | FAQs | Keyword uses (FAQ + heading + meta) |
 |---|---|---|
-| `/` | 9 | kanpur 26, itinerary 3, culture 3, map 3, kanpur city 2, events 2, news 2, night out 2, kanpur india 1, the weather 1, weather today 1, weather 1, current temperature 1, forecast 1, rain radar 1, upcoming festival 1, kanpur iit 1 |
+| `/` | 9 | kanpur 23, culture 3, news 3, events 3, map 3, itinerary 2, kanpur india 2, kanpur city 2, night out 2, live weather 1, the weather 1, weather today 1, weather 1, current temperature 1, forecast 1, rain radar 1, upcoming festival 1, kanpur iit 1 |
 | `/tourism` | 7 | kanpur 15, itinerary 3, map 2, kanpur city 2, weather 1, weather forecast 1 |
 | `/culture-history` | 5 | kanpur 12, culture 3, map 2, kanpur india 1 |
 | `/celebrations` | 5 | kanpur 13, upcoming festival 2, events 2 |
