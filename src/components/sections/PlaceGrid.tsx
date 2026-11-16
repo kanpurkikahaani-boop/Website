@@ -7,6 +7,7 @@ import { FilterPills } from "@/components/ui/FilterPills";
 import { placeCategories } from "@/data/places";
 import type { Place, PlaceCategory } from "@/data/types";
 import { useQueryState } from "@/lib/url-state";
+import { placeLinks } from "@/lib/googleQueries";
 
 type Filter = "all" | PlaceCategory;
 
@@ -76,6 +77,7 @@ function PlaceGridView({ places, cityLabel, filter, onChange }: Props & { filter
                 title={p.name}
                 description={p.description}
                 chips={[p.area, p.duration]}
+                google={placeLinks(p)}
               />
             </motion.li>
           ))}

@@ -20,6 +20,10 @@ const optionalText = (max: number) =>
 /** Links in the article boxes: https URLs or internal paths only (never javascript: etc.). */
 const linkUrl = z.string().trim().max(600).refine((u) => /^https:\/\//.test(u) || /^\/(?!\/)/.test(u), "Links must be https:// or an internal /path");
 
+/** Optional Google "Map" / "Photos" search text on blog place rows (v9 Google links). Empty → omitted. */
+const googleText = z.string().trim().max(160).optional().transform((v) => v || undefined);
+const googleFields = { mapsQuery: googleText, imagesQuery: googleText };
+
 /** Validated on the server for every save — never trust what the editor sends. */
 export const postInputSchema = z.object({
   id: z.uuid().optional(),
@@ -46,8 +50,8 @@ export const postInputSchema = z.object({
   coverFocal: z.string().regex(/^\d{1,3}% \d{1,3}%$/).nullish().transform((v) => v ?? null),
   keyFacts: z.array(z.object({ label: z.string().trim().min(1).max(40), value: z.string().trim().min(1).max(200) })).max(12).default([]),
   furtherReading: z.array(z.object({ title: z.string().trim().min(1).max(160), url: linkUrl, publisher: z.string().trim().max(80).default("") })).max(40).default([]),
-  glossary: z.array(z.object({ term: z.string().trim().min(1).max(60), definition: z.string().trim().min(1).max(240), url: linkUrl, source: z.string().trim().max(60).default("") })).max(30).default([]),
-  planVisit: z.array(z.object({ group: z.string().trim().min(1).max(40), label: z.string().trim().min(1).max(100), url: linkUrl })).max(30).default([]),
+  glossary: z.array(z.object({ term: z.string().trim().min(1).max(60), definition: z.string().trim().min(1).max(240), url: linkUrl, source: z.string().trim().max(60).default(""), ...googleFields })).max(30).default([]),
+  planVisit: z.array(z.object({ group: z.string().trim().min(1).max(40), label: z.string().trim().min(1).max(100), url: linkUrl, ...googleFields })).max(30).default([]),
 });
 
 export type PostInput = z.input<typeof postInputSchema>;

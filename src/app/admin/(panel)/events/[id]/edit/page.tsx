@@ -28,6 +28,8 @@ export default async function EditEventPage({ params }: PageProps<"/admin/events
           bmsUrl: e.bms_url ?? "",
           sourceUrl: e.source_url ?? "",
           status: e.status,
+          mapsQuery: e.maps_query ?? "",
+          imagesQuery: e.images_query ?? "",
         }}
       />
     </>

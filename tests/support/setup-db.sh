@@ -7,7 +7,7 @@ for f in supabase/tests/emulate-supabase.sql supabase/migrations/0001_init.sql s
          supabase/migrations/0004_events.sql supabase/migrations/0005_remove_seed_posts.sql \
          supabase/migrations/0006_authors_and_post_fields.sql supabase/migrations/0007_publish_navaratri.sql \
          supabase/migrations/0008_admin_v6.sql supabase/migrations/0009_team_authors.sql \
-         supabase/migrations/0010_views_and_syndication.sql; do
+         supabase/migrations/0010_views_and_syndication.sql supabase/migrations/0011_event_google_links.sql; do
   psql -q -v ON_ERROR_STOP=1 -1 -d "$DB" -f "$f" > /dev/null
 done
 psql -q -d "$DB" -c "insert into public.admins (email) values ('team@kanpurkikahaani.site') on conflict do nothing"

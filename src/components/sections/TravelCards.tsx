@@ -2,11 +2,13 @@ import { Plane, Car, TrainFront } from "lucide-react";
 import type { TravelMode } from "@/data/types";
 import { IconBadge } from "@/components/ui/IconBadge";
 import { FadeUp } from "@/components/ui/FadeUp";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import type { GoogleItem } from "@/lib/googleQueries";
 
 const icons = { train: TrainFront, road: Car, air: Plane };
 
 /** By Train / By Road / By Air cards. */
-export function TravelCards({ modes }: { modes: TravelMode[] }) {
+export function TravelCards({ modes, links }: { modes: TravelMode[]; links?: GoogleItem[] }) {
   return (
     <ul className="grid gap-5 md:grid-cols-3">
       {modes.map((m, i) => (
@@ -14,6 +16,7 @@ export function TravelCards({ modes }: { modes: TravelMode[] }) {
           <IconBadge icon={icons[m.mode]} size={44} />
           <h3 className="mt-4 text-xl font-semibold">{m.title}</h3>
           <p className="mt-2 text-[15px] leading-relaxed">{m.body}</p>
+          {links?.[i] && <GoogleLinks item={links[i]} className="mt-4" />}
         </FadeUp>
       ))}
     </ul>

@@ -13,6 +13,7 @@ import { CiteThisPage } from "@/components/seo/CiteThisPage";
 import { absoluteUrl } from "@/data/site";
 import { landmarks, timeline } from "@/data/history";
 import { buildMetadata, touristAttractionsJsonLd } from "@/lib/seo";
+import { landmarkLinks, timelineLinks } from "@/lib/googleQueries";
 
 export const metadata: Metadata = buildMetadata({
   title: "Kanpur History & Culture – From Jajmau to the Mills | Kanpur Ki Kahaani",
@@ -42,7 +43,7 @@ export default function CultureHistoryPage() {
             />
             <InlineLink href="/blogs">Read stories from Kanpur</InlineLink>
           </div>
-          <Timeline entries={timeline.map((e) => ({ label: e.era, title: e.title, body: e.description }))} />
+          <Timeline entries={timeline.map((e) => ({ label: e.era, title: e.title, body: e.description, google: timelineLinks(e) }))} />
         </div>
       </Section>
       <Section tone="alt" labelledBy="heritage-title">
@@ -55,7 +56,7 @@ export default function CultureHistoryPage() {
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {landmarks.map((l, i) => (
             <FadeUp as="li" key={l.slug} delay={(i % 3) * 0.06}>
-              <ImageCard image={l.image} alt={l.alt} imageLabel={l.name} imageSublabel={l.era} eyebrow={l.era} title={l.name} description={l.description} />
+              <ImageCard image={l.image} alt={l.alt} imageLabel={l.name} imageSublabel={l.era} eyebrow={l.era} title={l.name} description={l.description} google={landmarkLinks(l)} />
             </FadeUp>
           ))}
         </ul>

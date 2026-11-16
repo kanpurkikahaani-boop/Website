@@ -1,6 +1,6 @@
-import type { ImagePath } from "./types";
+import type { ImagePath, GoogleOverrides } from "./types";
 
-export interface Era {
+export interface Era extends GoogleOverrides {
   era: string;
   title: string;
   description: string;
@@ -17,7 +17,7 @@ export const timeline: Era[] = [
   { era: "Today", title: "Metro City Reimagined", description: "A new metro line, a revived riverfront and a startup scene write the next chapter of the Kahaani." },
 ];
 
-export interface Landmark {
+export interface Landmark extends GoogleOverrides {
   slug: string;
   era: string;
   name: string;

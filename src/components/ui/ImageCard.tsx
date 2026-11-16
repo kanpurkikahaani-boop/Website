@@ -3,6 +3,8 @@ import { ImageWithFallback } from "./ImageWithFallback";
 import { PhotoCreditBadge } from "./PhotoCredit";
 import { TagChip } from "./TagChip";
 import { cn } from "@/lib/utils";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import type { GoogleItem } from "@/lib/googleQueries";
 
 export interface ImageCardProps {
   image: string;
@@ -19,6 +21,8 @@ export interface ImageCardProps {
   href?: string;
   /** Extra content under the chips (links, prices…) */
   footer?: React.ReactNode;
+  /** Google "Map" + "Photos" buttons (v9), shown in the footer outside the card's own link. */
+  google?: GoogleItem;
   headingLevel?: "h2" | "h3";
   sizes?: string;
   priority?: boolean;
@@ -43,6 +47,7 @@ export function ImageCard({
   chips,
   href,
   footer,
+  google,
   headingLevel: H = "h3",
   sizes = "(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw",
   priority,
@@ -97,7 +102,8 @@ export function ImageCard({
             ))}
           </ul>
         )}
-        {footer && <div className="relative z-10 mt-auto pt-4">{footer}</div>}
+        {google && <GoogleLinks item={google} className="mt-auto pt-4" />}
+        {footer && <div className={cn("relative z-10 pt-4", !google && "mt-auto")}>{footer}</div>}
       </div>
     </article>
   );

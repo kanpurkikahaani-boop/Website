@@ -320,3 +320,9 @@ Every automatic copy starts with *“Originally published on Kanpur Ki Kahaani�
 
 ### 6. RSS
 The feed is at `/rss.xml` (also `/feed` and the old `/blogs/rss.xml`), linked from every page's `<head>`: title, excerpt, cover image, author, date, link and the full story with the “Originally published on” line. Feed readers, and importers like Medium's, can use it.
+
+## Update v9 — Google "Map" + "Photos" links
+
+- **Database:** run `supabase/migrations/0011_event_google_links.sql` once in the Supabase SQL editor (adds two optional columns to `events`). Until then, events still show Map/Photos links built from their venue and city; only the admin form's override fields can't be saved.
+- **Checks:** `npm run google:coverage` runs before every build and fails if any item is missing a link or a query is missing its city. `npm run google:export` writes `reports/google-links.csv` and `reports/google-links.html` (every link, clickable, filterable).
+- **Optional — exact place IDs:** `npm run google:place-ids` with `GOOGLE_MAPS_API_KEY` in `.env.local` looks up each place once with Google's Places API and saves `src/data/placeIds.json`, so Map links open the exact listing. This needs a Google Cloud project **with billing enabled** (Places API Text Search is billed beyond Google's monthly free usage; ~250 requests per run — VERIFY current pricing). Without a key nothing changes and the search links keep working. Matches in the wrong city or with a different name are saved as `flagged` and not used until you review them.

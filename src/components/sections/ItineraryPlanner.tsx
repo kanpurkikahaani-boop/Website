@@ -8,7 +8,9 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { WhatsAppIcon } from "@/components/ui/BrandIcons";
 import { cities } from "@/data/cities";
 import { food } from "@/data/food";
-import { kanpurPlaces } from "@/data/places";
+import { allPlaces, kanpurPlaces } from "@/data/places";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import { stopLinks } from "@/lib/googleQueries";
 import { absoluteUrl } from "@/data/site";
 import type { Interest, NearbyCitySlug } from "@/data/types";
 import { track } from "@/lib/analytics";
@@ -245,6 +247,7 @@ function Planner({ preselected, initialDays }: { preselected: NearbyCitySlug[]; 
                               )}
                             </span>
                             <span className="text-sm">{s.note}</span>
+                            <GoogleLinks item={stopLinks(s.title, d.city, allPlaces)} className="no-print mt-2" />
                           </span>
                         </li>
                       ))}

@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import { FilterBar } from "./FilterBar";
 import { NewsCard } from "./NewsCard";
 import { NewspaperDirectory } from "./NewspaperDirectory";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import { newsCityLinks } from "@/lib/googleQueries";
 
 /** Shared body of /news and the /news/[city]/[genre] landing pages. */
 export async function NewsView({
@@ -34,6 +36,7 @@ export async function NewsView({
   return (
     <>
       <FilterBar city={city} genre={genre} lang={lang} />
+      {city && <GoogleLinks item={newsCityLinks(city)} variant="large" className="mt-5" />}
       <p className="mt-3 text-xs text-muted" aria-live="polite">
         {lastUpdated ? <>Last updated: {formatIST(lastUpdated)}</> : "Headlines refresh every morning at 6:00 AM IST."}
         {total > 0 && <> · {total} headline{total === 1 ? "" : "s"}</>}

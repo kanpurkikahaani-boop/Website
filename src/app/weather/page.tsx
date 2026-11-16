@@ -11,6 +11,8 @@ import { buildMetadata } from "@/lib/seo";
 import { FaqSection } from "@/components/faq/FaqSection";
 import { faqPageInfo, faqs, weatherGroups } from "@/data/faqs";
 import { WeatherClient } from "./WeatherClient";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import { seasonLinks } from "@/lib/googleQueries";
 
 export const metadata: Metadata = buildMetadata({
   title: "Kanpur Weather Today & Tomorrow – Live Rain Radar & Forecast | Kanpur Ki Kahaani",
@@ -55,6 +57,7 @@ export default function WeatherPage() {
               <p className="eyebrow mt-4">{s.months}</p>
               <h3 className="mt-1 text-xl font-semibold">{s.title}</h3>
               <p className="mt-2 text-[15px]">{s.body}</p>
+              <GoogleLinks item={seasonLinks(s.months, s.title)} className="mt-4" />
             </li>
           ))}
         </ul>

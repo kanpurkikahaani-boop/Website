@@ -8,6 +8,8 @@ import { track } from "@/lib/analytics";
 import { EVENT_CATEGORIES, categoryLabel } from "@/lib/events-schema";
 import { CITY_LABELS, type NewsCity } from "@/lib/news/taxonomy";
 import { useQueryState } from "@/lib/url-state";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import { eventLinks } from "@/lib/googleQueries";
 
 export interface EventView {
   id: string;
@@ -19,6 +21,8 @@ export interface EventView {
   endAt: string | null;
   bmsUrl: string | null;
   sourceUrl: string | null;
+  mapsQuery?: string | null;
+  imagesQuery?: string | null;
 }
 
 const CITY_OPTIONS = [{ value: "all", label: "All" }, ...Object.entries(CITY_LABELS).map(([value, l]) => ({ value, label: l.en }))];
@@ -141,6 +145,7 @@ export function EventCard({ event: e }: { event: EventView }) {
             </span>
           )}
         </div>
+        <GoogleLinks item={eventLinks({ title: e.title, venue: e.venue, city: e.city, maps_query: e.mapsQuery, images_query: e.imagesQuery })} className="mt-3" />
       </div>
       {e.bmsUrl ? (
         <a

@@ -10,6 +10,7 @@ import { InlineLink } from "@/components/ui/InlineLink";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { shoppingFor } from "@/data/shopping";
 import { buildMetadata, touristAttractionsJsonLd } from "@/lib/seo";
+import { shopLinks } from "@/lib/googleQueries";
 
 export const metadata: Metadata = buildMetadata({
   title: "Shopping in Kanpur – Best Markets & Bazaars | Kanpur Ki Kahaani",
@@ -34,7 +35,7 @@ export default function ShoppingPage() {
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {markets.map((m, i) => (
             <FadeUp as="li" key={m.slug} delay={(i % 3) * 0.06}>
-              <ImageCard image={m.image} alt={m.alt} imageLabel={m.name} imageSublabel={m.area} eyebrow={m.area} title={m.name} description={m.knownFor} chips={[m.bestTime]} />
+              <ImageCard image={m.image} alt={m.alt} imageLabel={m.name} imageSublabel={m.area} eyebrow={m.area} title={m.name} description={m.knownFor} chips={[m.bestTime]} google={shopLinks(m)} />
             </FadeUp>
           ))}
         </ul>

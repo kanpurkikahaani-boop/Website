@@ -12,6 +12,9 @@ export interface CityEvent {
   imageUrl: string | null;
   bmsUrl: string | null;
   sourceUrl: string | null;
+  /** Optional Google link overrides (migration 0011). */
+  mapsQuery?: string | null;
+  imagesQuery?: string | null;
 }
 
 /** True while the event hasn't finished (its end, or its start if there's no end). */
@@ -26,7 +29,9 @@ export async function getUpcomingEvents(): Promise<CityEvent[]> {
   const now = new Date().toISOString();
   const { data, error } = await db
     .from("events")
-    .select("id, title, category, city, venue, start_at, end_at, image_url, bms_url, source_url")
+    // "*" so the optional Google search columns (migration 0011) are read when present, and the
+    // page still works before that migration runs.
+    .select("*")
     .eq("status", "published")
     .or(`end_at.gte.${now},and(end_at.is.null,start_at.gte.${now})`)
     .order("start_at", { ascending: true })
@@ -47,6 +52,8 @@ export async function getUpcomingEvents(): Promise<CityEvent[]> {
       imageUrl: r.image_url,
       bmsUrl: r.bms_url,
       sourceUrl: r.source_url,
+      mapsQuery: (r.maps_query as string | null | undefined) ?? null,
+      imagesQuery: (r.images_query as string | null | undefined) ?? null,
     }))
     .filter((e) => isUpcoming(e));
 }

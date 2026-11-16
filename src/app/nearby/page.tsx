@@ -16,6 +16,9 @@ import { CiteThisPage } from "@/components/seo/CiteThisPage";
 import { absoluteUrl } from "@/data/site";
 import { cities } from "@/data/cities";
 import { buildMetadata, touristDestinationJsonLd } from "@/lib/seo";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import { cityLinks, routeLinks } from "@/lib/googleQueries";
+import { circuits } from "@/data/circuits";
 
 export const metadata: Metadata = buildMetadata({
   title: "Weekend Trips from Kanpur – Lucknow, Agra, Varanasi & More | Kanpur Ki Kahaani",
@@ -25,12 +28,6 @@ export const metadata: Metadata = buildMetadata({
   ogImage: "/og/nearby",
 });
 
-const circuits = [
-  { name: "Nawabi Weekend", route: "Kanpur → Lucknow", days: "2 days", cities: ["lucknow"], body: "Kebabs, imambaras and chikankari — the easiest getaway, by intercity train or a quick highway drive." },
-  { name: "Spiritual Ganga Trail", route: "Kanpur → Prayagraj → Varanasi", days: "4–5 days", cities: ["prayagraj", "varanasi"], body: "Follow the river from the Sangam to the ghats of Kashi, with aartis at both ends." },
-  { name: "Ram Path", route: "Kanpur → Lucknow → Ayodhya", days: "3 days", cities: ["lucknow", "ayodhya"], body: "A Nawabi stopover, then on to the new Ram Mandir and evening aarti on the Saryu." },
-  { name: "Mughal Detour", route: "Kanpur → Agra", days: "2 days", cities: ["agra"], body: "Sunrise at the Taj Mahal, an afternoon at Agra Fort and sunset from Mehtab Bagh." },
-];
 
 export default function NearbyPage() {
   return (
@@ -45,6 +42,14 @@ export default function NearbyPage() {
       <Section labelledBy="hub-title">
         <SectionHeader id="hub-title" eyebrow="The circuit" title="Kanpur, the Hub" intro="Tap a city to open its guide. Lines show approximate road distance from Kanpur." />
         <HubSpokeMap />
+        <ul aria-label="Nearby cities on Google" className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {cities.map((c) => (
+            <li key={c.slug} className="rounded-xl border border-border bg-surface p-3">
+              <p className="text-sm font-semibold text-ink">{c.name}</p>
+              <GoogleLinks item={cityLinks(c)} className="mt-2" />
+            </li>
+          ))}
+        </ul>
       </Section>
 
       <Section tone="alt" labelledBy="compare-title">
@@ -71,6 +76,7 @@ export default function NearbyPage() {
                     <span lang="hi" className="ml-2 font-deva text-primary">
                       {c.hindi}
                     </span>
+                    <GoogleLinks item={cityLinks(c)} className="mt-2" />
                   </th>
                   <td className="px-5 py-4">~{c.distanceKm} km</td>
                   <td className="px-5 py-4">{c.driveTime}</td>
@@ -93,19 +99,22 @@ export default function NearbyPage() {
         <ul className="grid gap-6 md:grid-cols-2">
           {circuits.map((c, i) => (
             <FadeUp as="li" key={c.name} delay={(i % 2) * 0.06}>
-              <Link
-                href={`/tourism?cities=${c.cities.join(",")}#planner`}
-                className="group flex h-full flex-col rounded-2xl border border-border bg-surface p-6 transition hover:-translate-y-0.5 hover:shadow-[0_14px_34px_-18px_rgba(60,30,20,0.35)]"
-              >
+              {/* The card is clickable through a stretched title link, so the Google buttons sit beside it, not inside it. */}
+              <div className="group relative flex h-full flex-col rounded-2xl border border-border bg-surface p-6 transition hover:-translate-y-0.5 hover:shadow-[0_14px_34px_-18px_rgba(60,30,20,0.35)]">
                 <div className="flex items-start justify-between gap-4">
                   <IconBadge icon={Route} size={44} />
                   <TagChip>{c.days}</TagChip>
                 </div>
                 <p className="eyebrow mt-4">{c.route}</p>
-                <h3 className="mt-1 text-2xl font-semibold group-hover:text-primary">{c.name}</h3>
+                <h3 className="mt-1 text-2xl font-semibold group-hover:text-primary">
+                  <Link href={`/tourism?cities=${c.cities.join(",")}#planner`} className="after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none">
+                    {c.name}
+                  </Link>
+                </h3>
                 <p className="mt-2 text-[15px]">{c.body}</p>
-                <span className="mt-auto pt-4 text-sm font-semibold text-primary">Open in the planner →</span>
-              </Link>
+                <span aria-hidden className="mt-auto pt-4 text-sm font-semibold text-primary">Open in the planner →</span>
+                <GoogleLinks item={routeLinks(c.name, c.cities)} className="mt-3" />
+              </div>
             </FadeUp>
           ))}
         </ul>

@@ -1,6 +1,6 @@
-import type { ImagePath } from "./types";
+import type { ImagePath, GoogleOverrides } from "./types";
 
-export interface OutdoorSpot {
+export interface OutdoorSpot extends GoogleOverrides {
   slug: string;
   type: string;
   name: string;

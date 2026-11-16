@@ -12,7 +12,19 @@ export type ImagePath = `/images/${CitySlug}/${string}.jpg`;
 export type PlaceCategory = "heritage" | "temple" | "nature" | "museum" | "market";
 export type Interest = "history" | "food" | "nature" | "shopping";
 
-export interface Place {
+/**
+ * Optional per-item overrides for the Google "Map" / "Photos" links (v9 Google links). Defaults
+ * are generated in src/lib/googleQueries.ts, so items only set these when the default would be wrong.
+ */
+export interface GoogleOverrides {
+  mapsQuery?: string;
+  imagesQuery?: string;
+  /** From scripts/google/resolve-place-ids.ts (optional). */
+  placeId?: string;
+  area?: string;
+}
+
+export interface Place extends GoogleOverrides {
   slug: string;
   city: CitySlug;
   name: string;
@@ -34,7 +46,7 @@ export interface Place {
   priority?: number;
 }
 
-export interface FoodItem {
+export interface FoodItem extends GoogleOverrides {
   slug: string;
   city: CitySlug;
   kind: "street" | "restaurant" | "cafe" | "nightlife";
@@ -48,7 +60,7 @@ export interface FoodItem {
   sample?: boolean;
 }
 
-export interface ShopItem {
+export interface ShopItem extends GoogleOverrides {
   slug: string;
   city: CitySlug;
   area: string;
@@ -59,7 +71,7 @@ export interface ShopItem {
   alt: string;
 }
 
-export interface TravelMode {
+export interface TravelMode extends GoogleOverrides {
   mode: "train" | "road" | "air";
   title: string;
   body: string;
@@ -70,7 +82,7 @@ export interface ItineraryDay {
   stops: { time: string; title: string; note: string }[];
 }
 
-export interface City {
+export interface City extends GoogleOverrides {
   slug: NearbyCitySlug;
   name: string;
   hindi: string;
@@ -101,7 +113,7 @@ export interface City {
   dayTrip: boolean;
 }
 
-export interface Festival {
+export interface Festival extends GoogleOverrides {
   slug: string;
   month: string;
   /** 1–12, used by the month filter */
@@ -127,7 +139,7 @@ export interface NewsItem {
 
 export type StayTier = "budget" | "mid-range" | "luxury";
 
-export interface Stay {
+export interface Stay extends GoogleOverrides {
   slug: string;
   city: CitySlug;
   tier: StayTier;
@@ -138,7 +150,7 @@ export interface Stay {
   sample: true;
 }
 
-export interface Institution {
+export interface Institution extends GoogleOverrides {
   slug: string;
   area: string;
   name: string;

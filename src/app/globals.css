@@ -349,3 +349,14 @@ h4 {
     opacity: 1;
   }
 }
+
+/* Google Map/Photos pills (v9) keep their button look inside article link styles. */
+.prose-kkk [data-google-links] a,
+.article-links [data-google-links] a {
+  text-decoration: none;
+  overflow-wrap: normal;
+}
+.prose-kkk [data-google-links] a:visited,
+.article-links [data-google-links] a:visited { color: var(--ink); }
+.prose-kkk [data-google-links] a.ext::after,
+.article-links [data-google-links] a::after { content: none; }

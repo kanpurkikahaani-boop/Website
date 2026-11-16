@@ -7,6 +7,8 @@ import { stayTiers, bookingUrl } from "@/data/stays";
 import type { Stay } from "@/data/types";
 import { track } from "@/lib/analytics";
 import { useQueryState } from "@/lib/url-state";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import { stayLinks } from "@/lib/googleQueries";
 
 type Tier = (typeof stayTiers)[number]["value"];
 
@@ -95,6 +97,7 @@ function View({
                 <ArrowUpRight size={15} aria-hidden className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 <span className="sr-only"> (opens a booking site in a new tab)</span>
               </a>
+              <GoogleLinks item={stayLinks(s)} className="mt-3" />
             </li>
           ))}
         </ul>

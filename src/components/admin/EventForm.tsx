@@ -6,6 +6,7 @@ import { saveEvent } from "@/app/admin/(panel)/events/actions";
 import { BMS_URL_RE, EVENT_CATEGORIES } from "@/lib/events-schema";
 import { CITY_OPTIONS } from "@/lib/city-names";
 import { uploadBlogImage } from "@/lib/upload-image";
+import { eventLinks } from "@/lib/googleQueries";
 
 export interface EventFormValues {
   id?: string;
@@ -19,6 +20,8 @@ export interface EventFormValues {
   bmsUrl: string;
   sourceUrl: string;
   status: "draft" | "published" | "archived";
+  mapsQuery?: string;
+  imagesQuery?: string;
 }
 
 const inputCls = "w-full rounded-xl border border-border bg-white px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none";
@@ -49,6 +52,8 @@ export function EventForm({ initial }: { initial: EventFormValues }) {
         bmsUrl: v.bmsUrl,
         sourceUrl: v.sourceUrl,
         status,
+        mapsQuery: v.mapsQuery ?? "",
+        imagesQuery: v.imagesQuery ?? "",
       });
       if (!r.ok) return setError(r.error);
       router.push("/admin/events");
@@ -76,6 +81,24 @@ export function EventForm({ initial }: { initial: EventFormValues }) {
       <Field label="Venue" id="ev-venue">
         <input id="ev-venue" value={v.venue} onChange={(e) => set("venue", e.target.value)} className={inputCls} placeholder="e.g. Green Park Stadium, Civil Lines" />
       </Field>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <Field label="Google Maps search text (optional)" id="ev-maps">
+          <input id="ev-maps" value={v.mapsQuery ?? ""} onChange={(e) => set("mapsQuery", e.target.value)} maxLength={160} className={inputCls} placeholder="Empty = venue + city" />
+        </Field>
+        <Field label="Google Images search text (optional)" id="ev-images">
+          <input id="ev-images" value={v.imagesQuery ?? ""} onChange={(e) => set("imagesQuery", e.target.value)} maxLength={160} className={inputCls} placeholder="Empty = title + city" />
+        </Field>
+      </div>
+      {(() => {
+        const g = eventLinks({ title: v.title || "Event", venue: v.venue, city: v.city, maps_query: v.mapsQuery, images_query: v.imagesQuery });
+        return (
+          <p className="-mt-2 flex flex-wrap gap-4 text-xs font-semibold">
+            <a href={g.mapsUrl} target="_blank" rel="noopener noreferrer nofollow" className="text-primary underline">Test Maps link ↗</a>
+            <a href={g.imagesUrl} target="_blank" rel="noopener noreferrer nofollow" className="text-primary underline">Test Photos link ↗</a>
+            <span className="font-normal text-muted">{g.mapsQuery}</span>
+          </p>
+        );
+      })()}
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Starts (IST)" id="ev-start">
           <input id="ev-start" type="datetime-local" required value={v.startAt} onChange={(e) => set("startAt", e.target.value)} className={inputCls} />

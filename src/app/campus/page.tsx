@@ -12,6 +12,8 @@ import { FadeUp } from "@/components/ui/FadeUp";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { institutions, studentTips } from "@/data/campus";
 import { buildMetadata } from "@/lib/seo";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import { institutionLinks, tipLinks } from "@/lib/googleQueries";
 
 export const metadata: Metadata = buildMetadata({
   title: "Campus Life in Kanpur – IIT Kanpur, HBTU, GSVM & More | Kanpur Ki Kahaani",
@@ -45,8 +47,9 @@ export default function CampusPage() {
                   </li>
                 ))}
               </ul>
+              <GoogleLinks item={institutionLinks(i)} className="mt-auto pt-4" />
               {i.url && (
-                <InlineLink href={i.url} external className="mt-auto pt-4">
+                <InlineLink href={i.url} external className="pt-3">
                   Official website
                 </InlineLink>
               )}
@@ -63,6 +66,7 @@ export default function CampusPage() {
               <div>
                 <h3 className="text-xl font-semibold">{t.title}</h3>
                 <p className="mt-1.5 text-[15px] leading-relaxed">{t.body}</p>
+                <GoogleLinks item={tipLinks(t)} className="mt-3" />
               </div>
             </li>
           ))}

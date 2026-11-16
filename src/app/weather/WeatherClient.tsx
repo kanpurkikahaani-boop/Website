@@ -9,6 +9,8 @@ import { HourlyRow, LastUpdated, TodayStrip, TomorrowCard } from "@/components/w
 import { useQueryState } from "@/lib/url-state";
 import { setSelectedPlace, type WeatherPlace } from "@/lib/weather-place";
 import { cn } from "@/lib/utils";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import { weatherLinks } from "@/lib/googleQueries";
 
 const RainRadar = dynamic(() => import("@/components/weather/RainRadar"), {
   ssr: false,
@@ -134,6 +136,8 @@ function View({ cities, value, onChange }: { cities: WeatherCity[]; value: strin
 
       <p className="eyebrow mb-3">Right now in {place.label}</p>
       <WeatherWidget key={`${place.lat},${place.lon}`} lat={place.lat} lon={place.lon} place={place.label} ephemeral={place.ephemeral} />
+      {/* Google links for the chosen city (never for "my location": no coordinates in links). */}
+      {!mine && <GoogleLinks item={weatherLinks(city.value)} variant="large" className="mt-4" />}
 
       <section id="today" aria-labelledby="today-title" className="mt-10 scroll-mt-28">
         <h2 id="today-title" className="mb-4 text-[22px] font-bold text-primary md:text-[26px]">

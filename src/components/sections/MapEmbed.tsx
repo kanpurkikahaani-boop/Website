@@ -1,6 +1,7 @@
+import { mapsEmbedUrl } from "@/lib/googleLinks";
 /** Lazy-loaded Google Maps embed (no API key). */
 export function MapEmbed({ query, title, height = 300 }: { query: string; title: string; height?: number }) {
-  const src = `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+  const src = mapsEmbedUrl(query);
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-bg-alt" style={{ height }}>
       <iframe

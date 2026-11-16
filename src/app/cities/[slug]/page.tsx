@@ -27,6 +27,9 @@ import { placesFor } from "@/data/places";
 import { shoppingFor } from "@/data/shopping";
 import { absoluteUrl } from "@/data/site";
 import { buildMetadata, touristAttractionsJsonLd, touristDestinationJsonLd } from "@/lib/seo";
+import { cityLinks, foodLinks, gettingThereLinks, routeLinks, shopLinks, stopLinks } from "@/lib/googleQueries";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import { allPlaces } from "@/data/places";
 
 export const dynamicParams = false;
 
@@ -79,6 +82,7 @@ export default async function CityPage({ params }: PageProps<"/cities/[slug]">) 
               See the itinerary
             </a>
           </div>
+          <GoogleLinks item={cityLinks(city)} variant="large" tone="dark" className="mt-4" />
         </div>
       </section>
       <Breadcrumbs crumbs={[{ name: "Home", href: "/" }, { name: "Nearby Cities", href: "/nearby" }, { name: city.name }]} />
@@ -86,9 +90,9 @@ export default async function CityPage({ params }: PageProps<"/cities/[slug]">) 
       <InfoStrip
         label={`${city.name} quick facts`}
         items={[
-          { icon: MapPin, label: "Distance from Kanpur", value: `~${city.distanceKm} km · ${city.driveTime}` },
+          { icon: MapPin, label: "Distance from Kanpur", value: `~${city.distanceKm} km · ${city.driveTime}`, google: routeLinks(`Kanpur to ${city.name}`, [city.slug]) },
           { icon: Gauge, label: "Fastest way there", value: city.fastestWay },
-          { icon: Plane, label: "Nearest airport", value: city.nearestAirport },
+          { icon: Plane, label: "Nearest airport", value: city.nearestAirport, google: gettingThereLinks(city, { mode: "air", title: "By Air", body: "" }) },
           { icon: CalendarDays, label: "Best time to visit", value: city.bestTime },
         ]}
       />
@@ -123,7 +127,7 @@ export default async function CityPage({ params }: PageProps<"/cities/[slug]">) 
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {foods.map((f) => (
             <li key={f.slug}>
-              <ImageCard image={f.image} alt={f.alt} imageLabel={f.name} imageSublabel={city.name} eyebrow={f.eyebrow} title={f.name} description={f.description} chips={[f.area, f.price]} />
+              <ImageCard image={f.image} alt={f.alt} imageLabel={f.name} imageSublabel={city.name} eyebrow={f.eyebrow} title={f.name} description={f.description} chips={[f.area, f.price]} google={foodLinks(f)} />
             </li>
           ))}
         </ul>
@@ -134,7 +138,7 @@ export default async function CityPage({ params }: PageProps<"/cities/[slug]">) 
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {shops.map((s) => (
             <li key={s.slug}>
-              <ImageCard image={s.image} alt={s.alt} imageLabel={s.name} imageSublabel={s.area} eyebrow={s.area} title={s.name} description={s.knownFor} chips={[s.bestTime]} />
+              <ImageCard image={s.image} alt={s.alt} imageLabel={s.name} imageSublabel={s.area} eyebrow={s.area} title={s.name} description={s.knownFor} chips={[s.bestTime]} google={shopLinks(s)} />
             </li>
           ))}
         </ul>
@@ -142,7 +146,7 @@ export default async function CityPage({ params }: PageProps<"/cities/[slug]">) 
 
       <Section labelledBy="getting-title">
         <SectionHeader id="getting-title" eyebrow="Getting there" title={`Kanpur to ${city.name}`} intro={`About ${city.distanceKm} km — here's how to make the journey.`} />
-        <TravelCards modes={city.gettingThere} />
+        <TravelCards modes={city.gettingThere} links={city.gettingThere.map((m) => gettingThereLinks(city, m))} />
       </Section>
 
       <Section tone="alt" id="itinerary" labelledBy="itinerary-title">
@@ -152,14 +156,14 @@ export default async function CityPage({ params }: PageProps<"/cities/[slug]">) 
             <h3 className="mb-6 text-2xl font-bold text-primary">1 day</h3>
             <Timeline
               headingLevel="h4"
-              entries={city.itinerary.oneDay.flatMap((d) => d.stops.map((s) => ({ label: s.time, title: s.title, body: s.note })))}
+              entries={city.itinerary.oneDay.flatMap((d) => d.stops.map((s) => ({ label: s.time, title: s.title, body: s.note, google: stopLinks(s.title, city.slug, allPlaces) })))}
             />
           </div>
           <div className="rounded-3xl border border-border bg-surface p-6 md:p-8">
             <h3 className="mb-6 text-2xl font-bold text-primary">2 days</h3>
             <Timeline
               headingLevel="h4"
-              entries={city.itinerary.twoDay.flatMap((d) => d.stops.map((s) => ({ label: `${d.title.split(" · ")[0]} · ${s.time}`, title: s.title, body: s.note })))}
+              entries={city.itinerary.twoDay.flatMap((d) => d.stops.map((s) => ({ label: `${d.title.split(" · ")[0]} · ${s.time}`, title: s.title, body: s.note, google: stopLinks(s.title, city.slug, allPlaces) })))}
             />
           </div>
         </div>

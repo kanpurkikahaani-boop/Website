@@ -12,6 +12,7 @@ import { BLOG_CATEGORIES } from "@/lib/blog-categories";
 import type { GlossaryItem, KeyFact, PlanItem, ReadingItem } from "@/lib/posts";
 import { blogExtensions } from "@/lib/content/extensions";
 import { FigureImage, type FigureAttrs } from "@/lib/content/figure";
+import { imagesUrl, mapsUrl } from "@/lib/googleLinks";
 import { BLOG_FONTS, BLOG_SIZES, normaliseFont } from "@/lib/content/fonts";
 import { CITY_OPTIONS } from "@/lib/city-names";
 import { slugifyTitle, slugRe } from "@/lib/posts-admin-schema";
@@ -622,15 +623,30 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
           title="Plan your visit"
           hint="https:// or an internal /path."
           rows={post.planVisit as (PlanItem & Record<string, string>)[]}
-          empty={{ group: "", label: "", url: "" }}
-          fields={[{ key: "group", label: "Group (e.g. Getting here)", wide: true }, { key: "label", label: "Link text", wide: true }, { key: "url", label: "URL", wide: true }]}
+          empty={{ group: "", label: "", url: "", mapsQuery: "", imagesQuery: "" }}
+          fields={[
+            { key: "group", label: "Group (e.g. Getting here)", wide: true },
+            { key: "label", label: "Link text", wide: true },
+            { key: "url", label: "URL", wide: true },
+            { key: "mapsQuery", label: "Google Maps search text (places only, e.g. Bara Devi Temple, Kanpur)", wide: true },
+            { key: "imagesQuery", label: "Google Images search text (optional)", wide: true },
+          ]}
+          rowExtra={(r) => <GoogleTestLinks maps={r.mapsQuery} images={r.imagesQuery} label={r.label} />}
           onChange={(rows) => update("planVisit", rows)}
         />
         <RowsEditor<GlossaryItem & Record<string, string>>
           title="Glossary"
           rows={post.glossary as (GlossaryItem & Record<string, string>)[]}
-          empty={{ term: "", definition: "", url: "", source: "" }}
-          fields={[{ key: "term", label: "Term", wide: true }, { key: "definition", label: "Definition", wide: true }, { key: "url", label: "Learn-more URL", wide: true }, { key: "source", label: "Source name", wide: true }]}
+          empty={{ term: "", definition: "", url: "", source: "", mapsQuery: "", imagesQuery: "" }}
+          fields={[
+            { key: "term", label: "Term", wide: true },
+            { key: "definition", label: "Definition", wide: true },
+            { key: "url", label: "Learn-more URL", wide: true },
+            { key: "source", label: "Source name", wide: true },
+            { key: "mapsQuery", label: "Google Maps search text (if the term is a place)", wide: true },
+            { key: "imagesQuery", label: "Google Images search text (optional)", wide: true },
+          ]}
+          rowExtra={(r) => <GoogleTestLinks maps={r.mapsQuery} images={r.imagesQuery} label={r.term} />}
           onChange={(rows) => update("glossary", rows)}
         />
         <RowsEditor<ReadingItem & Record<string, string>>
@@ -744,6 +760,18 @@ export function PostEditor({ initial, authors: initialAuthors, routes = [] }: { 
         </div>
       )}
     </div>
+  );
+}
+
+/** "Test link ↗" for the Google search texts on blog place rows (v9). */
+function GoogleTestLinks({ maps, images, label }: { maps?: string; images?: string; label?: string }) {
+  if (!maps?.trim() && !images?.trim()) return <p className="text-[11px] text-muted">Leave the Google fields empty unless this row is a place; places we already list get links automatically.</p>;
+  const img = images?.trim() || (maps?.trim() ? `${label ?? ""}`.trim() : "");
+  return (
+    <p className="flex flex-wrap gap-3 text-xs font-semibold">
+      {maps?.trim() && <a href={mapsUrl(maps.trim())} target="_blank" rel="noopener noreferrer nofollow" className="text-primary underline">Test Maps link ↗</a>}
+      {img && <a href={imagesUrl(img)} target="_blank" rel="noopener noreferrer nofollow" className="text-primary underline">Test Photos link ↗</a>}
+    </p>
   );
 }
 

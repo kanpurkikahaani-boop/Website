@@ -1,10 +1,13 @@
 import type { LucideIcon } from "lucide-react";
 import { IconBadge } from "@/components/ui/IconBadge";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import type { GoogleItem } from "@/lib/googleQueries";
 
 export interface InfoItem {
   icon: LucideIcon;
   label: string;
   value: React.ReactNode;
+  google?: GoogleItem;
 }
 
 /** Dark strip of 4 facts with gold icon badges. */
@@ -19,6 +22,7 @@ export function InfoStrip({ items, label }: { items: InfoItem[]; label: string }
               <div className="min-w-0">
                 <p className="text-[10.5px] font-bold uppercase tracking-[0.2em] text-accent">{it.label}</p>
                 <p className="mt-0.5 text-[15px] font-medium text-cream">{it.value}</p>
+                {it.google && <GoogleLinks item={it.google} tone="dark" className="mt-2" />}
               </div>
             </li>
           ))}

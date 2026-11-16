@@ -17,6 +17,7 @@ export function RowsEditor<T extends Record<string, string>>({
   fields,
   empty,
   onChange,
+  rowExtra,
 }: {
   title: string;
   hint?: string;
@@ -24,6 +25,8 @@ export function RowsEditor<T extends Record<string, string>>({
   fields: RowField<T>[];
   empty: T;
   onChange: (rows: T[]) => void;
+  /** Extra controls under a row's fields (e.g. "Test link ↗"). */
+  rowExtra?: (row: T) => React.ReactNode;
 }) {
   const set = (i: number, k: keyof T, v: string) => onChange(rows.map((r, j) => (j === i ? { ...r, [k]: v } : r)));
   return (
@@ -46,6 +49,7 @@ export function RowsEditor<T extends Record<string, string>>({
                   />
                 </label>
               ))}
+              {rowExtra && <div className="sm:col-span-2">{rowExtra(r)}</div>}
             </div>
             <button type="button" aria-label={`Remove row ${i + 1}`} onClick={() => onChange(rows.filter((_, j) => j !== i))} className="mt-1.5 rounded-full p-1.5 text-muted hover:bg-primary-soft hover:text-primary">
               <Trash2 size={15} aria-hidden />

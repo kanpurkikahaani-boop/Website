@@ -11,6 +11,7 @@ import { InlineLink } from "@/components/ui/InlineLink";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { outdoor } from "@/data/outdoor";
 import { buildMetadata, touristAttractionsJsonLd } from "@/lib/seo";
+import { outdoorLinks } from "@/lib/googleQueries";
 
 export const metadata: Metadata = buildMetadata({
   title: "Outdoor & Sports in Kanpur – Parks, Ghats & Green Park | Kanpur Ki Kahaani",
@@ -34,7 +35,7 @@ export default function OutdoorPage() {
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {outdoor.map((o, i) => (
             <FadeUp as="li" key={o.slug} delay={(i % 3) * 0.06}>
-              <ImageCard image={o.image} alt={o.alt} imageLabel={o.name} imageSublabel={o.type} eyebrow={o.type} title={o.name} description={o.description} chips={[o.area]} />
+              <ImageCard image={o.image} alt={o.alt} imageLabel={o.name} imageSublabel={o.type} eyebrow={o.type} title={o.name} description={o.description} chips={[o.area]} google={outdoorLinks(o)} />
             </FadeUp>
           ))}
         </ul>

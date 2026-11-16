@@ -44,6 +44,9 @@ export const eventInputSchema = z
     bmsUrl: optionalUrl(BMS_URL_RE, "BookMyShow link must start with https://in.bookmyshow.com/"),
     sourceUrl: optionalUrl(/^https:\/\//, "Details link must be an https URL"),
     status: z.enum(["draft", "published", "archived"]),
+    // Optional Google "Map" / "Photos" search text (v9 Google links; migration 0011).
+    mapsQuery: z.string().trim().max(160).optional().transform((v) => v || null),
+    imagesQuery: z.string().trim().max(160).optional().transform((v) => v || null),
   })
   .refine((e) => !e.endAt || e.endAt >= e.startAt, { message: "End must be after start", path: ["endAt"] });
 

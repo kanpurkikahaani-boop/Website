@@ -11,6 +11,7 @@ import { festivals } from "@/data/festivals";
 import { CiteThisPage } from "@/components/seo/CiteThisPage";
 import { absoluteUrl } from "@/data/site";
 import { buildMetadata } from "@/lib/seo";
+import { festivalLinks } from "@/lib/googleQueries";
 
 export const metadata: Metadata = buildMetadata({
   title: "Festivals in Kanpur – Ganga Mela, Holi & Dev Deepawali | Kanpur Ki Kahaani",
@@ -57,7 +58,7 @@ export default function CelebrationsPage() {
           items={festivals.map((f) => ({
             key: f.slug,
             tags: [MONTHS[f.monthIndex].toLowerCase(), ...(f.month.includes("October") && f.monthIndex !== 10 ? ["oct"] : [])],
-            card: { image: f.image, alt: f.alt, imageLabel: f.name, imageSublabel: f.month, eyebrow: f.month, title: f.name, description: f.description, chips: [f.where] },
+            card: { image: f.image, alt: f.alt, imageLabel: f.name, imageSublabel: f.month, eyebrow: f.month, title: f.name, description: f.description, chips: [f.where], google: festivalLinks(f) },
           }))}
         />
         <p className="mt-8 text-sm">

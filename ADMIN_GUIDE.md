@@ -79,6 +79,11 @@ After inserting, point at (or tap) the photo for its toolbar:
 
 The **Cover image** section on the right works the same way. After uploading, click the most important part of the photo (the **focal point**) so it stays in view when the photo is cropped.
 
+### Google Map / Photos links
+Every place on the site has **Map** (opens Google Maps) and **Photos** (a Google Images search) buttons, built automatically.
+- In **Plan your visit** and **Glossary** rows, fill **Google Maps search text** only when the row is a place (e.g. “Bara Devi Temple, Kanpur”), then click **Test Maps link ↗** to check it. Places we already list (JK Temple, Bithoor Ghats…) get links automatically.
+- Events: the **Google Maps / Images search text** fields are optional — empty means “venue + city”. Use them when the venue name alone finds the wrong place.
+
 ### Views
 Every published story shows "👁 N views" at the end, counted once per reader per 24 hours. Search-engine bots and anyone signed in to the admin aren't counted, and previews never count. The **Views** column in the Blogs list shows the same numbers.
 

@@ -34,6 +34,8 @@ export async function saveEvent(input: EventInput): Promise<EventActionResult> {
     status: e.status,
     // a new or changed link gets re-checked by the next cron run
     link_status: "unknown",
+    // Only sent when filled, so saving still works before migration 0011 is run.
+    ...(e.mapsQuery || e.imagesQuery ? { maps_query: e.mapsQuery, images_query: e.imagesQuery } : {}),
   };
   const res = e.id
     ? await db.from("events").update(row).eq("id", e.id).select("id").single()

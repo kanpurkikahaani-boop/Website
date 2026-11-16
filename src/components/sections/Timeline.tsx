@@ -1,9 +1,12 @@
 import { FadeUp } from "@/components/ui/FadeUp";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import type { GoogleItem } from "@/lib/googleQueries";
 
 export interface TimelineEntry {
   label: string;
   title: string;
   body?: React.ReactNode;
+  google?: GoogleItem;
 }
 
 /** Vertical timeline with a thin gold line and gold dots; entries fade in on scroll. */
@@ -19,6 +22,7 @@ export function Timeline({ entries, headingLevel: H = "h3" }: { entries: Timelin
           <p className="eyebrow">{e.label}</p>
           <H className="mt-1 text-[22px] font-semibold leading-snug">{e.title}</H>
           {e.body && <div className="mt-1.5 max-w-xl text-[15px] leading-relaxed">{e.body}</div>}
+          {e.google && <GoogleLinks item={e.google} className="mt-3" />}
         </FadeUp>
       ))}
     </ol>

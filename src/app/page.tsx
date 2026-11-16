@@ -30,6 +30,8 @@ import { FaqSection } from "@/components/faq/FaqSection";
 import { faqPageInfo, faqs } from "@/data/faqs";
 import { getLatestPosts } from "@/lib/posts";
 import { cityName } from "@/lib/city-names";
+import { KANPUR_TRANSPORT, kanpurLinks, tileLinks } from "@/lib/googleQueries";
+import { GoogleLinks } from "@/components/GoogleLinks";
 
 export const metadata: Metadata = buildMetadata({
   title: "Kanpur – City, Stories & More | Kanpur Ki Kahaani",
@@ -93,10 +95,10 @@ export default async function HomePage() {
       <InfoStrip
         label="Kanpur at a glance"
         items={[
-          { icon: Thermometer, label: "Live in Kanpur", value: <WeatherInline lat={site.kanpur.lat} lon={site.kanpur.lon} /> },
-          { icon: TrainFront, label: "Nearest railway station", value: "Kanpur Central (CNB)" },
-          { icon: Plane, label: "Nearest airport", value: "Kanpur Airport, Chakeri (KNU)" },
-          { icon: PlaneTakeoff, label: "Nearest international airport", value: "Lucknow (LKO), ~80 km" },
+          { icon: Thermometer, label: "Live in Kanpur", value: <WeatherInline lat={site.kanpur.lat} lon={site.kanpur.lon} />, google: kanpurLinks() },
+          { icon: TrainFront, label: "Nearest railway station", value: "Kanpur Central (CNB)", google: KANPUR_TRANSPORT.station() },
+          { icon: Plane, label: "Nearest airport", value: "Kanpur Airport, Chakeri (KNU)", google: KANPUR_TRANSPORT.airport() },
+          { icon: PlaneTakeoff, label: "Nearest international airport", value: "Lucknow (LKO), ~80 km", google: KANPUR_TRANSPORT.lucknowAirport() },
         ]}
       />
 
@@ -120,6 +122,7 @@ export default async function HomePage() {
             <InlineLink href="/culture-history" className="mt-6">
               Read the city&apos;s story
             </InlineLink>
+            <GoogleLinks item={kanpurLinks()} className="mt-5" />
           </FadeUp>
           <FadeUp delay={0.1}>
             <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
@@ -145,7 +148,7 @@ export default async function HomePage() {
           title="How to Reach Kanpur"
           intro="Sitting on the Delhi–Howrah rail line and two national highways, Kanpur is one of the best-connected cities in Uttar Pradesh."
         />
-        <TravelCards modes={reach} />
+        <TravelCards modes={reach} links={[KANPUR_TRANSPORT.station(), KANPUR_TRANSPORT.road(), KANPUR_TRANSPORT.airport()]} />
       </Section>
 
       {/* Map */}
@@ -157,6 +160,7 @@ export default async function HomePage() {
           intro="On the south bank of the Ganga, roughly midway between Agra and Varanasi — the heart of the Uttar Pradesh travel circuit."
         />
         <MapEmbed query="Kanpur, Uttar Pradesh" title="Map of Kanpur, Uttar Pradesh" />
+        <GoogleLinks item={{ ...kanpurLinks(), name: "Kanpur" }} variant="large" className="mt-4" />
       </Section>
 
       {/* Videos */}
@@ -183,7 +187,7 @@ export default async function HomePage() {
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {exploreCards.map((c, i) => (
             <FadeUp as="li" key={c.href} delay={(i % 3) * 0.06}>
-              <ImageCard image={c.img.image} alt={c.img.alt} imageLabel={c.title} title={c.title} description={c.teaser} href={c.href} />
+              <ImageCard image={c.img.image} alt={c.img.alt} imageLabel={c.title} title={c.title} description={c.teaser} href={c.href} google={tileLinks(c.href, c.title)} />
             </FadeUp>
           ))}
         </ul>

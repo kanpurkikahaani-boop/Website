@@ -31,11 +31,16 @@ export interface GlossaryItem {
   definition: string;
   url: string;
   source: string;
+  /** Optional Google "Map" / "Photos" search text (v9 Google links) — for place terms. */
+  mapsQuery?: string;
+  imagesQuery?: string;
 }
 export interface PlanItem {
   group: string;
   label: string;
   url: string;
+  mapsQuery?: string;
+  imagesQuery?: string;
 }
 
 export interface PostSummary {

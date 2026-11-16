@@ -5,6 +5,9 @@ import { isExternalHref } from "@/lib/content/enrich";
 import { CITY_OPTIONS, cityName } from "@/lib/city-names";
 import type { Author, GlossaryItem, KeyFact, PlanItem, PostSummary, ReadingItem } from "@/lib/posts";
 import { cn } from "@/lib/utils";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import { allPlaces } from "@/data/places";
+import { blogPlaceLinks } from "@/lib/googleQueries";
 
 /** A link that follows the site rules: internal = same tab; external = new tab + noopener noreferrer + ↗ + sr text. */
 export function ArticleLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
@@ -46,7 +49,7 @@ export function KeyFactsBox({ title, facts }: { title: string; facts: KeyFact[] 
   );
 }
 
-export function PlanVisitCard({ title, items }: { title: string; items: PlanItem[] }) {
+export function PlanVisitCard({ title, items, city = null }: { title: string; items: PlanItem[]; city?: string | null }) {
   if (!items.length) return null;
   const groups = [...new Set(items.map((i) => i.group))];
   return (
@@ -64,6 +67,7 @@ export function PlanVisitCard({ title, items }: { title: string; items: PlanItem
               .map((i) => (
                 <li key={i.url}>
                   <ArticleLink href={i.url}>{i.label}</ArticleLink>
+                  <PlaceGoogleLinks label={i.label} city={city} item={i} />
                 </li>
               ))}
           </ul>
@@ -73,7 +77,13 @@ export function PlanVisitCard({ title, items }: { title: string; items: PlanItem
   );
 }
 
-export function GlossarySection({ items }: { items: GlossaryItem[] }) {
+/** Map/Photos for a blog row that names a place (editor's search text, or a place we list). */
+function PlaceGoogleLinks({ label, city, item }: { label: string; city: string | null; item: { mapsQuery?: string; imagesQuery?: string } }) {
+  const g = blogPlaceLinks(label, city, item, allPlaces);
+  return g ? <GoogleLinks item={g} className="mt-1.5" /> : null;
+}
+
+export function GlossarySection({ items, city = null }: { items: GlossaryItem[]; city?: string | null }) {
   if (!items.length) return null;
   return (
     <section aria-labelledby="glossary-title" data-link-group="D" className={cn(card, "article-links mt-10")}>
@@ -88,6 +98,7 @@ export function GlossarySection({ items }: { items: GlossaryItem[] }) {
               <ArticleLink href={g.url} className="whitespace-nowrap font-semibold">
                 Learn more{g.source ? ` on ${g.source}` : ""}
               </ArticleLink>
+              <PlaceGoogleLinks label={g.term} city={city} item={g} />
             </dd>
           </div>
         ))}

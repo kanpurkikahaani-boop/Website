@@ -9,6 +9,7 @@ import { SampleNote } from "@/components/ui/SampleNote";
 import { InlineLink } from "@/components/ui/InlineLink";
 import { foodFor, foodTabs } from "@/data/food";
 import { buildMetadata } from "@/lib/seo";
+import { foodLinks } from "@/lib/googleQueries";
 
 export const metadata: Metadata = buildMetadata({
   title: "Kanpur Street Food, Restaurants & Night Life | Kanpur Ki Kahaani",
@@ -37,7 +38,7 @@ export default function FoodPage() {
           items={foodFor("kanpur").map((f) => ({
             key: f.slug,
             tags: [f.kind],
-            card: { image: f.image, alt: f.alt, imageLabel: f.name, imageSublabel: f.eyebrow, eyebrow: f.eyebrow, title: f.name, description: f.description, chips: [f.area, f.price] },
+            card: { image: f.image, alt: f.alt, imageLabel: f.name, imageSublabel: f.eyebrow, eyebrow: f.eyebrow, title: f.name, description: f.description, chips: [f.area, f.price], google: foodLinks(f) },
           }))}
         />
         <SampleNote className="mt-8">Prices are indicative and some venue names are illustrative — check locally before you go.</SampleNote>

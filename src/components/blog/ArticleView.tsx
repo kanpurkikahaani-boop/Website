@@ -170,10 +170,10 @@ export function ArticleView({
 
             <div className="lg:hidden">
               <div className="mt-10">
-                <PlanVisitCard title={planTitle} items={post.planVisit} />
+                <PlanVisitCard title={planTitle} items={post.planVisit} city={post.city} />
               </div>
             </div>
-            <GlossarySection items={post.glossary} />
+            <GlossarySection items={post.glossary} city={post.city} />
             <FurtherReading items={post.furtherReading} />
             <MoreToExplore city={post.city} />
             <TagChips tags={post.tags} />
@@ -186,7 +186,7 @@ export function ArticleView({
           <aside className="hidden lg:block" aria-label="Article tools">
             <div className="sticky top-24 space-y-6">
               {toc.length > 2 && <ArticleToc items={toc} />}
-              <PlanVisitCard title={planTitle} items={post.planVisit} />
+              <PlanVisitCard title={planTitle} items={post.planVisit} city={post.city} />
             </div>
           </aside>
         </div>

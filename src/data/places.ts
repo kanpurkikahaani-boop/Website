@@ -87,7 +87,7 @@ export const kanpurPlaces: Place[] = [
     priority: 7,
   },
   {
-    slug: "jajmau-mound",
+    slug: "jajmau-mound", mapsQuery: "Jajmau, Kanpur", imagesQuery: "Jajmau mound ghats Kanpur",
     city: "kanpur",
     name: "Jajmau Mound & Ghats",
     category: "heritage",
@@ -155,7 +155,7 @@ export const kanpurPlaces: Place[] = [
     priority: 9,
   },
   {
-    slug: "phool-bagh",
+    slug: "phool-bagh", mapsQuery: "Phool Bagh, Mall Road, Kanpur",
     city: "kanpur",
     name: "Phool Bagh & Ganesh Shankar Vidyarthi Memorial",
     category: "heritage",
@@ -240,7 +240,7 @@ export const kanpurPlaces: Place[] = [
     priority: 7,
   },
   {
-    slug: "blue-world-theme-park",
+    slug: "blue-world-theme-park", mapsQuery: "Blue World Theme Park, Kanpur",
     city: "kanpur",
     name: "Blue World Theme Park",
     category: "nature",
@@ -262,7 +262,7 @@ export const kanpurPlaces: Place[] = [
 export const cityPlaces: Place[] = [
   // ── Lucknow ─────────────────────────────────────────────
   {
-    slug: "bara-imambara",
+    slug: "bara-imambara", mapsQuery: "Bara Imambara, Husainabad, Lucknow", imagesQuery: "Bara Imambara Bhool Bhulaiya Lucknow",
     city: "lucknow",
     name: "Bara Imambara & Bhool Bhulaiya",
     category: "heritage",
@@ -398,7 +398,7 @@ export const cityPlaces: Place[] = [
     alt: "The towering Buland Darwaza gateway at Fatehpur Sikri",
   },
   {
-    slug: "mehtab-bagh",
+    slug: "mehtab-bagh", mapsQuery: "Mehtab Bagh, Agra",
     city: "agra",
     name: "Mehtab Bagh",
     category: "nature",
@@ -459,7 +459,7 @@ export const cityPlaces: Place[] = [
     alt: "Facade of Anand Bhawan, the Nehru family home in Prayagraj",
   },
   {
-    slug: "allahabad-fort",
+    slug: "allahabad-fort", mapsQuery: "Allahabad Fort, Prayagraj", imagesQuery: "Allahabad Fort Akshayavat Prayagraj",
     city: "prayagraj",
     name: "Allahabad Fort & Akshayavat",
     category: "heritage",
@@ -505,7 +505,7 @@ export const cityPlaces: Place[] = [
   },
   // ── Varanasi ────────────────────────────────────────────
   {
-    slug: "dashashwamedh-ghat",
+    slug: "dashashwamedh-ghat", mapsQuery: "Dashashwamedh Ghat, Varanasi", imagesQuery: "Dashashwamedh Ghat Ganga Aarti Varanasi",
     city: "varanasi",
     name: "Dashashwamedh Ghat Ganga Aarti",
     category: "temple",
@@ -535,7 +535,7 @@ export const cityPlaces: Place[] = [
     alt: "The gold-topped spire of Shri Kashi Vishwanath temple, Varanasi",
   },
   {
-    slug: "assi-ghat",
+    slug: "assi-ghat", mapsQuery: "Assi Ghat, Varanasi", imagesQuery: "Assi Ghat sunrise Varanasi",
     city: "varanasi",
     name: "Assi Ghat Sunrise",
     category: "nature",
@@ -550,7 +550,7 @@ export const cityPlaces: Place[] = [
     alt: "Sunrise over the Ganga from Assi Ghat, Varanasi",
   },
   {
-    slug: "ghats-boat-ride",
+    slug: "ghats-boat-ride", mapsQuery: "boat ride Dashashwamedh Ghat, Varanasi", imagesQuery: "Varanasi ghats boat ride",
     city: "varanasi",
     name: "Boat Ride Along the Ghats",
     category: "nature",
@@ -565,7 +565,7 @@ export const cityPlaces: Place[] = [
     alt: "Wooden rowing boats in front of the Varanasi ghats",
   },
   {
-    slug: "sarnath",
+    slug: "sarnath", mapsQuery: "Sarnath, Varanasi",
     city: "varanasi",
     name: "Sarnath",
     category: "heritage",
@@ -641,7 +641,7 @@ export const cityPlaces: Place[] = [
     alt: "Ornate facade of Kanak Bhawan temple in Ayodhya",
   },
   {
-    slug: "ram-ki-paidi",
+    slug: "ram-ki-paidi", mapsQuery: "Ram ki Paidi, Ayodhya",
     city: "ayodhya",
     name: "Ram ki Paidi",
     category: "nature",
@@ -656,7 +656,7 @@ export const cityPlaces: Place[] = [
     alt: "Rows of diyas lit along Ram ki Paidi ghats during Deepotsav",
   },
   {
-    slug: "saryu-aarti",
+    slug: "saryu-aarti", mapsQuery: "Naya Ghat, Ayodhya", imagesQuery: "Saryu aarti Ayodhya",
     city: "ayodhya",
     name: "Saryu Ghat Aarti",
     category: "temple",

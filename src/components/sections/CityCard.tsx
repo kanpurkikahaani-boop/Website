@@ -3,6 +3,7 @@
 import type { City } from "@/data/types";
 import { ImageCard } from "@/components/ui/ImageCard";
 import { track } from "@/lib/analytics";
+import { cityLinks } from "@/lib/googleQueries";
 
 /** Nearby-city card with Devanagari name, tagline and distance/time chips. */
 export function CityCard({ city, from = "home" }: { city: City; from?: string }) {
@@ -18,6 +19,7 @@ export function CityCard({ city, from = "home" }: { city: City; from?: string })
       description={city.shortIntro}
       chips={[`~${city.distanceKm} km`, `${city.driveTime} by road`]}
       href={`/cities/${city.slug}`}
+      google={cityLinks(city)}
       onClick={() => track("city_card_click", { city: city.slug, from })}
     />
   );

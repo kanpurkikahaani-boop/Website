@@ -4,6 +4,8 @@ import { ArrowUpRight, Ticket } from "lucide-react";
 import { bookMyShowCityUrls } from "@/data/site";
 import { track } from "@/lib/analytics";
 import { CITY_LABELS, NEWS_CITIES } from "@/lib/news/taxonomy";
+import { GoogleLinks } from "@/components/GoogleLinks";
+import { cityLinks } from "@/lib/googleQueries";
 
 /** Six always-current BookMyShow city pages (BookMyShow maintains them; we only link out). */
 export function BmsCityStrip() {
@@ -32,6 +34,7 @@ export function BmsCityStrip() {
               <ArrowUpRight size={15} aria-hidden className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               <span className="sr-only"> on BookMyShow (opens in a new tab)</span>
             </a>
+            <GoogleLinks item={cityLinks({ slug: c as never, name: CITY_LABELS[c].en, imagesQuery: `${CITY_LABELS[c].en} events` })} className="mt-2" />
           </div>
         </li>
       ))}

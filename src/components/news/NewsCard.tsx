@@ -4,6 +4,7 @@ import { hostOf } from "@/lib/news/normalize";
 import type { NewsItem } from "@/lib/news/query";
 import { formatIST } from "@/lib/news/query";
 import { RelativeTime } from "./RelativeTime";
+import { faviconUrl } from "@/lib/googleLinks";
 
 /** Headline, source, time and link only — never article text or article photos. */
 export function NewsCard({ item }: { item: NewsItem }) {
@@ -13,7 +14,7 @@ export function NewsCard({ item }: { item: NewsItem }) {
       <div className="flex items-center justify-between gap-3">
         <span className="inline-flex min-w-0 items-center gap-2 rounded-full border border-border bg-bg-alt py-1 pl-1 pr-3 text-xs font-semibold text-ink">
           {/* eslint-disable-next-line @next/next/no-img-element -- tiny publisher favicon, not rehosted */}
-          <img src={`https://www.google.com/s2/favicons?domain=${host}&sz=32`} alt="" width={18} height={18} loading="lazy" className="h-[18px] w-[18px] shrink-0 rounded-full bg-white" />
+          <img src={faviconUrl(host)} alt="" width={18} height={18} loading="lazy" className="h-[18px] w-[18px] shrink-0 rounded-full bg-white" />
           <span className="truncate">{item.sourceName}</span>
         </span>
         <span className="shrink-0 text-xs text-muted">

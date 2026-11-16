@@ -15,7 +15,9 @@ export type AnalyticsEvent =
   | "bms_city_click"
   | "bms_event_click"
   | "blog_read"
-  | "outbound_click";
+  | "outbound_click"
+  | "google_maps_click"
+  | "google_images_click";
 
 type Params = Record<string, string | number | boolean | undefined>;
 
