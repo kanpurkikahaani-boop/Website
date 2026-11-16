@@ -8,6 +8,9 @@ Domain Authority (Moz) is calculated from **other websites linking to ours**: ho
 - **“Cite or link to this page”** boxes on the distance guide, Nearby, Celebrations, Culture & History and every blog post: one click copies a link or a citation.
 - Syndication (admin → Syndication): every cross-posted copy links back to the original.
 
+## Outreach kit (start here)
+Run `npm run outreach:kit` and open `reports/outreach/outreach-kit.html`. It lists 79 targets built from the site's own data: 36 newspapers and city news desks, 6 colleges, 24 real places and businesses we feature, 10 profiles and directories, and 3 communities. Each one has the page to point them to and a filled-in message (English, plus Hindi for press and places) with copy buttons and a status picker. `reports/outreach/targets.csv` is the same list for the team sheet, with columns for contact, status, date sent and the link earned. Sample listings are never included, and contacts are left for the team to fill in from each organisation's own website.
+
 ## Outreach checklist (do a few each week)
 1. **Places we feature.** When a story mentions a café, hotel, shop, event or creator, message them the link and the badge code from /press. Featured places link back more often than anyone else.
 2. **Colleges.** Ask our department/college and student clubs to list the project (links from `.ac.in` sites carry a lot of trust).

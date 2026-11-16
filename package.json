@@ -30,7 +30,8 @@
     "images:source": "tsx scripts/images/source.ts",
     "test:images": "tsx scripts/images/test-candidates.ts",
     "images:process": "tsx scripts/images/process.ts",
-    "images:report": "tsx scripts/images/report.ts"
+    "images:report": "tsx scripts/images/report.ts",
+    "outreach:kit": "tsx scripts/outreach/build.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
